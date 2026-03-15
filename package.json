@@ -1,0 +1,41 @@
+{
+  "name": "claude-ai-switcher",
+  "version": "1.0.0",
+  "description": "Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for Claude Code and OpenCode",
+  "main": "dist/index.js",
+  "bin": {
+    "claude-switch": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "claude",
+    "ai",
+    "qwen",
+    "glm",
+    "anthropic",
+    "alibaba",
+    "opencode"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/fs-extra": "^11.0.4",
+    "typescript": "^5.3.0",
+    "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
