@@ -155,3 +155,25 @@ claude-switch setup               # Interactive setup wizard
 - Claude Code and/or OpenCode must be installed separately
 - `@z_ai/coding-helper` package required for GLM/Z.AI provider support
 - API keys required for Alibaba (from Alibaba Cloud Model Studio)
+
+## Cross-Platform Development
+
+### Platform Support
+- **macOS**: Full support (primary development platform)
+- **Linux**: Full support
+- **Windows 11**: Full support (use Git Bash, WSL, or PowerShell for build commands)
+
+### Cross-Platform Code Guidelines
+
+**Shell Commands**:
+- Avoid Unix-specific commands like `which`, `rm -rf`
+- Use `platform()` from Node.js `os` module for platform detection
+- Example: `platform() === "win32" ? "where coding-helper" : "which coding-helper"`
+
+**Path Handling**:
+- Always use `path.join()` and `os.homedir()` for cross-platform paths
+- The tool uses Unix-style dotfiles (`~/.claude/`, `~/.opencode.json`) which matches Claude Code's cross-platform convention
+
+**Build Scripts**:
+- `rimraf` is used instead of `rm -rf` for cross-platform directory deletion
+- All npm scripts work on Windows, macOS, and Linux

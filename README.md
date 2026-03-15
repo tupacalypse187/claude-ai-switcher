@@ -22,6 +22,21 @@ npm run build
 npm link  # Install globally
 ```
 
+## Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| macOS | ✅ Full Support | Default development platform |
+| Linux | ✅ Full Support | All features supported |
+| Windows 11 | ✅ Full Support | Use Git Bash, WSL, or PowerShell for build commands |
+
+### Windows Notes
+
+- Build commands (`npm install`, `npm run build`) should be run in Git Bash, WSL, or PowerShell
+- The CLI works in any terminal after installation
+- GLM/Z.AI provider requires `coding-helper` to be in your PATH
+- The `clean` script uses `rimraf` for cross-platform compatibility
+
 ## Quick Start
 
 ```bash

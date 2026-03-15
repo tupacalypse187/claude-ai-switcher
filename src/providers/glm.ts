@@ -1,10 +1,11 @@
 /**
  * GLM/Z.AI Provider Configuration
- * 
+ *
  * Uses coding-helper to manage GLM Coding Plan settings.
  * This provider delegates to the @z_ai/coding-helper package.
  */
 
+import { platform } from "os";
 import { providers, glmModels } from "../models.js";
 
 export const GLM_PROVIDER = providers.glm;
@@ -30,8 +31,9 @@ export async function isCodingHelperInstalled(): Promise<boolean> {
     const { exec } = await import("child_process");
     const { promisify } = await import("util");
     const execAsync = promisify(exec);
-    
-    await execAsync("which coding-helper");
+
+    const checkCommand = platform() === "win32" ? "where coding-helper" : "which coding-helper";
+    await execAsync(checkCommand);
     return true;
   } catch {
     return false;
