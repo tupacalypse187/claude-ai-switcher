@@ -3,8 +3,8 @@
 /**
  * Claude AI Switcher
  *
- * Switch between AI providers (Anthropic, GLM, Alibaba Qwen)
- * for Claude Code and OpenCode
+ * Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for Claude Code.
+ * Also provides helper commands to add/remove Alibaba Coding Plan provider for OpenCode.
  */
 
 import { Command } from "commander";
@@ -27,9 +27,7 @@ import {
   claudeSettingsExists
 } from "./clients/claude-code.js";
 import {
-  configureAnthropic as configureOpenCodeAnthropic,
   configureAlibaba as configureOpenCodeAlibaba,
-  configureGLM as configureOpenCodeGLM,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
 } from "./clients/opencode.js";
@@ -47,7 +45,7 @@ const program = new Command();
 
 program
   .name("claude-switch")
-  .description("Switch between AI providers for Claude Code and OpenCode")
+  .description("Switch between AI providers for Claude Code. Also provides OpenCode helper commands.")
   .version("1.0.0");
 
 // ---------------------------------------------------------------------------
@@ -100,12 +98,11 @@ function addTierOptions(cmd: Command): Command {
 }
 
 // ---------------------------------------------------------------------------
-// Provider switch implementations
+// Provider switch implementations (Claude Code)
 // ---------------------------------------------------------------------------
 
-async function switchAnthropic(targets: { claude: boolean; opencode: boolean }): Promise<void> {
-  if (targets.claude) await configureClaudeAnthropic();
-  if (targets.opencode) await configureOpenCodeAnthropic();
+async function switchAnthropic(): Promise<void> {
+  await configureClaudeAnthropic();
 
   displaySuccess("Switched to Anthropic (default)");
   console.log(chalk.dim("  Provider: Anthropic"));
@@ -115,7 +112,6 @@ async function switchAnthropic(targets: { claude: boolean; opencode: boolean }):
 
 async function switchAlibaba(
   model: string | undefined,
-  targets: { claude: boolean; opencode: boolean },
   tierOpts: { opus?: string; sonnet?: string; haiku?: string }
 ): Promise<void> {
   const selectedModel = model || "qwen3.5-plus";
@@ -139,8 +135,7 @@ async function switchAlibaba(
 
   const tierMap = buildTierMap(getAlibabaTierMap(selectedModel), tierOpts);
 
-  if (targets.claude) await configureClaudeAlibaba(apiKey, selectedModel, tierMap);
-  if (targets.opencode) await configureOpenCodeAlibaba(apiKey, selectedModel);
+  await configureClaudeAlibaba(apiKey, selectedModel, tierMap);
 
   console.log(chalk.green(`\n✓ Switched to: Alibaba Coding Plan`));
   console.log(chalk.dim("─".repeat(60)));
@@ -149,58 +144,62 @@ async function switchAlibaba(
   console.log(`  ${chalk.cyan.bold("Endpoint:")} ${chalk.dim("https://coding-intl.dashscope.aliyuncs.com/apps/anthropic")}`);
   console.log(`  ${chalk.cyan.bold("Capabilities:")} ${chalk.gray(validModel.capabilities.join(", "))}`);
   console.log(chalk.dim(`  ${validModel.description}`));
-  if (targets.claude) {
-    console.log();
-    displayTierMap(tierMap);
-  }
+  console.log();
+  displayTierMap(tierMap);
   console.log();
 }
 
-async function switchGLM(
-  targets: { claude: boolean; opencode: boolean },
-  tierOpts: { opus?: string; sonnet?: string; haiku?: string }
-): Promise<void> {
+async function switchGLM(tierOpts: { opus?: string; sonnet?: string; haiku?: string }): Promise<void> {
   const hasCodingHelper = await isCodingHelperInstalled();
 
   if (!hasCodingHelper) {
     displayWarning("coding-helper not found");
     console.log(chalk.dim("  Install with: npm install -g @z_ai/coding-helper"));
+    console.log(chalk.dim("  Then run: coding-helper auth"));
     console.log();
   }
 
   const tierMap = buildTierMap(GLM_DEFAULT_TIER_MAP, tierOpts);
 
-  if (targets.claude) {
-    await configureClaudeGLM(tierMap);
-    if (hasCodingHelper) {
-      const result = await reloadGLMConfig();
-      if (!result.success) {
-        displayWarning("coding-helper reload failed, but local config updated");
-      }
+  await configureClaudeGLM(tierMap);
+  if (hasCodingHelper) {
+    const result = await reloadGLMConfig();
+    if (!result.success) {
+      displayWarning("coding-helper reload failed, but local config updated");
     }
   }
-  if (targets.opencode) await configureOpenCodeGLM();
 
   displaySuccess("Switched to GLM/Z.AI");
   console.log(chalk.dim("  Provider: GLM/Z.AI"));
   if (hasCodingHelper) console.log(chalk.dim("  Managed by: coding-helper"));
-  if (targets.claude) {
-    console.log();
-    displayTierMap(tierMap);
-  }
+  console.log();
+  displayTierMap(tierMap);
   console.log();
 }
 
 // ---------------------------------------------------------------------------
-// Top-level commands — update BOTH claude and opencode
+// Top-level commands — Claude Code only
 // ---------------------------------------------------------------------------
+
+addTierOptions(
+  program
+    .command("alibaba [model]")
+    .description("Switch Claude Code to Alibaba Coding Plan")
+).action(async (model, options) => {
+  try {
+    await switchAlibaba(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Alibaba");
+    process.exit(1);
+  }
+});
 
 program
   .command("anthropic")
-  .description("Switch both Claude Code and OpenCode to Anthropic (default)")
+  .description("Switch Claude Code to Anthropic (default)")
   .action(async () => {
     try {
-      await switchAnthropic({ claude: true, opencode: true });
+      await switchAnthropic();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to switch to Anthropic");
       process.exit(1);
@@ -209,24 +208,11 @@ program
 
 addTierOptions(
   program
-    .command("alibaba [model]")
-    .description("Switch both Claude Code and OpenCode to Alibaba Coding Plan")
-).action(async (model, options) => {
-  try {
-    await switchAlibaba(model, { claude: true, opencode: true }, options);
-  } catch (error) {
-    displayError(error instanceof Error ? error.message : "Failed to switch to Alibaba");
-    process.exit(1);
-  }
-});
-
-addTierOptions(
-  program
     .command("glm")
-    .description("Switch both Claude Code and OpenCode to GLM/Z.AI")
+    .description("Switch Claude Code to GLM/Z.AI (requires @z_ai/coding-helper)")
 ).action(async (options) => {
   try {
-    await switchGLM({ claude: true, opencode: true }, options);
+    await switchGLM(options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to GLM");
     process.exit(1);
@@ -234,19 +220,19 @@ addTierOptions(
 });
 
 // ---------------------------------------------------------------------------
-// `claude` subcommand — Claude Code only
+// `claude` subcommand — explicit Claude Code targeting
 // ---------------------------------------------------------------------------
 
 const claudeCmd = program
   .command("claude")
-  .description("Configure Claude Code only");
+  .description("Configure Claude Code (explicit targeting)");
 
 claudeCmd
   .command("anthropic")
   .description("Switch Claude Code to Anthropic (default)")
   .action(async () => {
     try {
-      await switchAnthropic({ claude: true, opencode: false });
+      await switchAnthropic();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to switch to Anthropic");
       process.exit(1);
@@ -259,7 +245,7 @@ addTierOptions(
     .description("Switch Claude Code to Alibaba Coding Plan")
 ).action(async (model, options) => {
   try {
-    await switchAlibaba(model, { claude: true, opencode: false }, options);
+    await switchAlibaba(model, options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to Alibaba");
     process.exit(1);
@@ -269,10 +255,10 @@ addTierOptions(
 addTierOptions(
   claudeCmd
     .command("glm")
-    .description("Switch Claude Code to GLM/Z.AI")
+    .description("Switch Claude Code to GLM/Z.AI (requires @z_ai/coding-helper)")
 ).action(async (options) => {
   try {
-    await switchGLM({ claude: true, opencode: false }, options);
+    await switchGLM(options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to GLM");
     process.exit(1);
@@ -280,45 +266,61 @@ addTierOptions(
 });
 
 // ---------------------------------------------------------------------------
-// `opencode` subcommand — OpenCode only
+// `opencode` subcommand — OpenCode helper commands
 // ---------------------------------------------------------------------------
 
 const opencodeCmd = program
   .command("opencode")
-  .description("Configure OpenCode only");
+  .description("OpenCode helper commands");
 
-opencodeCmd
-  .command("anthropic")
-  .description("Switch OpenCode to Anthropic (default)")
+const opencodeAddCmd = opencodeCmd
+  .command("add")
+  .description("Add a provider to OpenCode");
+
+opencodeAddCmd
+  .command("alibaba")
+  .description("Add Alibaba Coding Plan provider to OpenCode")
   .action(async () => {
     try {
-      await switchAnthropic({ claude: false, opencode: true });
+      let apiKey = await getApiKey("alibaba");
+      if (!apiKey) {
+        apiKey = await promptApiKey(
+          "Alibaba",
+          "https://modelstudio.console.alibabacloud.com/"
+        );
+        await setApiKey("alibaba", apiKey);
+      }
+
+      await configureOpenCodeAlibaba(apiKey);
+
+      displaySuccess("Added Alibaba Coding Plan provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: bailian-coding-plan"));
+      console.log(chalk.dim("  Models: qwen3.5-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5"));
+      console.log();
     } catch (error) {
-      displayError(error instanceof Error ? error.message : "Failed to switch to Anthropic");
+      displayError(error instanceof Error ? error.message : "Failed to add Alibaba provider");
       process.exit(1);
     }
   });
 
-opencodeCmd
-  .command("alibaba [model]")
-  .description("Switch OpenCode to Alibaba Coding Plan")
-  .action(async (model) => {
-    try {
-      await switchAlibaba(model, { claude: false, opencode: true }, {});
-    } catch (error) {
-      displayError(error instanceof Error ? error.message : "Failed to switch to Alibaba");
-      process.exit(1);
-    }
-  });
+const opencodeRemoveCmd = opencodeCmd
+  .command("remove")
+  .description("Remove a provider from OpenCode");
 
-opencodeCmd
-  .command("glm")
-  .description("Switch OpenCode to GLM/Z.AI")
+opencodeRemoveCmd
+  .command("alibaba")
+  .description("Remove Alibaba Coding Plan provider from OpenCode")
   .action(async () => {
     try {
-      await switchGLM({ claude: false, opencode: true }, {});
+      const { configureAnthropic: configureOpenCodeAnthropic } = await import("./clients/opencode.js");
+      await configureOpenCodeAnthropic();
+
+      displaySuccess("Removed Alibaba Coding Plan provider from OpenCode");
+      console.log(chalk.dim("  OpenCode will use default provider configuration"));
+      console.log();
     } catch (error) {
-      displayError(error instanceof Error ? error.message : "Failed to switch to GLM");
+      displayError(error instanceof Error ? error.message : "Failed to remove Alibaba provider");
       process.exit(1);
     }
   });
@@ -468,14 +470,15 @@ program
 
       console.log(chalk.green("\n✓ Setup complete!\n"));
       console.log("Available commands:");
-      console.log(chalk.dim("  claude-switch anthropic               - Switch both to Anthropic"));
-      console.log(chalk.dim("  claude-switch alibaba [model]         - Switch both to Alibaba"));
-      console.log(chalk.dim("  claude-switch glm                     - Switch both to GLM/Z.AI"));
-      console.log(chalk.dim("  claude-switch claude anthropic        - Claude Code only"));
-      console.log(chalk.dim("  claude-switch opencode alibaba        - OpenCode only"));
-      console.log(chalk.dim("  claude-switch alibaba --opus <model>  - Custom model aliases"));
-      console.log(chalk.dim("  claude-switch list                    - List all providers"));
-      console.log(chalk.dim("  claude-switch current                 - Show current config"));
+      console.log(chalk.dim("  claude-switch alibaba [model]        - Switch Claude Code to Alibaba"));
+      console.log(chalk.dim("  claude-switch anthropic              - Switch Claude Code to Anthropic"));
+      console.log(chalk.dim("  claude-switch glm                    - Switch Claude Code to GLM/Z.AI"));
+      console.log(chalk.dim("  claude-switch claude alibaba         - Explicit Claude Code targeting"));
+      console.log(chalk.dim("  claude-switch opencode add alibaba   - Add Alibaba provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove alibaba - Remove Alibaba from OpenCode"));
+      console.log(chalk.dim("  claude-switch alibaba --opus <model> - Custom model aliases"));
+      console.log(chalk.dim("  claude-switch list                   - List all providers"));
+      console.log(chalk.dim("  claude-switch current                - Show current config"));
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Setup failed");

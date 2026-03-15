@@ -1,17 +1,17 @@
 # Claude AI Switcher
 
-Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for **Claude Code** and **OpenCode** with ease.
+Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for **Claude Code** with ease. Also provides helper commands to manage Alibaba Coding Plan provider for **OpenCode**.
 
 ## Features
 
 - **Quick Switching**: Switch between Anthropic, GLM/Z.AI, and Alibaba Coding Plan with a single command
 - **Model Aliases**: Automatically sets `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` in Claude Code's settings so you always know what model is active
-- **Separate Client Control**: Target Claude Code, OpenCode, or both independently — no accidental cross-contamination
 - **Custom Tier Overrides**: Use `--opus`, `--sonnet`, `--haiku` to pin specific models per tier
 - **Model Information**: See model capabilities, context windows, and descriptions when switching
 - **Secure Storage**: API keys stored locally in `~/.claude-ai-switcher/config.json`
 - **Safe Configuration**: Backs up existing settings before any modifications
 - **Auto Onboarding**: Automatically sets `hasCompletedOnboarding: true` to prevent connection errors
+- **OpenCode Helper**: Add/remove Alibaba Coding Plan provider for OpenCode with simple commands
 
 ## Installation
 
@@ -43,24 +43,25 @@ npm link  # Install globally
 # Run setup wizard (recommended for first-time use)
 claude-switch setup
 
-# Switch both Claude Code and OpenCode to Alibaba Coding Plan
+# Switch Claude Code to Alibaba Coding Plan
 claude-switch alibaba
 
-# Switch only Claude Code (OpenCode unchanged)
-claude-switch claude alibaba qwen3.5-plus
+# Switch Claude Code with specific model
+claude-switch alibaba qwen3.5-plus
 
-# Switch only OpenCode (Claude Code unchanged)
-claude-switch opencode alibaba
-
-# Switch back to default Anthropic (both clients)
+# Switch back to default Anthropic
 claude-switch anthropic
+
+# Add Alibaba provider to OpenCode
+claude-switch opencode add alibaba
+
+# Remove Alibaba provider from OpenCode
+claude-switch opencode remove alibaba
 ```
 
 ## Commands
 
-### Switch Both Clients (default)
-
-When no client is specified, both Claude Code and OpenCode are updated.
+### Switch Claude Code (top-level commands)
 
 ```bash
 claude-switch anthropic
@@ -69,7 +70,7 @@ claude-switch alibaba qwen3.5-plus       # specific model
 claude-switch glm
 ```
 
-### Switch Claude Code Only
+### Switch Claude Code (explicit targeting)
 
 ```bash
 claude-switch claude anthropic
@@ -78,14 +79,19 @@ claude-switch claude alibaba qwen3.5-plus
 claude-switch claude glm
 ```
 
-### Switch OpenCode Only
+### OpenCode Helper Commands
+
+Add or remove the Alibaba Coding Plan provider from OpenCode configuration:
 
 ```bash
-claude-switch opencode anthropic
-claude-switch opencode alibaba
-claude-switch opencode alibaba qwen3.5-plus
-claude-switch opencode glm
+# Add Alibaba Coding Plan provider to OpenCode
+claude-switch opencode add alibaba
+
+# Remove Alibaba Coding Plan provider from OpenCode
+claude-switch opencode remove alibaba
 ```
+
+**Note**: OpenCode configuration is stored at `~/.config/opencode/opencode.json`. The `add` command adds the `bailian-coding-plan` provider with all available models. The `remove` command removes only the `bailian-coding-plan` provider, preserving any other providers you have configured.
 
 ### Model Aliases (Claude Code)
 
@@ -100,14 +106,14 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 Override any tier at switch time:
 
 ```bash
-# Set all three tiers to the same model (default for Alibaba)
-claude-switch claude alibaba qwen3.5-plus
+# Set all three tiers (default for Alibaba)
+claude-switch alibaba qwen3.5-plus
 
 # Override individual tiers
-claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.5-plus --haiku glm-5
+claude-switch alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.5-plus --haiku glm-5
 
-# Custom configuration with specific model assignments (qwen3.5-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku)
-claude-switch claude alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-5
+# Custom configuration with specific model assignments
+claude-switch alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-5
 
 # GLM with custom haiku tier
 claude-switch glm --haiku glm-4.7
@@ -187,12 +193,12 @@ claude-switch setup
 |--------|-------------|---------|
 | Claude Code | `~/.claude/settings.json` | Environment variables for provider config + model alias env vars |
 | Claude Code | `~/.claude.json` | `hasCompletedOnboarding` flag |
-| OpenCode | `~/.opencode.json` | Provider and agent configuration |
+| OpenCode | `~/.config/opencode/opencode.json` | Provider configuration (bailian-coding-plan) |
 | API Keys | `~/.claude-ai-switcher/config.json` | Secure local API key storage |
 
 ## How It Works
 
-### Alibaba Coding Plan Configuration
+### Claude Code Configuration
 
 When you switch Claude Code to Alibaba, the tool writes these environment variables to `~/.claude/settings.json`:
 
@@ -214,6 +220,38 @@ When you switch Claude Code to Alibaba, the tool writes these environment variab
 
 Switching back to Anthropic clears all these env vars.
 
+### OpenCode Configuration
+
+When you run `claude-switch opencode add alibaba`, the tool writes the `bailian-coding-plan` provider to `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "bailian-coding-plan": {
+      "npm": "@ai-sdk/anthropic",
+      "name": "Model Studio Coding Plan",
+      "options": {
+        "baseURL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic/v1",
+        "apiKey": "YOUR_API_KEY"
+      },
+      "models": {
+        "qwen3.5-plus": { ... },
+        "qwen3-max-2026-01-23": { ... },
+        "qwen3-coder-next": { ... },
+        "qwen3-coder-plus": { ... },
+        "MiniMax-M2.5": { ... },
+        "glm-5": { ... },
+        "glm-4.7": { ... },
+        "kimi-k2.5": { ... }
+      }
+    }
+  }
+}
+```
+
+Running `claude-switch opencode remove alibaba` removes only the `bailian-coding-plan` provider, preserving any other providers you have configured.
+
 ### GLM/Z.AI Configuration
 
 GLM uses the `@z_ai/coding-helper` package to manage its configuration. The tool triggers `coding-helper auth reload claude` to apply GLM settings, plus sets the model tier aliases.
@@ -221,7 +259,7 @@ GLM uses the `@z_ai/coding-helper` package to manage its configuration. The tool
 ## Example Output
 
 ```bash
-$ claude-switch claude alibaba qwen3.5-plus
+$ claude-switch alibaba qwen3.5-plus
 
 ✓ Switched to: Alibaba Coding Plan
 ────────────────────────────────────────────────────────────
@@ -238,6 +276,15 @@ $ claude-switch claude alibaba qwen3.5-plus
 ```
 
 ```bash
+$ claude-switch opencode add alibaba
+
+✓ Added Alibaba Coding Plan provider to OpenCode
+  Config: ~/.config/opencode/opencode.json
+  Provider: bailian-coding-plan
+  Models: qwen3.5-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5
+```
+
+```bash
 $ claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
 
 ✓ Switched to GLM/Z.AI
@@ -251,7 +298,8 @@ $ claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
 ## Requirements
 
 - Node.js >= 18.0.0
-- Claude Code and/or OpenCode installed
+- Claude Code installed (for Claude Code support)
+- OpenCode installed (for OpenCode helper commands)
 - Alibaba API Key (for Alibaba Coding Plan)
 - `coding-helper` package (for GLM/Z.AI support)
 
@@ -278,6 +326,7 @@ $ claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
 - Auto-sets `hasCompletedOnboarding: true` in `~/.claude.json`
 - Local-only storage (no cloud sync)
 - Clears model alias env vars when switching back to Anthropic
+- Preserves other OpenCode providers when adding/removing bailian-coding-plan
 
 ## Troubleshooting
 
