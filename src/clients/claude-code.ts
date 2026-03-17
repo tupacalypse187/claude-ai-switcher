@@ -179,11 +179,20 @@ export async function configureAnthropic(): Promise<void> {
 
 /**
  * Configure Claude Code for GLM via coding-helper
+ * Clears provider-specific env vars (e.g. Alibaba) before applying GLM tier map
  */
 export async function configureGLM(tierMap: ModelTierMap): Promise<void> {
   await ensureOnboardingComplete();
 
   const settings = await readClaudeSettings();
+
+  // Clear other provider env vars (e.g. Alibaba)
+  if (settings.env) {
+    delete settings.env["ANTHROPIC_AUTH_TOKEN"];
+    delete settings.env["ANTHROPIC_BASE_URL"];
+    delete settings.env["ANTHROPIC_MODEL"];
+  }
+
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
 }
