@@ -77,7 +77,7 @@ Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
 | Alibaba | qwen3.5-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.5-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
-| GLM | glm-5 | glm-4.7 | glm-4.7-flash |
+| GLM | glm-5-turbo | glm-5 | glm-4.7 |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Type Definitions
@@ -114,7 +114,7 @@ claude-switch opencode glm
 ```bash
 # Custom model tier aliases (Claude Code only)
 claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.5-plus
-claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
+claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
 
 # Specific configuration with qwen3.5-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku
 claude-switch claude alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-5
@@ -149,7 +149,7 @@ claude-switch setup               # Interactive setup wizard
 3. **Onboarding Auto-Complete**: Sets `hasCompletedOnboarding: true` to prevent connection errors
 4. **Local-Only Storage**: No cloud sync of API keys or configurations
 5. **Existence Checks**: Validates config files before reading/writing
-6. **Env Var Cleanup**: Clears provider-specific env vars when switching back to Anthropic
+6. **Env Var Cleanup**: Clears provider-specific env vars when switching between providers
 
 ## External Dependencies
 - Claude Code and/or OpenCode must be installed separately

@@ -99,9 +99,9 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 
 | Env Var | Default (Alibaba) | Default (GLM) |
 |---------|-------------------|---------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | selected model (e.g., `qwen3.5-plus`) | `glm-5` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.5-plus` (balanced) | `glm-4.7` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` (fast, 1M context) | `glm-4.7-flash` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | selected model (e.g., `qwen3.5-plus`) | `glm-5-turbo` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.5-plus` (balanced) | `glm-5` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` (fast, 1M context) | `glm-4.7` |
 
 Override any tier at switch time:
 
@@ -173,9 +173,9 @@ claude-switch setup
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
+| glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
 | glm-5 | 200K tokens | Text Generation, Deep Thinking |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
-| glm-4.7-flash | 256K tokens | Text Generation, Fast Inference |
 
 ### Anthropic (Default)
 
@@ -285,14 +285,14 @@ $ claude-switch opencode add alibaba
 ```
 
 ```bash
-$ claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
+$ claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
 
 ✓ Switched to GLM/Z.AI
 
   Claude model aliases:
-    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5
-    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-4.7
-    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-4.7-flash
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5-turbo
+    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-4.7
 ```
 
 ## Requirements
@@ -325,7 +325,7 @@ $ claude-switch glm --opus glm-5 --sonnet glm-4.7 --haiku glm-4.7-flash
 - Never overwrites without confirmation
 - Auto-sets `hasCompletedOnboarding: true` in `~/.claude.json`
 - Local-only storage (no cloud sync)
-- Clears model alias env vars when switching back to Anthropic
+- Clears model alias env vars when switching between providers
 - Preserves other OpenCode providers when adding/removing bailian-coding-plan
 
 ## Troubleshooting
