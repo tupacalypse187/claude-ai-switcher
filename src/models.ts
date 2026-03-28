@@ -21,9 +21,9 @@ export interface ModelTierMap {
 
 // Default GLM tier map: best model per tier
 export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
-  opus: "glm-5-turbo",
-  sonnet: "glm-5",
-  haiku: "glm-4.7"
+  opus: "glm-5.1",
+  sonnet: "glm-5-turbo",
+  haiku: "glm-5"
 };
 
 // For Alibaba: tier mapping based on model capabilities
@@ -126,6 +126,13 @@ export const alibabaModels: Model[] = [
 
 // GLM/Z.AI Models (via coding-helper)
 export const glmModels: Model[] = [
+  {
+    id: "glm-5.1",
+    name: "GLM-5.1",
+    contextWindow: 200000,
+    capabilities: ["Text Generation", "Deep Thinking"],
+    description: "Zhipu's most advanced model with state-of-the-art reasoning and deep thinking capabilities."
+  },
   {
     id: "glm-5-turbo",
     name: "GLM-5-Turbo",
