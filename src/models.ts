@@ -26,6 +26,13 @@ export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
   haiku: "glm-5"
 };
 
+// Default OpenRouter tier map
+export const OPENROUTER_DEFAULT_TIER_MAP: ModelTierMap = {
+  opus: "qwen/qwen3.6-plus:free",
+  sonnet: "openrouter/free",
+  haiku: "openrouter/free"
+};
+
 // For Alibaba: tier mapping based on model capabilities
 // Default mapping when no specific model chosen: Opus = qwen3.5-plus, Sonnet = kimi-k2.5, Haiku = glm-5
 // When specific model selected: Opus = selected model, Sonnet = qwen3.5-plus, Haiku = kimi-k2.5
@@ -163,6 +170,24 @@ export const glmModels: Model[] = [
   }
 ];
 
+// OpenRouter Models
+export const openrouterModels: Model[] = [
+  {
+    id: "qwen/qwen3.6-plus:free",
+    name: "Qwen3.6 Plus (Free)",
+    contextWindow: 131072,
+    capabilities: ["Text Generation", "Deep Thinking"],
+    description: "Free Qwen3.6 Plus model via OpenRouter with strong reasoning capabilities."
+  },
+  {
+    id: "openrouter/free",
+    name: "OpenRouter Free",
+    contextWindow: 131072,
+    capabilities: ["Text Generation"],
+    description: "OpenRouter's free tier model for basic usage."
+  }
+];
+
 // Anthropic Models (default)
 export const anthropicModels: Model[] = [
   {
@@ -219,6 +244,12 @@ export const providers: Record<string, Provider> = {
     id: "glm",
     name: "GLM/Z.AI",
     models: glmModels
+  },
+  openrouter: {
+    id: "openrouter",
+    name: "OpenRouter",
+    endpoint: "https://openrouter.ai/api/v1",
+    models: openrouterModels
   }
 };
 

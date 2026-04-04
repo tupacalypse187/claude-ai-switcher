@@ -1,7 +1,7 @@
 {
   "name": "claude-ai-switcher",
   "version": "1.0.0",
-  "description": "Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for Claude Code and OpenCode",
+  "description": "Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter) for Claude Code and OpenCode",
   "main": "dist/index.js",
   "bin": {
     "claude-switch": "./dist/index.js"
@@ -19,7 +19,8 @@
     "glm",
     "anthropic",
     "alibaba",
-    "opencode"
+    "opencode",
+    "openrouter"
   ],
   "author": "",
   "license": "MIT",

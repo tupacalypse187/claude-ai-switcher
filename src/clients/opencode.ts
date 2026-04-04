@@ -222,6 +222,11 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.provider["bailian-coding-plan"];
   }
 
+  // Remove openrouter provider
+  if (settings.provider?.["openrouter"]) {
+    delete settings.provider["openrouter"];
+  }
+
   // Clean up empty provider object
   if (settings.provider && Object.keys(settings.provider).length === 0) {
     delete settings.provider;
@@ -237,6 +242,73 @@ export async function configureAnthropic(): Promise<void> {
 export async function configureGLM(): Promise<void> {
   // GLM configuration is managed by coding-helper
   // No changes needed to opencode.json
+}
+
+/**
+ * Configure OpenCode for OpenRouter
+ * Writes the openrouter provider with available models
+ */
+export async function configureOpenRouter(apiKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  // Set schema
+  settings.$schema = "https://opencode.ai/config.json";
+
+  // Configure openrouter provider with models
+  settings.provider = settings.provider || {};
+  settings.provider["openrouter"] = {
+    npm: "@ai-sdk/openai",
+    name: "OpenRouter",
+    options: {
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: apiKey
+    },
+    models: {
+      "qwen/qwen3.6-plus:free": {
+        name: "Qwen3.6 Plus (Free)",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 131072,
+          output: 32768
+        }
+      },
+      "openrouter/free": {
+        name: "OpenRouter Free",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 131072,
+          output: 32768
+        }
+      }
+    }
+  };
+
+  await writeOpenCodeSettings(settings);
+}
+
+/**
+ * Remove a specific provider from OpenCode settings
+ * Only removes the named provider, preserving others
+ */
+export async function removeProvider(providerKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  if (settings.provider?.[providerKey]) {
+    delete settings.provider[providerKey];
+  }
+
+  // Clean up empty provider object
+  if (settings.provider && Object.keys(settings.provider).length === 0) {
+    delete settings.provider;
+  }
+
+  await writeOpenCodeSettings(settings);
 }
 
 /**
@@ -258,6 +330,14 @@ export async function getCurrentProvider(): Promise<{
     return {
       provider: "alibaba",
       endpoint: settings.provider["bailian-coding-plan"].options?.baseURL
+    };
+  }
+
+  // Check for openrouter configuration
+  if (settings.provider?.["openrouter"]) {
+    return {
+      provider: "openrouter",
+      endpoint: "https://openrouter.ai/api/v1"
     };
   }
 

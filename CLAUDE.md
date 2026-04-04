@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
+Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
 ## Project Structure
 
@@ -21,7 +21,8 @@ claude-ai-switcher/
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
-│       └── glm.ts         # GLM/Z.AI provider (coding-helper)
+│       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
+│       └── openrouter.ts # OpenRouter provider config
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
 ├── tsconfig.json          # TypeScript configuration
@@ -78,6 +79,7 @@ Default tier maps per provider:
 |----------|------|--------|-------|
 | Alibaba | qwen3.5-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.5-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
 | GLM | glm-5.1 | glm-5-turbo | glm-5 |
+| OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Type Definitions
@@ -103,11 +105,13 @@ claude-switch glm
 claude-switch claude anthropic
 claude-switch claude alibaba
 claude-switch claude glm
+claude-switch claude openrouter
 
 # Switch OpenCode only
 claude-switch opencode anthropic
 claude-switch opencode alibaba
 claude-switch opencode glm
+claude-switch opencode openrouter
 ```
 
 ### Configure Model Tiers

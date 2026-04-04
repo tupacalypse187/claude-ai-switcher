@@ -17,17 +17,20 @@ import {
   formatContext,
   ModelTierMap,
   GLM_DEFAULT_TIER_MAP,
+  OPENROUTER_DEFAULT_TIER_MAP,
   getAlibabaTierMap
 } from "./models.js";
 import {
   configureAnthropic as configureClaudeAnthropic,
   configureAlibaba as configureClaudeAlibaba,
   configureGLM as configureClaudeGLM,
+  configureOpenRouter as configureClaudeOpenRouter,
   getCurrentProvider as getClaudeProvider,
   claudeSettingsExists
 } from "./clients/claude-code.js";
 import {
   configureAlibaba as configureOpenCodeAlibaba,
+  configureOpenRouter as configureOpenCodeOpenRouter,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
 } from "./clients/opencode.js";
@@ -177,6 +180,45 @@ async function switchGLM(tierOpts: { opus?: string; sonnet?: string; haiku?: str
   console.log();
 }
 
+async function switchOpenRouter(
+  model: string | undefined,
+  tierOpts: { opus?: string; sonnet?: string; haiku?: string }
+): Promise<void> {
+  const selectedModel = model || "qwen/qwen3.6-plus:free";
+
+  let apiKey = await getApiKey("openrouter");
+  if (!apiKey) {
+    apiKey = await promptApiKey(
+      "OpenRouter",
+      "https://openrouter.ai/settings/keys"
+    );
+    await setApiKey("openrouter", apiKey);
+  }
+
+  const openrouterModels = getModels("openrouter");
+  const validModel = openrouterModels.find((m) => m.id === selectedModel);
+  if (!validModel) {
+    displayError(`Invalid model: ${selectedModel}`);
+    console.log(chalk.dim("  Valid models: ") + openrouterModels.map((m) => m.id).join(", "));
+    process.exit(1);
+  }
+
+  const tierMap = buildTierMap(OPENROUTER_DEFAULT_TIER_MAP, tierOpts);
+
+  await configureClaudeOpenRouter(apiKey, selectedModel, tierMap);
+
+  console.log(chalk.green(`\n✓ Switched to: OpenRouter`));
+  console.log(chalk.dim("─".repeat(60)));
+  console.log(`  ${chalk.cyan.bold("Model:")} ${chalk.white(validModel.name)}`);
+  console.log(`  ${chalk.cyan.bold("Context:")} ${chalk.yellow(formatContext(validModel.contextWindow))}`);
+  console.log(`  ${chalk.cyan.bold("Endpoint:")} ${chalk.dim("https://openrouter.ai/api/v1")}`);
+  console.log(`  ${chalk.cyan.bold("Capabilities:")} ${chalk.gray(validModel.capabilities.join(", "))}`);
+  console.log(chalk.dim(`  ${validModel.description}`));
+  console.log();
+  displayTierMap(tierMap);
+  console.log();
+}
+
 // ---------------------------------------------------------------------------
 // Top-level commands — Claude Code only
 // ---------------------------------------------------------------------------
@@ -215,6 +257,19 @@ addTierOptions(
     await switchGLM(options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to GLM");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  program
+    .command("openrouter [model]")
+    .description("Switch Claude Code to OpenRouter")
+).action(async (model, options) => {
+  try {
+    await switchOpenRouter(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to OpenRouter");
     process.exit(1);
   }
 });
@@ -265,6 +320,19 @@ addTierOptions(
   }
 });
 
+addTierOptions(
+  claudeCmd
+    .command("openrouter [model]")
+    .description("Switch Claude Code to OpenRouter")
+).action(async (model, options) => {
+  try {
+    await switchOpenRouter(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to OpenRouter");
+    process.exit(1);
+  }
+});
+
 // ---------------------------------------------------------------------------
 // `opencode` subcommand — OpenCode helper commands
 // ---------------------------------------------------------------------------
@@ -304,6 +372,33 @@ opencodeAddCmd
     }
   });
 
+opencodeAddCmd
+  .command("openrouter")
+  .description("Add OpenRouter provider to OpenCode")
+  .action(async () => {
+    try {
+      let apiKey = await getApiKey("openrouter");
+      if (!apiKey) {
+        apiKey = await promptApiKey(
+          "OpenRouter",
+          "https://openrouter.ai/settings/keys"
+        );
+        await setApiKey("openrouter", apiKey);
+      }
+
+      await configureOpenCodeOpenRouter(apiKey);
+
+      displaySuccess("Added OpenRouter provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: openrouter"));
+      console.log(chalk.dim("  Models: qwen/qwen3.6-plus:free, openrouter/free"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to add OpenRouter provider");
+      process.exit(1);
+    }
+  });
+
 const opencodeRemoveCmd = opencodeCmd
   .command("remove")
   .description("Remove a provider from OpenCode");
@@ -313,14 +408,31 @@ opencodeRemoveCmd
   .description("Remove Alibaba Coding Plan provider from OpenCode")
   .action(async () => {
     try {
-      const { configureAnthropic: configureOpenCodeAnthropic } = await import("./clients/opencode.js");
-      await configureOpenCodeAnthropic();
+      const { removeProvider } = await import("./clients/opencode.js");
+      await removeProvider("bailian-coding-plan");
 
       displaySuccess("Removed Alibaba Coding Plan provider from OpenCode");
-      console.log(chalk.dim("  OpenCode will use default provider configuration"));
+      console.log(chalk.dim("  Other providers remain unchanged"));
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to remove Alibaba provider");
+      process.exit(1);
+    }
+  });
+
+opencodeRemoveCmd
+  .command("openrouter")
+  .description("Remove OpenRouter provider from OpenCode")
+  .action(async () => {
+    try {
+      const { removeProvider } = await import("./clients/opencode.js");
+      await removeProvider("openrouter");
+
+      displaySuccess("Removed OpenRouter provider from OpenCode");
+      console.log(chalk.dim("  Other providers remain unchanged"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove OpenRouter provider");
       process.exit(1);
     }
   });
@@ -402,7 +514,7 @@ program
   .description("Show models for a specific provider")
   .action((providerName) => {
     if (!providerName) {
-      displayError("Please specify a provider: anthropic, alibaba, or glm");
+      displayError("Please specify a provider: anthropic, alibaba, openrouter, or glm");
       console.log(chalk.dim("  Example: claude-switch models alibaba"));
       process.exit(1);
     }
@@ -466,19 +578,38 @@ program
         }
       }
 
+      const hasOpenRouterKey = await hasApiKey("openrouter");
+      if (!hasOpenRouterKey) {
+        console.log(chalk.yellow("\nOpenRouter Setup"));
+        console.log(chalk.dim("  Get your API key from: https://openrouter.ai/settings/keys"));
+        console.log();
+
+        const answer = await new Promise<string>((resolve) => {
+          rl.question("Enter your OpenRouter API Key (or press Enter to skip): ", resolve);
+        });
+
+        if (answer.trim()) {
+          await setApiKey("openrouter", answer.trim());
+          displaySuccess("OpenRouter API key saved");
+        }
+      }
+
       rl.close();
 
       console.log(chalk.green("\n✓ Setup complete!\n"));
       console.log("Available commands:");
-      console.log(chalk.dim("  claude-switch alibaba [model]        - Switch Claude Code to Alibaba"));
-      console.log(chalk.dim("  claude-switch anthropic              - Switch Claude Code to Anthropic"));
-      console.log(chalk.dim("  claude-switch glm                    - Switch Claude Code to GLM/Z.AI"));
-      console.log(chalk.dim("  claude-switch claude alibaba         - Explicit Claude Code targeting"));
-      console.log(chalk.dim("  claude-switch opencode add alibaba   - Add Alibaba provider to OpenCode"));
-      console.log(chalk.dim("  claude-switch opencode remove alibaba - Remove Alibaba from OpenCode"));
-      console.log(chalk.dim("  claude-switch alibaba --opus <model> - Custom model aliases"));
-      console.log(chalk.dim("  claude-switch list                   - List all providers"));
-      console.log(chalk.dim("  claude-switch current                - Show current config"));
+      console.log(chalk.dim("  claude-switch alibaba [model]          - Switch Claude Code to Alibaba"));
+      console.log(chalk.dim("  claude-switch anthropic                - Switch Claude Code to Anthropic"));
+      console.log(chalk.dim("  claude-switch glm                      - Switch Claude Code to GLM/Z.AI"));
+      console.log(chalk.dim("  claude-switch openrouter [model]       - Switch Claude Code to OpenRouter"));
+      console.log(chalk.dim("  claude-switch claude alibaba           - Explicit Claude Code targeting"));
+      console.log(chalk.dim("  claude-switch opencode add alibaba     - Add Alibaba provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode add openrouter  - Add OpenRouter provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove alibaba  - Remove Alibaba from OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove openrouter - Remove OpenRouter from OpenCode"));
+      console.log(chalk.dim("  claude-switch openrouter --opus <model> - Custom model aliases"));
+      console.log(chalk.dim("  claude-switch list                     - List all providers"));
+      console.log(chalk.dim("  claude-switch current                  - Show current config"));
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Setup failed");

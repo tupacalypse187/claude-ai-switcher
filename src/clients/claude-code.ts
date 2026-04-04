@@ -198,6 +198,24 @@ export async function configureGLM(tierMap: ModelTierMap): Promise<void> {
 }
 
 /**
+ * Configure Claude Code for OpenRouter
+ * Sets env vars to route through OpenRouter's Anthropic-compatible API
+ */
+export async function configureOpenRouter(apiKey: string, model: string, tierMap: ModelTierMap): Promise<void> {
+  await ensureOnboardingComplete();
+
+  const settings = await readClaudeSettings();
+
+  settings.env = settings.env || {};
+  settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
+  settings.env["ANTHROPIC_BASE_URL"] = "https://openrouter.ai/api/v1";
+  settings.env["ANTHROPIC_MODEL"] = model;
+
+  applyTierMap(settings, tierMap);
+  await writeClaudeSettings(settings);
+}
+
+/**
  * Get current provider from Claude settings
  */
 export async function getCurrentProvider(): Promise<{
@@ -222,6 +240,16 @@ export async function getCurrentProvider(): Promise<{
   if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("coding-intl.dashscope.aliyuncs.com")) {
     return {
       provider: "alibaba",
+      model: settings.env["ANTHROPIC_MODEL"],
+      endpoint: settings.env["ANTHROPIC_BASE_URL"],
+      tierMap
+    };
+  }
+
+  // Check for OpenRouter via env vars
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("openrouter.ai")) {
+    return {
+      provider: "openrouter",
       model: settings.env["ANTHROPIC_MODEL"],
       endpoint: settings.env["ANTHROPIC_BASE_URL"],
       tierMap
