@@ -293,6 +293,25 @@ export async function configureOpenRouter(apiKey: string): Promise<void> {
 }
 
 /**
+ * Remove a specific provider from OpenCode settings
+ * Only removes the named provider, preserving others
+ */
+export async function removeProvider(providerKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  if (settings.provider?.[providerKey]) {
+    delete settings.provider[providerKey];
+  }
+
+  // Clean up empty provider object
+  if (settings.provider && Object.keys(settings.provider).length === 0) {
+    delete settings.provider;
+  }
+
+  await writeOpenCodeSettings(settings);
+}
+
+/**
  * Get current provider from OpenCode settings
  */
 export async function getCurrentProvider(): Promise<{
