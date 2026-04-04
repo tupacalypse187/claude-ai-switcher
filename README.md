@@ -1,17 +1,17 @@
 # Claude AI Switcher
 
-Switch between AI providers (Anthropic, GLM, Alibaba Qwen) for **Claude Code** with ease. Also provides helper commands to manage Alibaba Coding Plan provider for **OpenCode**.
+Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter) for **Claude Code** with ease. Also provides helper commands to manage providers for **OpenCode**.
 
 ## Features
 
-- **Quick Switching**: Switch between Anthropic, GLM/Z.AI, and Alibaba Coding Plan with a single command
+- **Quick Switching**: Switch between Anthropic, GLM/Z.AI, Alibaba Coding Plan, and OpenRouter with a single command
 - **Model Aliases**: Automatically sets `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` in Claude Code's settings so you always know what model is active
 - **Custom Tier Overrides**: Use `--opus`, `--sonnet`, `--haiku` to pin specific models per tier
 - **Model Information**: See model capabilities, context windows, and descriptions when switching
 - **Secure Storage**: API keys stored locally in `~/.claude-ai-switcher/config.json`
 - **Safe Configuration**: Backs up existing settings before any modifications
 - **Auto Onboarding**: Automatically sets `hasCompletedOnboarding: true` to prevent connection errors
-- **OpenCode Helper**: Add/remove Alibaba Coding Plan provider for OpenCode with simple commands
+- **OpenCode Helper**: Add/remove provider configurations for OpenCode with simple commands
 
 ## Installation
 
@@ -49,14 +49,21 @@ claude-switch alibaba
 # Switch Claude Code with specific model
 claude-switch alibaba qwen3.5-plus
 
+# Switch Claude Code to OpenRouter (free models)
+claude-switch openrouter
+
 # Switch back to default Anthropic
 claude-switch anthropic
 
 # Add Alibaba provider to OpenCode
 claude-switch opencode add alibaba
 
-# Remove Alibaba provider from OpenCode
+# Add OpenRouter provider to OpenCode
+claude-switch opencode add openrouter
+
+# Remove providers
 claude-switch opencode remove alibaba
+claude-switch opencode remove openrouter
 ```
 
 ## Commands
@@ -68,6 +75,8 @@ claude-switch anthropic
 claude-switch alibaba
 claude-switch alibaba qwen3.5-plus       # specific model
 claude-switch glm
+claude-switch openrouter                   # default: qwen/qwen3.6-plus:free
+claude-switch openrouter openrouter/free   # specific model
 ```
 
 ### Switch Claude Code (explicit targeting)
@@ -77,6 +86,8 @@ claude-switch claude anthropic
 claude-switch claude alibaba
 claude-switch claude alibaba qwen3.5-plus
 claude-switch claude glm
+claude-switch claude openrouter
+claude-switch claude openrouter qwen/qwen3.6-plus:free
 ```
 
 ### OpenCode Helper Commands
@@ -97,11 +108,11 @@ claude-switch opencode remove alibaba
 
 When switching Claude Code to a non-Anthropic provider, the tool writes model alias env vars into `~/.claude/settings.json` so Claude Code knows which model to route each tier to:
 
-| Env Var | Default (Alibaba) | Default (GLM) |
-|---------|-------------------|---------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | selected model (e.g., `qwen3.5-plus`) | `glm-5-turbo` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.5-plus` (balanced) | `glm-5` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` (fast, 1M context) | `glm-4.7` |
+| Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) |
+|---------|-------------------|---------------|---------------------|
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | selected model (e.g., `qwen3.5-plus`) | `glm-5-turbo` | `qwen/qwen3.6-plus:free` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.5-plus` (balanced) | `glm-5` | `openrouter/free` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` (fast, 1M context) | `glm-4.7` | `openrouter/free` |
 
 Override any tier at switch time:
 
@@ -117,6 +128,9 @@ claude-switch alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-5
 
 # GLM with custom haiku tier
 claude-switch glm --haiku glm-4.7
+
+# OpenRouter with custom tiers
+claude-switch openrouter --sonnet qwen/qwen3.6-plus:free --haiku openrouter/free
 ```
 
 Switching back to Anthropic clears these env vars so native Claude models are used again.
@@ -187,6 +201,13 @@ claude-switch setup
 | claude-sonnet-4-5-20250814 | 200K tokens | Text, Code, Vision |
 | claude-haiku-4-5-20251015 | 200K tokens | Text, Fast Responses |
 
+### OpenRouter
+
+| Model | Context | Capabilities |
+|-------|---------|--------------|
+| `qwen/qwen3.6-plus:free` | 131K tokens | Text Generation, Deep Thinking |
+| `openrouter/free` | 131K tokens | Text Generation |
+
 ## Configuration Files
 
 | Client | Config File | Purpose |
@@ -219,6 +240,26 @@ When you switch Claude Code to Alibaba, the tool writes these environment variab
 - `ANTHROPIC_DEFAULT_*_MODEL` — Map Claude's model tiers (opus/sonnet/haiku) to specific Alibaba models
 
 Switching back to Anthropic clears all these env vars.
+
+### OpenRouter Configuration
+
+When you switch Claude Code to OpenRouter, the tool writes these environment variables to `~/.claude/settings.json`:
+
+```json
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "YOUR_OPENROUTER_API_KEY",
+    "ANTHROPIC_BASE_URL": "https://openrouter.ai/api/v1",
+    "ANTHROPIC_MODEL": "qwen/qwen3.6-plus:free",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen/qwen3.6-plus:free",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "openrouter/free",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "openrouter/free"
+  }
+}
+```
+
+- `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` — Route Claude Code to OpenRouter's endpoint
+- `ANTHROPIC_DEFAULT_*_MODEL` — Map Claude's model tiers (opus/sonnet/haiku) to specific OpenRouter models
 
 ### OpenCode Configuration
 
@@ -295,6 +336,23 @@ $ claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
     ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-4.7
 ```
 
+```bash
+$ claude-switch openrouter
+
+✓ Switched to: OpenRouter
+────────────────────────────────────────────────────────────
+  Model: Qwen3.6 Plus (Free)
+  Context: 131K tokens
+  Endpoint: https://openrouter.ai/api/v1
+  Capabilities: Text Generation, Deep Thinking
+  Free Qwen3.6 Plus model via OpenRouter with strong reasoning capabilities.
+
+  Claude model aliases:
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → qwen/qwen3.6-plus:free
+    ANTHROPIC_DEFAULT_SONNET_MODEL → openrouter/free
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → openrouter/free
+```
+
 ## Requirements
 
 - Node.js >= 18.0.0
@@ -317,6 +375,12 @@ $ claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
 1. Install coding-helper: `npm install -g @z_ai/coding-helper`
 2. Run: `coding-helper auth`
 3. Follow the interactive setup
+
+### OpenRouter
+
+1. Visit [OpenRouter Keys](https://openrouter.ai/settings/keys)
+2. Create a new API key
+3. Run `claude-switch setup` or `claude-switch key openrouter <key>`
 
 ## Safety Features
 
