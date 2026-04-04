@@ -14,6 +14,7 @@ claude-ai-switcher/
 │   ├── index.ts           # Main CLI entry point (Commander.js)
 │   ├── config.ts          # API key and config management
 │   ├── models.ts          # Provider/model definitions + ModelTierMap
+│   ├── verify.ts          # API key verification (lightweight HTTP checks)
 │   ├── display.ts         # Console output utilities (chalk)
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
@@ -82,6 +83,13 @@ Default tier maps per provider:
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
+### Status Command
+`claude-switch status` — Shows current provider/model for both clients, displays masked API keys, and verifies each key by making a lightweight API call. Uses `src/verify.ts` which performs:
+- Alibaba: GET to DashScope models endpoint
+- OpenRouter: GET to OpenRouter models endpoint
+- Anthropic: GET to Anthropic models endpoint (uses `ANTHROPIC_API_KEY` env var)
+- GLM: Checks if `coding-helper` CLI is installed
+
 ### Type Definitions
 ```typescript
 // ModelTierMap defines which model maps to each Anthropic tier
@@ -126,6 +134,7 @@ claude-switch claude alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-
 
 ### View Information
 ```bash
+claude-switch status              # Show current config + verify API keys
 claude-switch current             # Show current configuration (both clients)
 claude-switch list                # List all providers and models
 claude-switch models alibaba      # Show models for specific provider

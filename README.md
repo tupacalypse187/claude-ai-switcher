@@ -7,6 +7,7 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter) for **Cla
 - **Quick Switching**: Switch between Anthropic, GLM/Z.AI, Alibaba Coding Plan, and OpenRouter with a single command
 - **Model Aliases**: Automatically sets `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` in Claude Code's settings so you always know what model is active
 - **Custom Tier Overrides**: Use `--opus`, `--sonnet`, `--haiku` to pin specific models per tier
+- **API Key Verification**: Run `claude-switch status` to check current config and verify API keys are valid
 - **Model Information**: See model capabilities, context windows, and descriptions when switching
 - **Secure Storage**: API keys stored locally in `~/.claude-ai-switcher/config.json`
 - **Safe Configuration**: Backs up existing settings before any modifications
@@ -110,9 +111,9 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 
 | Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) |
 |---------|-------------------|---------------|---------------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | selected model (e.g., `qwen3.5-plus`) | `glm-5-turbo` | `qwen/qwen3.6-plus:free` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.5-plus` (balanced) | `glm-5` | `openrouter/free` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` (fast, 1M context) | `glm-4.7` | `openrouter/free` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.5-plus` | `glm-5.1` | `qwen/qwen3.6-plus:free` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `kimi-k2.5` | `glm-5-turbo` | `openrouter/free` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5` | `glm-5` | `openrouter/free` |
 
 Override any tier at switch time:
 
@@ -138,6 +139,9 @@ Switching back to Anthropic clears these env vars so native Claude models are us
 ### View Information
 
 ```bash
+# Show current config + verify API keys (recommended)
+claude-switch status
+
 # Show current configuration for both clients
 claude-switch current
 
@@ -300,6 +304,26 @@ GLM uses the `@z_ai/coding-helper` package to manage its configuration. The tool
 ## Example Output
 
 ```bash
+$ claude-switch status
+
+=== Claude AI Switcher Status ===
+
+  Claude Code:
+    Provider: anthropic
+
+  OpenCode:
+    Provider: anthropic
+
+  API Key Verification:
+──────────────────────────────────────────────────
+    ○ alibaba      No key configured
+    ○ openrouter   No key configured
+    ○ anthropic    No key configured
+    ✓ glm          coding-helper installed
+──────────────────────────────────────────────────
+```
+
+```bash
 $ claude-switch alibaba qwen3.5-plus
 
 ✓ Switched to: Alibaba Coding Plan
@@ -419,7 +443,8 @@ claude-switch anthropic
 ### Check current configuration
 
 ```bash
-claude-switch current
+claude-switch status    # Shows config + verifies API keys
+claude-switch current   # Shows config only
 ```
 
 ## License

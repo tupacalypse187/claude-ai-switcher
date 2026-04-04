@@ -43,6 +43,7 @@ import {
   displayProviders
 } from "./display.js";
 import { reloadGLMConfig, isCodingHelperInstalled } from "./providers/glm.js";
+import { verifyAllKeys, maskKey } from "./verify.js";
 
 const program = new Command();
 
@@ -442,6 +443,119 @@ opencodeRemoveCmd
 // ---------------------------------------------------------------------------
 
 program
+  .command("status")
+  .description("Show current config and verify API keys")
+  .action(async () => {
+    try {
+      // ── Current Configuration ──
+      console.log(chalk.green("\n=== Claude AI Switcher Status ===\n"));
+
+      // Claude Code
+      console.log(chalk.cyan.bold("  Claude Code:"));
+      if (claudeSettingsExists()) {
+        const claudeProvider = await getClaudeProvider();
+        if (claudeProvider) {
+          console.log(`    Provider: ${chalk.white(claudeProvider.provider)}`);
+          if (claudeProvider.model) console.log(`    Model: ${chalk.white(claudeProvider.model)}`);
+          if (claudeProvider.endpoint) console.log(`    Endpoint: ${chalk.dim(claudeProvider.endpoint)}`);
+          if (claudeProvider.tierMap?.opus) {
+            console.log(chalk.dim("    Aliases:"));
+            console.log(chalk.dim(`      opus   → ${claudeProvider.tierMap.opus}`));
+            console.log(chalk.dim(`      sonnet → ${claudeProvider.tierMap.sonnet}`));
+            console.log(chalk.dim(`      haiku  → ${claudeProvider.tierMap.haiku}`));
+          }
+        } else {
+          console.log(chalk.dim("    Unable to read configuration"));
+        }
+      } else {
+        console.log(chalk.dim("    Not configured (using defaults)"));
+      }
+
+      console.log();
+
+      // OpenCode
+      console.log(chalk.cyan.bold("  OpenCode:"));
+      if (opencodeSettingsExists()) {
+        const opencodeProvider = await getOpenCodeProvider();
+        if (opencodeProvider) {
+          console.log(`    Provider: ${chalk.white(opencodeProvider.provider)}`);
+          if (opencodeProvider.model) console.log(`    Model: ${chalk.white(opencodeProvider.model)}`);
+          if (opencodeProvider.endpoint) console.log(`    Endpoint: ${chalk.dim(opencodeProvider.endpoint)}`);
+        } else {
+          console.log(chalk.dim("    Unable to read configuration"));
+        }
+      } else {
+        console.log(chalk.dim("    Not installed"));
+      }
+
+      // ── API Key Verification ──
+      console.log();
+      console.log(chalk.cyan.bold("  API Key Verification:"));
+      console.log(chalk.dim("─".repeat(50)));
+
+      const alibabaKey = await getApiKey("alibaba");
+      const openrouterKey = await getApiKey("openrouter");
+      const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+      // Show spinner while verifying
+      const ora = (await import("ora")).default;
+      const spinner = ora("Verifying API keys...").start();
+
+      const results = await verifyAllKeys({
+        alibaba: alibabaKey,
+        openrouter: openrouterKey,
+        anthropic: anthropicKey,
+        checkGLM: true
+      });
+
+      spinner.stop();
+
+      for (const result of results) {
+        const label = result.provider.padEnd(12);
+        let icon: string;
+        let detail = result.message || "";
+
+        switch (result.status) {
+          case "ok":
+            icon = chalk.green("✓");
+            break;
+          case "invalid":
+            icon = chalk.red("✗");
+            break;
+          case "missing":
+            icon = chalk.dim("○");
+            detail = "No key configured";
+            break;
+          case "error":
+            icon = chalk.yellow("⚠");
+            break;
+          default:
+            icon = chalk.dim("–");
+            detail = "Skipped";
+        }
+
+        // Show masked key if available
+        let keyDisplay = "";
+        if (result.provider === "alibaba" && alibabaKey) {
+          keyDisplay = chalk.dim(` (${maskKey(alibabaKey)})`);
+        } else if (result.provider === "openrouter" && openrouterKey) {
+          keyDisplay = chalk.dim(` (${maskKey(openrouterKey)})`);
+        } else if (result.provider === "anthropic" && anthropicKey) {
+          keyDisplay = chalk.dim(` (${maskKey(anthropicKey)})`);
+        }
+
+        console.log(`    ${icon} ${chalk.white(label)} ${chalk.gray(detail)}${keyDisplay}`);
+      }
+
+      console.log(chalk.dim("─".repeat(50)));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to get status");
+      process.exit(1);
+    }
+  });
+
+program
   .command("current")
   .description("Show current provider and model for both clients")
   .action(async () => {
@@ -609,6 +723,7 @@ program
       console.log(chalk.dim("  claude-switch opencode remove openrouter - Remove OpenRouter from OpenCode"));
       console.log(chalk.dim("  claude-switch openrouter --opus <model> - Custom model aliases"));
       console.log(chalk.dim("  claude-switch list                     - List all providers"));
+      console.log(chalk.dim("  claude-switch status                   - Show current config + verify API keys"));
       console.log(chalk.dim("  claude-switch current                  - Show current config"));
       console.log();
     } catch (error) {
