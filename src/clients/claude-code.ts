@@ -256,11 +256,29 @@ export async function getCurrentProvider(): Promise<{
     };
   }
 
-  // Check for GLM via MCP server
+  // Check for GLM via MCP server or coding-helper (sets z.ai base URL)
   if (settings.mcpServers?.["glm-coding-plan"]) {
     return {
       provider: "glm",
       model: settings.mcpServers["glm-coding-plan"].model,
+      tierMap
+    };
+  }
+
+  // Check for GLM via z.ai endpoint (set by coding-helper auth reload)
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("z.ai")) {
+    return {
+      provider: "glm",
+      model: settings.env["ANTHROPIC_MODEL"],
+      endpoint: settings.env["ANTHROPIC_BASE_URL"],
+      tierMap
+    };
+  }
+
+  // Check for GLM via tier map env vars (no BASE_URL but tier aliases are set)
+  if (!settings.env?.["ANTHROPIC_BASE_URL"] && tierMap?.opus) {
+    return {
+      provider: "glm",
       tierMap
     };
   }
