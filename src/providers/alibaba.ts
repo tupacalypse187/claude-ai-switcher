@@ -17,6 +17,7 @@ export interface AlibabaConfig {
 }
 
 export const ALIBABA_ENDPOINT = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
+export const ALIBABA_VERIFY_URL = "https://coding-intl.dashscope.aliyuncs.com/compatible-mode/v1/models";
 
 export function getAlibabaConfig(apiKey: string, model?: string): AlibabaConfig {
   return {

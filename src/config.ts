@@ -14,6 +14,7 @@ const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 export interface UserConfig {
   alibabaApiKey?: string;
   openrouterApiKey?: string;
+  geminiApiKey?: string;
   defaultProvider?: string;
   defaultModel?: string;
 }
@@ -56,6 +57,8 @@ export async function getApiKey(provider: string): Promise<string | undefined> {
       return config.alibabaApiKey;
     case "openrouter":
       return config.openrouterApiKey;
+    case "gemini":
+      return config.geminiApiKey;
     default:
       return undefined;
   }
@@ -73,6 +76,9 @@ export async function setApiKey(provider: string, apiKey: string): Promise<void>
       break;
     case "openrouter":
       config.openrouterApiKey = apiKey;
+      break;
+    case "gemini":
+      config.geminiApiKey = apiKey;
       break;
   }
   
