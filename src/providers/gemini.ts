@@ -68,8 +68,8 @@ export async function isGeminiKeyValid(apiKey: string): Promise<boolean> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
     const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
-      { signal: controller.signal }
+      "https://generativelanguage.googleapis.com/v1beta/models",
+      { signal: controller.signal, headers: { "x-goog-api-key": apiKey } }
     );
     clearTimeout(timeout);
     return resp.ok;

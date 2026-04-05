@@ -124,7 +124,7 @@ export async function startLitellmProxy(model: string, port: number = OLLAMA_LIT
     const child = spawn("litellm", ["--model", `ollama/${model}`, "--port", String(port)], {
       detached: true,
       stdio: "ignore",
-      shell: true
+      shell: false
     });
     child.unref();
 

@@ -230,25 +230,23 @@ async function verifyOllama(): Promise<VerifyResult> {
  * Verify Gemini API key and LiteLLM proxy.
  */
 async function verifyGemini(apiKey: string): Promise<VerifyResult> {
+  // Verify Gemini API key independently of proxy status
   try {
-    // Check LiteLLM proxy on port 4001
-    try {
-      const res = await fetchWithTimeout("http://localhost:4001/health", { method: "GET" });
-      if (!res.ok) {
-        return { provider: "gemini", status: "error", message: "LiteLLM proxy not healthy" };
-      }
-    } catch {
-      return { provider: "gemini", status: "error", message: "LiteLLM proxy not running on port 4001" };
-    }
-
-    // Verify Gemini API key
     const res = await fetchWithTimeout(
-      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
-      { method: "GET" }
+      "https://generativelanguage.googleapis.com/v1beta/models",
+      { method: "GET", headers: { "x-goog-api-key": apiKey } }
     );
 
     if (res.ok) {
-      return { provider: "gemini", status: "ok", message: "Key valid, proxy running" };
+      // Key is valid — also check proxy status for informational purposes
+      let proxyMsg = "";
+      try {
+        const proxyRes = await fetchWithTimeout("http://localhost:4001/health", { method: "GET" });
+        proxyMsg = proxyRes.ok ? ", proxy running" : ", proxy not running";
+      } catch {
+        proxyMsg = ", proxy not running";
+      }
+      return { provider: "gemini", status: "ok", message: `Key valid${proxyMsg}` };
     }
     if (res.status === 400 || res.status === 401 || res.status === 403) {
       return { provider: "gemini", status: "invalid", message: "Authentication failed" };
