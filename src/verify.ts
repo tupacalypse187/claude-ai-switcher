@@ -30,21 +30,20 @@ async function fetchWithTimeout(url: string, init: RequestInit): Promise<Respons
 }
 
 /**
- * Verify Alibaba Coding Plan API key by listing models from the DashScope API.
+ * Verify Alibaba Coding Plan API key with a minimal chat completion request.
  */
 async function verifyAlibaba(apiKey: string): Promise<VerifyResult> {
   try {
     const res = await fetchWithTimeout(
-      "https://coding-intl.dashscope.aliyuncs.com/compatible-mode/v1/models",
+      "https://dashscope.aliyuncs.com/compatible-mode/v1/models",
       {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
         }
       }
     );
-
+    // 200 OK means key works, 401/403 means invalid
     if (res.ok) {
       return { provider: "alibaba", status: "ok", message: "Key valid" };
     }
@@ -153,6 +152,8 @@ export async function verifyAllKeys(keys: {
   openrouter?: string;
   anthropic?: string;
   checkGLM?: boolean;
+  checkOllama?: boolean;
+  gemini?: string;
 }): Promise<VerifyResult[]> {
   const checks: Promise<VerifyResult>[] = [];
 
@@ -180,5 +181,80 @@ export async function verifyAllKeys(keys: {
     checks.push(Promise.resolve({ provider: "glm", status: "skipped" }));
   }
 
+  if (keys.checkOllama) {
+    checks.push(verifyOllama());
+  } else {
+    checks.push(Promise.resolve({ provider: "ollama", status: "skipped" }));
+  }
+
+  if (keys.gemini) {
+    checks.push(verifyGemini(keys.gemini));
+  } else {
+    checks.push(Promise.resolve({ provider: "gemini", status: "missing" }));
+  }
+
   return Promise.all(checks);
+}
+
+/**
+ * Verify Ollama by checking LiteLLM proxy and Ollama service.
+ */
+async function verifyOllama(): Promise<VerifyResult> {
+  try {
+    // Check LiteLLM proxy on port 4000
+    try {
+      const res = await fetchWithTimeout("http://localhost:4000/health", { method: "GET" });
+      if (!res.ok) {
+        return { provider: "ollama", status: "error", message: "LiteLLM proxy not healthy" };
+      }
+    } catch {
+      return { provider: "ollama", status: "error", message: "LiteLLM proxy not running on port 4000" };
+    }
+
+    // Check Ollama on port 11434
+    try {
+      const res = await fetchWithTimeout("http://localhost:11434/api/tags", { method: "GET" });
+      if (res.ok) {
+        return { provider: "ollama", status: "ok", message: "Ollama + LiteLLM proxy running" };
+      }
+      return { provider: "ollama", status: "error", message: "Ollama not responding" };
+    } catch {
+      return { provider: "ollama", status: "error", message: "Ollama not running on port 11434" };
+    }
+  } catch {
+    return { provider: "ollama", status: "error", message: "Check failed" };
+  }
+}
+
+/**
+ * Verify Gemini API key and LiteLLM proxy.
+ */
+async function verifyGemini(apiKey: string): Promise<VerifyResult> {
+  try {
+    // Check LiteLLM proxy on port 4001
+    try {
+      const res = await fetchWithTimeout("http://localhost:4001/health", { method: "GET" });
+      if (!res.ok) {
+        return { provider: "gemini", status: "error", message: "LiteLLM proxy not healthy" };
+      }
+    } catch {
+      return { provider: "gemini", status: "error", message: "LiteLLM proxy not running on port 4001" };
+    }
+
+    // Verify Gemini API key
+    const res = await fetchWithTimeout(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+      { method: "GET" }
+    );
+
+    if (res.ok) {
+      return { provider: "gemini", status: "ok", message: "Key valid, proxy running" };
+    }
+    if (res.status === 400 || res.status === 401 || res.status === 403) {
+      return { provider: "gemini", status: "invalid", message: "Authentication failed" };
+    }
+    return { provider: "gemini", status: "error", message: `HTTP ${res.status}` };
+  } catch {
+    return { provider: "gemini", status: "error", message: "Connection failed" };
+  }
 }

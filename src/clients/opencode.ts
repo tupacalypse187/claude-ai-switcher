@@ -227,6 +227,16 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.provider["openrouter"];
   }
 
+  // Remove ollama provider
+  if (settings.provider?.["ollama"]) {
+    delete settings.provider["ollama"];
+  }
+
+  // Remove gemini provider
+  if (settings.provider?.["gemini"]) {
+    delete settings.provider["gemini"];
+  }
+
   // Clean up empty provider object
   if (settings.provider && Object.keys(settings.provider).length === 0) {
     delete settings.provider;
@@ -293,6 +303,129 @@ export async function configureOpenRouter(apiKey: string): Promise<void> {
 }
 
 /**
+ * Configure OpenCode for Ollama (via LiteLLM proxy on port 4000)
+ */
+export async function configureOllama(): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  settings.$schema = "https://opencode.ai/config.json";
+
+  settings.provider = settings.provider || {};
+  settings.provider["ollama"] = {
+    npm: "@ai-sdk/openai",
+    name: "Ollama (Local)",
+    options: {
+      baseURL: "http://localhost:4000/v1",
+      apiKey: "ollama"
+    },
+    models: {
+      "deepseek-r1:latest": {
+        name: "DeepSeek R1",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 128000,
+          output: 32768
+        }
+      },
+      "qwen2.5-coder:latest": {
+        name: "Qwen 2.5 Coder",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 128000,
+          output: 32768
+        }
+      },
+      "llama3.1:latest": {
+        name: "Llama 3.1",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        limit: {
+          context: 128000,
+          output: 32768
+        }
+      },
+      "codellama:latest": {
+        name: "Code Llama",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 100000,
+          output: 32768
+        }
+      }
+    }
+  };
+
+  await writeOpenCodeSettings(settings);
+}
+
+/**
+ * Configure OpenCode for Gemini (via LiteLLM proxy on port 4001)
+ */
+export async function configureGemini(apiKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  settings.$schema = "https://opencode.ai/config.json";
+
+  settings.provider = settings.provider || {};
+  settings.provider["gemini"] = {
+    npm: "@ai-sdk/openai",
+    name: "Gemini (Google)",
+    options: {
+      baseURL: "http://localhost:4001/v1",
+      apiKey: apiKey
+    },
+    models: {
+      "gemini-2.5-pro": {
+        name: "Gemini 2.5 Pro",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        limit: {
+          context: 1000000,
+          output: 65536
+        }
+      },
+      "gemini-2.5-flash": {
+        name: "Gemini 2.5 Flash",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        limit: {
+          context: 1000000,
+          output: 65536
+        }
+      },
+      "gemini-2.5-flash-lite": {
+        name: "Gemini 2.5 Flash Lite",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 1000000,
+          output: 65536
+        }
+      }
+    }
+  };
+
+  await writeOpenCodeSettings(settings);
+}
+
+/**
  * Remove a specific provider from OpenCode settings
  * Only removes the named provider, preserving others
  */
@@ -338,6 +471,22 @@ export async function getCurrentProvider(): Promise<{
     return {
       provider: "openrouter",
       endpoint: "https://openrouter.ai/api/v1"
+    };
+  }
+
+  // Check for ollama configuration
+  if (settings.provider?.["ollama"]) {
+    return {
+      provider: "ollama",
+      endpoint: "http://localhost:4000/v1"
+    };
+  }
+
+  // Check for gemini configuration
+  if (settings.provider?.["gemini"]) {
+    return {
+      provider: "gemini",
+      endpoint: "http://localhost:4001/v1"
     };
   }
 

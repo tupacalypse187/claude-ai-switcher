@@ -33,6 +33,20 @@ export const OPENROUTER_DEFAULT_TIER_MAP: ModelTierMap = {
   haiku: "openrouter/free"
 };
 
+// Default Ollama tier map (via LiteLLM proxy on port 4000)
+export const OLLAMA_DEFAULT_TIER_MAP: ModelTierMap = {
+  opus: "deepseek-r1:latest",
+  sonnet: "qwen2.5-coder:latest",
+  haiku: "llama3.1:latest"
+};
+
+// Default Gemini tier map (via LiteLLM proxy on port 4001)
+export const GEMINI_DEFAULT_TIER_MAP: ModelTierMap = {
+  opus: "gemini-2.5-pro",
+  sonnet: "gemini-2.5-flash",
+  haiku: "gemini-2.5-flash-lite"
+};
+
 // For Alibaba: tier mapping based on model capabilities
 // Default mapping when no specific model chosen: Opus = qwen3.5-plus, Sonnet = kimi-k2.5, Haiku = glm-5
 // When specific model selected: Opus = selected model, Sonnet = qwen3.5-plus, Haiku = kimi-k2.5
@@ -188,6 +202,63 @@ export const openrouterModels: Model[] = [
   }
 ];
 
+// Ollama Models (local, via LiteLLM proxy)
+export const ollamaModels: Model[] = [
+  {
+    id: "deepseek-r1:latest",
+    name: "DeepSeek R1",
+    contextWindow: 128000,
+    capabilities: ["Text Generation", "Deep Thinking", "Reasoning"],
+    description: "DeepSeek's reasoning model with deep thinking capabilities for complex problem-solving."
+  },
+  {
+    id: "qwen2.5-coder:latest",
+    name: "Qwen 2.5 Coder",
+    contextWindow: 128000,
+    capabilities: ["Text Generation", "Coding", "Tool Calling"],
+    description: "Alibaba's code-specialized model with strong coding and tool calling capabilities."
+  },
+  {
+    id: "llama3.1:latest",
+    name: "Llama 3.1",
+    contextWindow: 128000,
+    capabilities: ["Text Generation", "Code", "Vision"],
+    description: "Meta's Llama 3.1 with strong general performance, code generation, and vision support."
+  },
+  {
+    id: "codellama:latest",
+    name: "Code Llama",
+    contextWindow: 100000,
+    capabilities: ["Text Generation", "Coding"],
+    description: "Meta's code-specialized Llama model optimized for code generation and understanding."
+  }
+];
+
+// Gemini Models (via LiteLLM proxy)
+export const geminiModels: Model[] = [
+  {
+    id: "gemini-2.5-pro",
+    name: "Gemini 2.5 Pro",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Deep Thinking", "Code", "Vision"],
+    description: "Google's most capable Gemini model with deep thinking, 1M context, and multimodal support."
+  },
+  {
+    id: "gemini-2.5-flash",
+    name: "Gemini 2.5 Flash",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Fast Responses", "Code"],
+    description: "Google's fast Gemini model with 1M context, optimized for speed while maintaining quality."
+  },
+  {
+    id: "gemini-2.5-flash-lite",
+    name: "Gemini 2.5 Flash Lite",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Cost-optimized"],
+    description: "Google's cost-optimized Gemini model with 1M context for budget-conscious usage."
+  }
+];
+
 // Anthropic Models (default)
 export const anthropicModels: Model[] = [
   {
@@ -250,6 +321,18 @@ export const providers: Record<string, Provider> = {
     name: "OpenRouter",
     endpoint: "https://openrouter.ai/api/v1",
     models: openrouterModels
+  },
+  ollama: {
+    id: "ollama",
+    name: "Ollama (Local)",
+    endpoint: "http://localhost:4000",
+    models: ollamaModels
+  },
+  gemini: {
+    id: "gemini",
+    name: "Gemini (Google)",
+    endpoint: "http://localhost:4001",
+    models: geminiModels
   }
 };
 

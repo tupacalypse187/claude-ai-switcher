@@ -18,6 +18,8 @@ import {
   ModelTierMap,
   GLM_DEFAULT_TIER_MAP,
   OPENROUTER_DEFAULT_TIER_MAP,
+  OLLAMA_DEFAULT_TIER_MAP,
+  GEMINI_DEFAULT_TIER_MAP,
   getAlibabaTierMap
 } from "./models.js";
 import {
@@ -25,12 +27,16 @@ import {
   configureAlibaba as configureClaudeAlibaba,
   configureGLM as configureClaudeGLM,
   configureOpenRouter as configureClaudeOpenRouter,
+  configureOllama as configureClaudeOllama,
+  configureGemini as configureClaudeGemini,
   getCurrentProvider as getClaudeProvider,
   claudeSettingsExists
 } from "./clients/claude-code.js";
 import {
   configureAlibaba as configureOpenCodeAlibaba,
   configureOpenRouter as configureOpenCodeOpenRouter,
+  configureOllama as configureOpenCodeOllama,
+  configureGemini as configureOpenCodeGemini,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
 } from "./clients/opencode.js";
@@ -43,6 +49,21 @@ import {
   displayProviders
 } from "./display.js";
 import { reloadGLMConfig, isCodingHelperInstalled } from "./providers/glm.js";
+import {
+  isLitellmInstalled as isLitellmInstalledForOllama,
+  isOllamaInstalled,
+  isOllamaRunning,
+  startLitellmProxy,
+  getOllamaConfig,
+  findModel as findOllamaModel
+} from "./providers/ollama.js";
+import {
+  isLitellmInstalled as isLitellmInstalledForGemini,
+  isGeminiKeyValid,
+  startGeminiLitellmProxy,
+  getGeminiConfig,
+  findModel as findGeminiModel
+} from "./providers/gemini.js";
 import { verifyAllKeys, maskKey } from "./verify.js";
 
 const program = new Command();
@@ -50,7 +71,7 @@ const program = new Command();
 program
   .name("claude-switch")
   .description("Switch between AI providers for Claude Code. Also provides OpenCode helper commands.")
-  .version("1.0.0");
+  .version("1.1.0");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -220,6 +241,122 @@ async function switchOpenRouter(
   console.log();
 }
 
+async function switchOllama(
+  model: string | undefined,
+  tierOpts: { opus?: string; sonnet?: string; haiku?: string }
+): Promise<void> {
+  // Pre-flight: check litellm
+  const hasLitellm = await isLitellmInstalledForOllama();
+  if (!hasLitellm) {
+    displayError("LiteLLM is required for Ollama support");
+    console.log(chalk.dim("  Install with: pip install 'litellm[proxy]'"));
+    process.exit(1);
+  }
+
+  // Pre-flight: check ollama
+  const hasOllama = await isOllamaInstalled();
+  if (!hasOllama) {
+    displayError("Ollama is not installed");
+    console.log(chalk.dim("  Install from: https://ollama.com"));
+    process.exit(1);
+  }
+
+  // Check if Ollama is running
+  const ollamaRunning = await isOllamaRunning();
+  if (!ollamaRunning) {
+    displayError("Ollama is not running");
+    console.log(chalk.dim("  Start with: ollama serve"));
+    process.exit(1);
+  }
+
+  const selectedModel = model || "deepseek-r1:latest";
+
+  const validModel = findOllamaModel(selectedModel);
+  if (!validModel) {
+    const ollamaModels = getModels("ollama");
+    displayError(`Invalid model: ${selectedModel}`);
+    console.log(chalk.dim("  Valid models: ") + ollamaModels.map((m) => m.id).join(", "));
+    process.exit(1);
+  }
+
+  // Start LiteLLM proxy
+  const proxyResult = await startLitellmProxy(selectedModel);
+  if (!proxyResult.success) {
+    displayError(`Failed to start LiteLLM proxy: ${proxyResult.error}`);
+    process.exit(1);
+  }
+
+  const tierMap = buildTierMap(OLLAMA_DEFAULT_TIER_MAP, tierOpts);
+
+  await configureClaudeOllama(selectedModel, tierMap);
+
+  console.log(chalk.green(`\n✓ Switched to: Ollama (Local)`));
+  console.log(chalk.dim("─".repeat(60)));
+  console.log(`  ${chalk.cyan.bold("Model:")} ${chalk.white(validModel.name)}`);
+  console.log(`  ${chalk.cyan.bold("Context:")} ${chalk.yellow(formatContext(validModel.contextWindow))}`);
+  console.log(`  ${chalk.cyan.bold("Endpoint:")} ${chalk.dim("http://localhost:4000 (LiteLLM proxy)")}`);
+  console.log(`  ${chalk.cyan.bold("Capabilities:")} ${chalk.gray(validModel.capabilities.join(", "))}`);
+  console.log(chalk.dim(`  ${validModel.description}`));
+  console.log();
+  displayTierMap(tierMap);
+  console.log();
+}
+
+async function switchGemini(
+  model: string | undefined,
+  tierOpts: { opus?: string; sonnet?: string; haiku?: string }
+): Promise<void> {
+  // Pre-flight: check litellm
+  const hasLitellm = await isLitellmInstalledForGemini();
+  if (!hasLitellm) {
+    displayError("LiteLLM is required for Gemini support");
+    console.log(chalk.dim("  Install with: pip install 'litellm[proxy]'"));
+    process.exit(1);
+  }
+
+  const selectedModel = model || "gemini-2.5-pro";
+
+  const validModel = findGeminiModel(selectedModel);
+  if (!validModel) {
+    const geminiModels = getModels("gemini");
+    displayError(`Invalid model: ${selectedModel}`);
+    console.log(chalk.dim("  Valid models: ") + geminiModels.map((m) => m.id).join(", "));
+    process.exit(1);
+  }
+
+  // Get API key
+  let apiKey = await getApiKey("gemini");
+  if (!apiKey) {
+    apiKey = await promptApiKey(
+      "Gemini",
+      "https://aistudio.google.com/apikey"
+    );
+    await setApiKey("gemini", apiKey);
+  }
+
+  // Start LiteLLM proxy
+  const proxyResult = await startGeminiLitellmProxy(apiKey, selectedModel);
+  if (!proxyResult.success) {
+    displayError(`Failed to start LiteLLM proxy: ${proxyResult.error}`);
+    process.exit(1);
+  }
+
+  const tierMap = buildTierMap(GEMINI_DEFAULT_TIER_MAP, tierOpts);
+
+  await configureClaudeGemini(apiKey, selectedModel, tierMap);
+
+  console.log(chalk.green(`\n✓ Switched to: Gemini (Google)`));
+  console.log(chalk.dim("─".repeat(60)));
+  console.log(`  ${chalk.cyan.bold("Model:")} ${chalk.white(validModel.name)}`);
+  console.log(`  ${chalk.cyan.bold("Context:")} ${chalk.yellow(formatContext(validModel.contextWindow))}`);
+  console.log(`  ${chalk.cyan.bold("Endpoint:")} ${chalk.dim("http://localhost:4001 (LiteLLM proxy)")}`);
+  console.log(`  ${chalk.cyan.bold("Capabilities:")} ${chalk.gray(validModel.capabilities.join(", "))}`);
+  console.log(chalk.dim(`  ${validModel.description}`));
+  console.log();
+  displayTierMap(tierMap);
+  console.log();
+}
+
 // ---------------------------------------------------------------------------
 // Top-level commands — Claude Code only
 // ---------------------------------------------------------------------------
@@ -271,6 +408,32 @@ addTierOptions(
     await switchOpenRouter(model, options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to OpenRouter");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  program
+    .command("ollama [model]")
+    .description("Switch Claude Code to Ollama (local models, requires LiteLLM proxy)")
+).action(async (model, options) => {
+  try {
+    await switchOllama(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Ollama");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  program
+    .command("gemini [model]")
+    .description("Switch Claude Code to Gemini (Google, requires LiteLLM proxy)")
+).action(async (model, options) => {
+  try {
+    await switchGemini(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Gemini");
     process.exit(1);
   }
 });
@@ -330,6 +493,32 @@ addTierOptions(
     await switchOpenRouter(model, options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to OpenRouter");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  claudeCmd
+    .command("ollama [model]")
+    .description("Switch Claude Code to Ollama (local models, requires LiteLLM proxy)")
+).action(async (model, options) => {
+  try {
+    await switchOllama(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Ollama");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  claudeCmd
+    .command("gemini [model]")
+    .description("Switch Claude Code to Gemini (Google, requires LiteLLM proxy)")
+).action(async (model, options) => {
+  try {
+    await switchGemini(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Gemini");
     process.exit(1);
   }
 });
@@ -400,6 +589,53 @@ opencodeAddCmd
     }
   });
 
+opencodeAddCmd
+  .command("ollama")
+  .description("Add Ollama provider to OpenCode (requires LiteLLM proxy)")
+  .action(async () => {
+    try {
+      await configureOpenCodeOllama();
+
+      displaySuccess("Added Ollama provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: ollama"));
+      console.log(chalk.dim("  Models: deepseek-r1:latest, qwen2.5-coder:latest, llama3.1:latest, codellama:latest"));
+      console.log(chalk.yellow("  Note: Requires LiteLLM proxy running on port 4000"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to add Ollama provider");
+      process.exit(1);
+    }
+  });
+
+opencodeAddCmd
+  .command("gemini")
+  .description("Add Gemini provider to OpenCode (requires LiteLLM proxy)")
+  .action(async () => {
+    try {
+      let apiKey = await getApiKey("gemini");
+      if (!apiKey) {
+        apiKey = await promptApiKey(
+          "Gemini",
+          "https://aistudio.google.com/apikey"
+        );
+        await setApiKey("gemini", apiKey);
+      }
+
+      await configureOpenCodeGemini(apiKey);
+
+      displaySuccess("Added Gemini provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: gemini"));
+      console.log(chalk.dim("  Models: gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-flash-lite"));
+      console.log(chalk.yellow("  Note: Requires LiteLLM proxy running on port 4001"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to add Gemini provider");
+      process.exit(1);
+    }
+  });
+
 const opencodeRemoveCmd = opencodeCmd
   .command("remove")
   .description("Remove a provider from OpenCode");
@@ -434,6 +670,40 @@ opencodeRemoveCmd
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to remove OpenRouter provider");
+      process.exit(1);
+    }
+  });
+
+opencodeRemoveCmd
+  .command("ollama")
+  .description("Remove Ollama provider from OpenCode")
+  .action(async () => {
+    try {
+      const { removeProvider } = await import("./clients/opencode.js");
+      await removeProvider("ollama");
+
+      displaySuccess("Removed Ollama provider from OpenCode");
+      console.log(chalk.dim("  Other providers remain unchanged"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove Ollama provider");
+      process.exit(1);
+    }
+  });
+
+opencodeRemoveCmd
+  .command("gemini")
+  .description("Remove Gemini provider from OpenCode")
+  .action(async () => {
+    try {
+      const { removeProvider } = await import("./clients/opencode.js");
+      await removeProvider("gemini");
+
+      displaySuccess("Removed Gemini provider from OpenCode");
+      console.log(chalk.dim("  Other providers remain unchanged"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove Gemini provider");
       process.exit(1);
     }
   });
@@ -496,6 +766,7 @@ program
       const alibabaKey = await getApiKey("alibaba");
       const openrouterKey = await getApiKey("openrouter");
       const anthropicKey = process.env.ANTHROPIC_API_KEY;
+      const geminiKey = await getApiKey("gemini");
 
       // Show spinner while verifying
       const ora = (await import("ora")).default;
@@ -505,7 +776,9 @@ program
         alibaba: alibabaKey,
         openrouter: openrouterKey,
         anthropic: anthropicKey,
-        checkGLM: true
+        checkGLM: true,
+        checkOllama: true,
+        gemini: geminiKey
       });
 
       spinner.stop();
@@ -542,6 +815,8 @@ program
           keyDisplay = chalk.dim(` (${maskKey(openrouterKey)})`);
         } else if (result.provider === "anthropic" && anthropicKey) {
           keyDisplay = chalk.dim(` (${maskKey(anthropicKey)})`);
+        } else if (result.provider === "gemini" && geminiKey) {
+          keyDisplay = chalk.dim(` (${maskKey(geminiKey)})`);
         }
 
         console.log(`    ${icon} ${chalk.white(label)} ${chalk.gray(detail)}${keyDisplay}`);
@@ -628,7 +903,7 @@ program
   .description("Show models for a specific provider")
   .action((providerName) => {
     if (!providerName) {
-      displayError("Please specify a provider: anthropic, alibaba, openrouter, or glm");
+      displayError("Please specify a provider: anthropic, alibaba, openrouter, glm, ollama, or gemini");
       console.log(chalk.dim("  Example: claude-switch models alibaba"));
       process.exit(1);
     }
@@ -708,6 +983,22 @@ program
         }
       }
 
+      const hasGeminiKey = await hasApiKey("gemini");
+      if (!hasGeminiKey) {
+        console.log(chalk.yellow("\nGemini Setup"));
+        console.log(chalk.dim("  Get your API key from: https://aistudio.google.com/apikey"));
+        console.log();
+
+        const answer = await new Promise<string>((resolve) => {
+          rl.question("Enter your Gemini API Key (or press Enter to skip): ", resolve);
+        });
+
+        if (answer.trim()) {
+          await setApiKey("gemini", answer.trim());
+          displaySuccess("Gemini API key saved");
+        }
+      }
+
       rl.close();
 
       console.log(chalk.green("\n✓ Setup complete!\n"));
@@ -716,11 +1007,17 @@ program
       console.log(chalk.dim("  claude-switch anthropic                - Switch Claude Code to Anthropic"));
       console.log(chalk.dim("  claude-switch glm                      - Switch Claude Code to GLM/Z.AI"));
       console.log(chalk.dim("  claude-switch openrouter [model]       - Switch Claude Code to OpenRouter"));
+      console.log(chalk.dim("  claude-switch ollama [model]           - Switch Claude Code to Ollama"));
+      console.log(chalk.dim("  claude-switch gemini [model]           - Switch Claude Code to Gemini"));
       console.log(chalk.dim("  claude-switch claude alibaba           - Explicit Claude Code targeting"));
       console.log(chalk.dim("  claude-switch opencode add alibaba     - Add Alibaba provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add openrouter  - Add OpenRouter provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode add ollama      - Add Ollama provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode add gemini      - Add Gemini provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove alibaba  - Remove Alibaba from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove openrouter - Remove OpenRouter from OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove ollama   - Remove Ollama from OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove gemini   - Remove Gemini from OpenCode"));
       console.log(chalk.dim("  claude-switch openrouter --opus <model> - Custom model aliases"));
       console.log(chalk.dim("  claude-switch list                     - List all providers"));
       console.log(chalk.dim("  claude-switch status                   - Show current config + verify API keys"));

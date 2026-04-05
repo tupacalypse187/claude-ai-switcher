@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
+Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
 ## Project Structure
 
@@ -23,7 +23,9 @@ claude-ai-switcher/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
 │       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
-│       └── openrouter.ts # OpenRouter provider config
+│       ├── openrouter.ts # OpenRouter provider config
+│       ├── ollama.ts     # Ollama provider (local, LiteLLM proxy on :4000)
+│       └── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
 ├── tsconfig.json          # TypeScript configuration
@@ -81,6 +83,8 @@ Default tier maps per provider:
 | Alibaba | qwen3.5-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.5-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
 | GLM | glm-5.1 | glm-5-turbo | glm-5 |
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
+| Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
+| Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Status Command
@@ -89,6 +93,8 @@ Default tier maps per provider:
 - OpenRouter: GET to OpenRouter models endpoint
 - Anthropic: GET to Anthropic models endpoint (uses `ANTHROPIC_API_KEY` env var)
 - GLM: Checks if `coding-helper` CLI is installed
+- Ollama: Checks LiteLLM proxy on port 4000, then Ollama on port 11434
+- Gemini: Checks LiteLLM proxy on port 4001, then validates Google API key
 
 ### Type Definitions
 ```typescript
@@ -114,12 +120,18 @@ claude-switch claude anthropic
 claude-switch claude alibaba
 claude-switch claude glm
 claude-switch claude openrouter
+claude-switch claude ollama
+claude-switch claude gemini
 
 # Switch OpenCode only
 claude-switch opencode anthropic
 claude-switch opencode alibaba
 claude-switch opencode glm
 claude-switch opencode openrouter
+claude-switch opencode add ollama
+claude-switch opencode add gemini
+claude-switch opencode remove ollama
+claude-switch opencode remove gemini
 ```
 
 ### Configure Model Tiers
@@ -168,6 +180,9 @@ claude-switch setup               # Interactive setup wizard
 - Claude Code and/or OpenCode must be installed separately
 - `@z_ai/coding-helper` package required for GLM/Z.AI provider support
 - API keys required for Alibaba (from Alibaba Cloud Model Studio)
+- [LiteLLM](https://github.com/BerriAI/litellm) with proxy support required for Ollama and Gemini (`pip install 'litellm[proxy]'`)
+- [Ollama](https://ollama.com) must be installed and running for local model support
+- Google API key (from [AI Studio](https://aistudio.google.com/apikey)) required for Gemini
 
 ## Cross-Platform Development
 

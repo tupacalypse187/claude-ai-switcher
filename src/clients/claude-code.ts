@@ -216,6 +216,40 @@ export async function configureOpenRouter(apiKey: string, model: string, tierMap
 }
 
 /**
+ * Configure Claude Code for Ollama (via LiteLLM proxy on port 4000)
+ */
+export async function configureOllama(model: string, tierMap: ModelTierMap): Promise<void> {
+  await ensureOnboardingComplete();
+
+  const settings = await readClaudeSettings();
+
+  settings.env = settings.env || {};
+  settings.env["ANTHROPIC_AUTH_TOKEN"] = "ollama";
+  settings.env["ANTHROPIC_BASE_URL"] = "http://localhost:4000";
+  settings.env["ANTHROPIC_MODEL"] = model;
+
+  applyTierMap(settings, tierMap);
+  await writeClaudeSettings(settings);
+}
+
+/**
+ * Configure Claude Code for Gemini (via LiteLLM proxy on port 4001)
+ */
+export async function configureGemini(apiKey: string, model: string, tierMap: ModelTierMap): Promise<void> {
+  await ensureOnboardingComplete();
+
+  const settings = await readClaudeSettings();
+
+  settings.env = settings.env || {};
+  settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
+  settings.env["ANTHROPIC_BASE_URL"] = "http://localhost:4001";
+  settings.env["ANTHROPIC_MODEL"] = model;
+
+  applyTierMap(settings, tierMap);
+  await writeClaudeSettings(settings);
+}
+
+/**
  * Get current provider from Claude settings
  */
 export async function getCurrentProvider(): Promise<{
@@ -256,7 +290,26 @@ export async function getCurrentProvider(): Promise<{
     };
   }
 
-  // Check for GLM via MCP server or coding-helper (sets z.ai base URL)
+  // Check for Ollama via LiteLLM proxy on port 4000
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("localhost:4000")) {
+    return {
+      provider: "ollama",
+      model: settings.env["ANTHROPIC_MODEL"],
+      endpoint: settings.env["ANTHROPIC_BASE_URL"],
+      tierMap
+    };
+  }
+
+  // Check for Gemini via LiteLLM proxy on port 4001
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("localhost:4001")) {
+    return {
+      provider: "gemini",
+      model: settings.env["ANTHROPIC_MODEL"],
+      endpoint: settings.env["ANTHROPIC_BASE_URL"],
+      tierMap
+    };
+  }
+
   if (settings.mcpServers?.["glm-coding-plan"]) {
     return {
       provider: "glm",
