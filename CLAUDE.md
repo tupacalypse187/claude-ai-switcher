@@ -80,7 +80,7 @@ When switching Claude Code to a non-Anthropic provider, the tool writes into `~/
 Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
-| Alibaba | qwen3.5-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.5-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
+| Alibaba | qwen3.6-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
 | GLM | glm-5.1 | glm-5-turbo | glm-5 |
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
@@ -137,11 +137,11 @@ claude-switch opencode remove gemini
 ### Configure Model Tiers
 ```bash
 # Custom model tier aliases (Claude Code only)
-claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.5-plus
+claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
 claude-switch glm --opus glm-5.1 --sonnet glm-5-turbo --haiku glm-5
 
-# Specific configuration with qwen3.5-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku
-claude-switch claude alibaba --opus qwen3.5-plus --sonnet kimi-k2.5 --haiku glm-5
+# Specific configuration with qwen3.6-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku
+claude-switch claude alibaba --opus qwen3.6-plus --sonnet kimi-k2.5 --haiku glm-5
 ```
 
 ### View Information

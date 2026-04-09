@@ -86,8 +86,8 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
       apiKey: apiKey
     },
     models: {
-      "qwen3.5-plus": {
-        name: "Qwen3.5 Plus",
+      "qwen3.6-plus": {
+        name: "Qwen3.6 Plus",
         modalities: {
           input: ["text", "image"],
           output: ["text"]

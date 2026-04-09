@@ -23,7 +23,7 @@ export function getAlibabaConfig(apiKey: string, model?: string): AlibabaConfig 
   return {
     provider: "alibaba",
     apiKey,
-    model: model || "qwen3.5-plus",
+    model: model || "qwen3.6-plus",
     endpoint: ALIBABA_ENDPOINT
   };
 }

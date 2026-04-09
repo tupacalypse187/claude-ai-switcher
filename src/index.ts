@@ -139,7 +139,7 @@ async function switchAlibaba(
   model: string | undefined,
   tierOpts: { opus?: string; sonnet?: string; haiku?: string }
 ): Promise<void> {
-  const selectedModel = model || "qwen3.5-plus";
+  const selectedModel = model || "qwen3.6-plus";
 
   let apiKey = await getApiKey("alibaba");
   if (!apiKey) {
@@ -554,7 +554,7 @@ opencodeAddCmd
       displaySuccess("Added Alibaba Coding Plan provider to OpenCode");
       console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
       console.log(chalk.dim("  Provider: bailian-coding-plan"));
-      console.log(chalk.dim("  Models: qwen3.5-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5"));
+      console.log(chalk.dim("  Models: qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5"));
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to add Alibaba provider");

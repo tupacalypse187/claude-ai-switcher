@@ -48,13 +48,13 @@ export const GEMINI_DEFAULT_TIER_MAP: ModelTierMap = {
 };
 
 // For Alibaba: tier mapping based on model capabilities
-// Default mapping when no specific model chosen: Opus = qwen3.5-plus, Sonnet = kimi-k2.5, Haiku = glm-5
-// When specific model selected: Opus = selected model, Sonnet = qwen3.5-plus, Haiku = kimi-k2.5
+// Default mapping when no specific model chosen: Opus = qwen3.6-plus, Sonnet = kimi-k2.5, Haiku = glm-5
+// When specific model selected: Opus = selected model, Sonnet = qwen3.6-plus, Haiku = kimi-k2.5
 export function getAlibabaTierMap(model: string): ModelTierMap {
   // Use custom defaults when using the default model
-  if (model === "qwen3.5-plus") {
+  if (model === "qwen3.6-plus") {
     return {
-      opus: "qwen3.5-plus",
+      opus: "qwen3.6-plus",
       sonnet: "kimi-k2.5",
       haiku: "glm-5"
     };
@@ -62,7 +62,7 @@ export function getAlibabaTierMap(model: string): ModelTierMap {
     // For other specific models, use the selected model as opus
     return {
       opus: model,
-      sonnet: "qwen3.5-plus",
+      sonnet: "qwen3.6-plus",
       haiku: "kimi-k2.5"
     };
   }
@@ -81,8 +81,8 @@ export function formatContext(tokens: number): string {
 // Alibaba Coding Plan Models
 export const alibabaModels: Model[] = [
   {
-    id: "qwen3.5-plus",
-    name: "Qwen3.5-Plus",
+    id: "qwen3.6-plus",
+    name: "Qwen3.6-Plus",
     contextWindow: 1000000,
     capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding"],
     description: "Balanced performance, speed, and cost. Supports thinking/non-thinking modes with 1M context window."

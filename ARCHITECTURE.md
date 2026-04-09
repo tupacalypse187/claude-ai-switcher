@@ -100,7 +100,7 @@ ANTHROPIC_DEFAULT_HAIKU_MODEL  -- maps to provider's haiku model
 ```
 Provider    |  opus                     |  sonnet                   |  haiku
 ------------+---------------------------+---------------------------+---------------------------
-Alibaba     |  qwen3.5-plus / selected  |  kimi-k2.5 / qwen3.5-plus|  glm-5 / kimi-k2.5
+Alibaba     |  qwen3.6-plus / selected  |  kimi-k2.5 / qwen3.6-plus|  glm-5 / kimi-k2.5
 GLM         |  glm-5.1                  |  glm-5-turbo              |  glm-5
 OpenRouter  |  qwen/qwen3.6-plus:free   |  openrouter/free          |  openrouter/free
 Ollama      |  deepseek-r1:latest       |  qwen2.5-coder:latest     |  llama3.1:latest
