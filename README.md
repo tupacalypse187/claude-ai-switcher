@@ -453,7 +453,7 @@ $ claude-switch alibaba qwen3.6-plus
 
 ✓ Switched to: Alibaba Coding Plan
 ────────────────────────────────────────────────────────────
-  Model: Qwen3.5-Plus
+  Model: Qwen3.6-Plus
   Context: 1M tokens
   Endpoint: https://coding-intl.dashscope.aliyuncs.com/apps/anthropic
   Capabilities: Text Generation, Deep Thinking, Visual Understanding
