@@ -22,8 +22,8 @@ export interface ModelTierMap {
 // Default GLM tier map: best model per tier
 export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
   opus: "glm-5.1",
-  sonnet: "glm-5-turbo",
-  haiku: "glm-5"
+  sonnet: "glm-5v-turbo",
+  haiku: "glm-5-turbo"
 };
 
 // Default OpenRouter tier map
@@ -153,6 +153,13 @@ export const glmModels: Model[] = [
     contextWindow: 200000,
     capabilities: ["Text Generation", "Deep Thinking"],
     description: "Zhipu's most advanced model with state-of-the-art reasoning and deep thinking capabilities."
+  },
+  {
+    id: "glm-5v-turbo",
+    name: "GLM-5V-Turbo",
+    contextWindow: 200000,
+    capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding", "Visual Programming"],
+    description: "Zhipu's first multimodal coding foundation model. Natively understands images, videos, design drafts, and screenshots for visual programming."
   },
   {
     id: "glm-5-turbo",
