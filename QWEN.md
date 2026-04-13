@@ -91,7 +91,7 @@ claude-switch opencode glm
 
 # Custom model tier aliases (Claude Code only)
 claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku glm-5
-claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
+claude-switch glm --opus glm-5.1 --sonnet glm-5v-turbo --haiku glm-5-turbo
 
 # Specific configuration with qwen3.6-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku
 claude-switch claude alibaba --opus qwen3.6-plus --sonnet kimi-k2.5 --haiku glm-5
@@ -165,7 +165,7 @@ Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
 | Alibaba | qwen3.6-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
-| GLM | glm-5-turbo | glm-5 | glm-4.7 |
+| GLM | glm-5.1 | glm-5v-turbo | glm-5-turbo |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Switching to Anthropic clears all three vars.
@@ -180,7 +180,7 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 
 ### GLM/Z.AI
 - **Managed by**: `@z_ai/coding-helper` package
-- **Models**: glm-5-turbo, glm-5, glm-4.7
+- **Models**: glm-5.1, glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7
 - **Context Windows**: 200K - 256K tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
 
@@ -219,9 +219,9 @@ interface ModelTierMap {
 
 // GLM default: best model per tier
 const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
-  opus: "glm-5-turbo",
-  sonnet: "glm-5",
-  haiku: "glm-4.7"
+  opus: "glm-5.1",
+  sonnet: "glm-5v-turbo",
+  haiku: "glm-5-turbo"
 };
 
 // Alibaba default: opus = selected model, sonnet = qwen3.6-plus, haiku = kimi-k2.5

@@ -81,7 +81,7 @@ Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
 | Alibaba | qwen3.6-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
-| GLM | glm-5.1 | glm-5-turbo | glm-5 |
+| GLM | glm-5.1 | glm-5v-turbo | glm-5-turbo |
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
 | Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |

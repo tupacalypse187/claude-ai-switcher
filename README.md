@@ -141,8 +141,8 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 | Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) |
 |---------|-------------------|---------------|---------------------|-----------------|-----------------|
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.6-plus` | `glm-5.1` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `kimi-k2.5` | `glm-5-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5` | `glm-5` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5` | `glm-5-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` |
 
 Override any tier at switch time:
 
@@ -235,6 +235,8 @@ claude-switch setup
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
+| glm-5.1 | 200K tokens | Text Generation, Deep Thinking |
+| glm-5v-turbo | 200K tokens | Text Generation, Deep Thinking, Visual Understanding, Visual Programming |
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
 | glm-5 | 200K tokens | Text Generation, Deep Thinking |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
@@ -475,14 +477,14 @@ $ claude-switch opencode add alibaba
 ```
 
 ```bash
-$ claude-switch glm --opus glm-5-turbo --sonnet glm-5 --haiku glm-4.7
+$ claude-switch glm --opus glm-5.1 --sonnet glm-5v-turbo --haiku glm-5-turbo
 
 ✓ Switched to GLM/Z.AI
 
   Claude model aliases:
-    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5-turbo
-    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5
-    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-4.7
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.1
+    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5v-turbo
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5-turbo
 ```
 
 ```bash
