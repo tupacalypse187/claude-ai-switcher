@@ -33,7 +33,7 @@ flowchart TD
     B --> C{"Which provider?"}
     C -->|alibaba / openrouter| D["<b>Direct API Provider</b><br/>Set ANTHROPIC_BASE_URL + AUTH_TOKEN"]
     C -->|ollama| E["<b>Start LiteLLM Proxy</b><br/>Port 4000 → Ollama :11434"]
-    C -->|gemini| F["<b>Start LiteLLM Proxy</b><br/>Port 4041 → Gemini API"]
+    C -->|gemini| F["<b>Start LiteLLM Proxy</b><br/>Port 4001 → Gemini API"]
     C -->|glm| G["<b>coding-helper</b><br/>MCP server manages config"]
     C -->|anthropic| H["<b>Clear overrides</b><br/>Revert to native Claude"]
     D --> I["<b>Claude Code Client</b><br/>~/.claude/settings.json"]
