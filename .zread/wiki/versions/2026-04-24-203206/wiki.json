@@ -1,0 +1,192 @@
+{
+  "id": "2026-04-24-203206",
+  "generated_at": "2026-04-25T00:32:06.58032Z",
+  "language": "en",
+  "pages": [
+    {
+      "slug": "1-overview-what-claude-ai-switcher-does-and-why-it-matters",
+      "title": "Overview: What Claude AI Switcher Does and Why It Matters",
+      "file": "1-overview-what-claude-ai-switcher-does-and-why-it-matters.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "2-quick-start-installation-and-first-provider-switch",
+      "title": "Quick Start: Installation and First Provider Switch",
+      "file": "2-quick-start-installation-and-first-provider-switch.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "3-interactive-setup-wizard",
+      "title": "Interactive Setup Wizard",
+      "file": "3-interactive-setup-wizard.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "4-switching-providers-for-claude-code",
+      "title": "Switching Providers for Claude Code",
+      "file": "4-switching-providers-for-claude-code.md",
+      "section": "Get Started",
+      "group": "CLI Command Reference",
+      "level": "Beginner"
+    },
+    {
+      "slug": "5-managing-opencode-providers-add-remove",
+      "title": "Managing OpenCode Providers (Add/Remove)",
+      "file": "5-managing-opencode-providers-add-remove.md",
+      "section": "Get Started",
+      "group": "CLI Command Reference",
+      "level": "Beginner"
+    },
+    {
+      "slug": "6-viewing-status-current-config-and-model-lists",
+      "title": "Viewing Status, Current Config, and Model Lists",
+      "file": "6-viewing-status-current-config-and-model-lists.md",
+      "section": "Get Started",
+      "group": "CLI Command Reference",
+      "level": "Beginner"
+    },
+    {
+      "slug": "7-project-architecture-and-module-responsibilities",
+      "title": "Project Architecture and Module Responsibilities",
+      "file": "7-project-architecture-and-module-responsibilities.md",
+      "section": "Deep Dive",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "8-how-provider-switching-works-the-end-to-end-flow",
+      "title": "How Provider Switching Works: The End-to-End Flow",
+      "file": "8-how-provider-switching-works-the-end-to-end-flow.md",
+      "section": "Deep Dive",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "9-direct-api-providers-anthropic-alibaba-openrouter",
+      "title": "Direct API Providers (Anthropic, Alibaba, OpenRouter)",
+      "file": "9-direct-api-providers-anthropic-alibaba-openrouter.md",
+      "section": "Deep Dive",
+      "group": "Provider System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "10-litellm-proxy-providers-ollama-on-port-4000-gemini-on-port-4001",
+      "title": "LiteLLM Proxy Providers (Ollama on Port 4000, Gemini on Port 4001)",
+      "file": "10-litellm-proxy-providers-ollama-on-port-4000-gemini-on-port-4001.md",
+      "section": "Deep Dive",
+      "group": "Provider System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "11-glm-z-ai-provider-and-the-coding-helper-integration",
+      "title": "GLM/Z.AI Provider and the coding-helper Integration",
+      "file": "11-glm-z-ai-provider-and-the-coding-helper-integration.md",
+      "section": "Deep Dive",
+      "group": "Provider System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "12-claude-code-client-settings-environment-variables-and-backups",
+      "title": "Claude Code Client: Settings, Environment Variables, and Backups",
+      "file": "12-claude-code-client-settings-environment-variables-and-backups.md",
+      "section": "Deep Dive",
+      "group": "Client Configuration Layer",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "13-opencode-client-provider-schema-and-json-configuration",
+      "title": "OpenCode Client: Provider Schema and JSON Configuration",
+      "file": "13-opencode-client-provider-schema-and-json-configuration.md",
+      "section": "Deep Dive",
+      "group": "Client Configuration Layer",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "14-model-and-provider-type-definitions",
+      "title": "Model and Provider Type Definitions",
+      "file": "14-model-and-provider-type-definitions.md",
+      "section": "Deep Dive",
+      "group": "Core Data Models and Tier Alias System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "15-model-tier-alias-mapping-opus-sonnet-haiku",
+      "title": "Model Tier Alias Mapping (Opus/Sonnet/Haiku)",
+      "file": "15-model-tier-alias-mapping-opus-sonnet-haiku.md",
+      "section": "Deep Dive",
+      "group": "Core Data Models and Tier Alias System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "16-custom-tier-overrides-with-opus-sonnet-haiku-flags",
+      "title": "Custom Tier Overrides with --opus, --sonnet, --haiku Flags",
+      "file": "16-custom-tier-overrides-with-opus-sonnet-haiku-flags.md",
+      "section": "Deep Dive",
+      "group": "Core Data Models and Tier Alias System",
+      "level": "Advanced"
+    },
+    {
+      "slug": "17-api-key-storage-and-local-configuration-management",
+      "title": "API Key Storage and Local Configuration Management",
+      "file": "17-api-key-storage-and-local-configuration-management.md",
+      "section": "Deep Dive",
+      "group": "Security and Verification",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "18-api-key-verification-lightweight-http-health-checks",
+      "title": "API Key Verification: Lightweight HTTP Health Checks",
+      "file": "18-api-key-verification-lightweight-http-health-checks.md",
+      "section": "Deep Dive",
+      "group": "Security and Verification",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "19-litellm-proxy-lifecycle-management-start-health-check-port-allocation",
+      "title": "LiteLLM Proxy Lifecycle Management (Start, Health Check, Port Allocation)",
+      "file": "19-litellm-proxy-lifecycle-management-start-health-check-port-allocation.md",
+      "section": "Deep Dive",
+      "group": "Infrastructure and Cross-Cutting Concerns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "20-provider-detection-from-claude-settings",
+      "title": "Provider Detection from Claude Settings",
+      "file": "20-provider-detection-from-claude-settings.md",
+      "section": "Deep Dive",
+      "group": "Infrastructure and Cross-Cutting Concerns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "21-console-output-formatting-with-chalk-and-ora",
+      "title": "Console Output Formatting with Chalk and Ora",
+      "file": "21-console-output-formatting-with-chalk-and-ora.md",
+      "section": "Deep Dive",
+      "group": "Infrastructure and Cross-Cutting Concerns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "22-cross-platform-compatibility-macos-linux-windows",
+      "title": "Cross-Platform Compatibility (macOS, Linux, Windows)",
+      "file": "22-cross-platform-compatibility-macos-linux-windows.md",
+      "section": "Deep Dive",
+      "group": "Infrastructure and Cross-Cutting Concerns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "23-adding-a-new-provider-step-by-step-implementation-guide",
+      "title": "Adding a New Provider: Step-by-Step Implementation Guide",
+      "file": "23-adding-a-new-provider-step-by-step-implementation-guide.md",
+      "section": "Deep Dive",
+      "level": "Advanced"
+    },
+    {
+      "slug": "24-build-toolchain-typescript-configuration-and-npm-scripts",
+      "title": "Build Toolchain: TypeScript Configuration and npm Scripts",
+      "file": "24-build-toolchain-typescript-configuration-and-npm-scripts.md",
+      "section": "Deep Dive",
+      "level": "Advanced"
+    }
+  ]
+}

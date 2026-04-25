@@ -538,6 +538,33 @@ $ claude-switch gemini
     ANTHROPIC_DEFAULT_HAIKU_MODEL  → gemini-2.5-flash-lite
 ```
 
+## Project Documentation (Zread)
+
+This repository includes an AI-generated project wiki in `.zread/` created with [Zread CLI](https://zread.ai/cli). It provides detailed architectural walkthroughs, module breakdowns, and implementation guides.
+
+### Viewing the Wiki
+
+```bash
+# Install Zread CLI
+npm install -g zread_cli
+
+# Browse the wiki in your browser
+zread browse
+
+# Regenerate after code changes
+zread generate
+```
+
+The wiki is versioned alongside the code. Contributors should prune old version snapshots before committing so the repo only contains the latest.
+
+### Contributing to the Wiki
+
+After making significant code changes:
+
+1. Run `zread generate` to create an updated wiki
+2. Delete old dated folders under `.zread/wiki/versions/`, keeping only the latest
+3. Commit the updated `current` pointer and the new version folder
+
 ## Requirements
 
 - Node.js >= 18.0.0

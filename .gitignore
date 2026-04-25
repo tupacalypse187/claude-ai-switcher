@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Claude Code
+.claude/
+
+# Zread CLI (skip in-progress drafts)
+.zread/wiki/drafts/
+
 # Build output
 dist/
 

@@ -184,6 +184,31 @@ claude-switch setup               # Interactive setup wizard
 - [Ollama](https://ollama.com) must be installed and running for local model support
 - Google API key (from [AI Studio](https://aistudio.google.com/apikey)) required for Gemini
 
+## Zread Project Wiki
+
+The `.zread/` directory contains an AI-generated project wiki maintained with [Zread CLI](https://zread.ai/cli).
+
+### Structure
+```
+.zread/
+  wiki/
+    current          → pointer to latest version (e.g., "versions/2026-04-24-203206")
+    versions/
+      <timestamp>/   ← markdown files (the actual wiki content)
+    drafts/          ← in-progress generation (gitignored)
+```
+
+### Workflow
+1. After meaningful code changes, run `zread generate` to update the wiki
+2. Prune old version snapshots before committing: delete all but the latest dated folder under `.zread/wiki/versions/`
+3. Commit `current` (the pointer) + the single latest version folder
+4. Git history tracks what changed over time — no need for multiple dated snapshots in the repo
+
+### Guidelines
+- Never commit `.zread/wiki/drafts/` (already in `.gitignore`)
+- Keep only one versioned snapshot in the repo at a time to avoid accumulation
+- The wiki is for developer reference and AI context — it does not affect build or runtime
+
 ## Cross-Platform Development
 
 ### Platform Support
