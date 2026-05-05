@@ -73,7 +73,6 @@ import {
   removeVisualEnhancements,
   removeAllHooks,
   areHooksInstalled,
-  getHooksStatus,
   showTokenStatus,
   showVisualStatus,
   resetTokenUsage
@@ -1057,9 +1056,12 @@ hooksCmd
   .description("Install all visual enhancements and token tracking")
   .action(async () => {
     try {
-      const spinner = await import("ora").then(m => m.default("Installing hooks...")).catch(() => null);
-      
+      const ora = await import("ora").catch(() => null);
+      const spinner = ora ? ora.default("Installing hooks...").start() : null;
+
       await installAllHooks();
+
+      spinner?.stop();
       
       console.log(chalk.green("\n✓ Hooks installed successfully!\n"));
       console.log(chalk.cyan.bold("  Installed:"));

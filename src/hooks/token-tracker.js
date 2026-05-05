@@ -26,12 +26,27 @@ const MODEL_CONTEXT_WINDOWS = {
   'glm-4.7-flash': 256000,
   'kimi-k2.5': 200000,
   'MiniMax-M2.5': 200000,
-  
+
   // GLM Models
   'glm-5.1': 200000,
   'glm-5v-turbo': 200000,
   'glm-5-turbo': 200000,
-  
+
+  // OpenRouter Models
+  'qwen/qwen3.6-plus:free': 131072,
+  'openrouter/free': 131072,
+
+  // Ollama Models
+  'deepseek-r1:latest': 128000,
+  'qwen2.5-coder:latest': 128000,
+  'llama3.1:latest': 128000,
+  'codellama:latest': 100000,
+
+  // Gemini Models
+  'gemini-2.5-pro': 1000000,
+  'gemini-2.5-flash': 1000000,
+  'gemini-2.5-flash-lite': 1000000,
+
   // Anthropic Models
   'claude-opus-4-6-20250205': 200000,
   'claude-opus-4-5-20251101': 200000,
@@ -88,7 +103,14 @@ function loadTokenUsage() {
       };
     }
     
-    return JSON.parse(fs.readFileSync(TRACKER_FILE, 'utf-8'));
+    const data = JSON.parse(fs.readFileSync(TRACKER_FILE, 'utf-8'));
+    if (
+      typeof data.totalInputTokens !== 'number' ||
+      typeof data.totalOutputTokens !== 'number'
+    ) {
+      throw new Error('Invalid token usage data');
+    }
+    return data;
   } catch (error) {
     return {
       totalInputTokens: 0,

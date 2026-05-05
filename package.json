@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "tsc && npm run copy-hooks",
-    "copy-hooks": "xcopy /Y /I src\\hooks\\*.js dist\\hooks\\",
+    "copy-hooks": "node -e \"const fs=require('fs-extra');fs.ensureDirSync('dist/hooks');fs.copySync('src/hooks','dist/hooks',{filter:f=>f.endsWith('.js')||!f.includes('.')});\"",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "clean": "rimraf dist"

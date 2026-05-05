@@ -12,7 +12,6 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as os from "os";
-import * as readline from "readline";
 
 const CLAUDE_DIR = path.join(os.homedir(), ".claude");
 const TOKEN_TRACKER_SRC = path.join(__dirname, "..", "hooks", "token-tracker.js");
@@ -131,8 +130,16 @@ async function readHooksConfig(): Promise<HooksConfig> {
     };
   }
 
-  const content = await fs.readFile(HOOKS_CONFIG, "utf-8");
-  return JSON.parse(content);
+  try {
+    const content = await fs.readFile(HOOKS_CONFIG, "utf-8");
+    return JSON.parse(content);
+  } catch {
+    return {
+      tokenTracking: false,
+      visualEnhancements: false,
+      customPrompts: false
+    };
+  }
 }
 
 /**
@@ -140,13 +147,6 @@ async function readHooksConfig(): Promise<HooksConfig> {
  */
 async function writeHooksConfig(config: HooksConfig): Promise<void> {
   await fs.writeFile(HOOKS_CONFIG, JSON.stringify(config, null, 2), "utf-8");
-}
-
-/**
- * Get hooks status
- */
-export async function getHooksStatus(): Promise<HooksConfig> {
-  return await readHooksConfig();
 }
 
 /**
@@ -159,6 +159,7 @@ export async function showTokenStatus(): Promise<void> {
   }
 
   try {
+    delete require.cache[require.resolve(TOKEN_TRACKER_DEST)];
     const tracker = require(TOKEN_TRACKER_DEST);
     tracker.showStatus();
   } catch (error) {
@@ -176,6 +177,7 @@ export async function showVisualStatus(): Promise<void> {
   }
 
   try {
+    delete require.cache[require.resolve(VISUAL_ENHANCEMENTS_DEST)];
     const visuals = require(VISUAL_ENHANCEMENTS_DEST);
     visuals.displayStatus();
   } catch (error) {
@@ -193,6 +195,7 @@ export async function resetTokenUsage(): Promise<void> {
   }
 
   try {
+    delete require.cache[require.resolve(TOKEN_TRACKER_DEST)];
     const tracker = require(TOKEN_TRACKER_DEST);
     tracker.resetTokenUsage();
     console.log("Token usage reset complete.");

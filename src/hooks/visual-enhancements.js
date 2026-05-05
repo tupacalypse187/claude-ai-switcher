@@ -63,12 +63,27 @@ const MODEL_CAPABILITIES = {
   'glm-4.7-flash': ['Text Generation', 'Fast Inference'],
   'kimi-k2.5': ['Text Generation', 'Deep Thinking', 'Visual Understanding'],
   'MiniMax-M2.5': ['Text Generation', 'Deep Thinking'],
-  
+
   // GLM Models
   'glm-5.1': ['Text Generation', 'Deep Thinking', 'Most Advanced'],
   'glm-5v-turbo': ['Text Generation', 'Deep Thinking', 'Multimodal'],
   'glm-5-turbo': ['Text Generation', 'Deep Thinking', 'Fast'],
-  
+
+  // OpenRouter Models
+  'qwen/qwen3.6-plus:free': ['Text Generation', 'Deep Thinking'],
+  'openrouter/free': ['Text Generation'],
+
+  // Ollama Models
+  'deepseek-r1:latest': ['Text Generation', 'Deep Thinking', 'Reasoning'],
+  'qwen2.5-coder:latest': ['Text Generation', 'Coding', 'Tool Calling'],
+  'llama3.1:latest': ['Text Generation', 'Code', 'Vision'],
+  'codellama:latest': ['Text Generation', 'Coding'],
+
+  // Gemini Models
+  'gemini-2.5-pro': ['Text Generation', 'Deep Thinking', 'Code', 'Vision'],
+  'gemini-2.5-flash': ['Text Generation', 'Fast Responses', 'Code'],
+  'gemini-2.5-flash-lite': ['Text Generation', 'Cost-optimized'],
+
   // Anthropic Models
   'claude-opus-4-6-20250205': ['Text Generation', 'Code', 'Vision', 'Complex Reasoning'],
   'claude-opus-4-5-20251101': ['Text Generation', 'Code', 'Vision', 'Complex Reasoning'],
@@ -158,6 +173,15 @@ function getContextWindow(modelId) {
     'glm-5.1': 200000,
     'glm-5v-turbo': 200000,
     'glm-5-turbo': 200000,
+    'qwen/qwen3.6-plus:free': 131072,
+    'openrouter/free': 131072,
+    'deepseek-r1:latest': 128000,
+    'qwen2.5-coder:latest': 128000,
+    'llama3.1:latest': 128000,
+    'codellama:latest': 100000,
+    'gemini-2.5-pro': 1000000,
+    'gemini-2.5-flash': 1000000,
+    'gemini-2.5-flash-lite': 1000000,
     'claude-opus-4-6-20250205': 200000,
     'claude-opus-4-5-20251101': 200000,
     'claude-sonnet-4-6-20250219': 200000,
@@ -207,13 +231,13 @@ function createModelCard() {
   output += `${dimColor}┌─────────────────────────────────────────────────────────────┐${reset}\n`;
   output += `${dimColor}│${reset} ${headerColor}${bold}${providerInfo.icon} ${providerInfo.name}${reset}${dimColor}${' '.repeat(48)}│${reset}\n`;
   output += `${dimColor}├─────────────────────────────────────────────────────────────┤${reset}\n`;
-  output += `${dimColor}│${reset} ${accentColor}Model:${reset} ${infoColor}${modelName}${' '.repeat(35 - modelName.length)}${dimColor}│${reset}\n`;
-  output += `${dimColor}│${reset} ${accentColor}Context:${reset} ${infoColor}${formatContext(contextWindow)} tokens${' '.repeat(31 - formatContext(contextWindow).length - 8)}${dimColor}│${reset}\n`;
-  
+  output += `${dimColor}│${reset} ${accentColor}Model:${reset} ${infoColor}${modelName}${' '.repeat(Math.max(0, 35 - modelName.length))}${dimColor}│${reset}\n`;
+  output += `${dimColor}│${reset} ${accentColor}Context:${reset} ${infoColor}${formatContext(contextWindow)} tokens${' '.repeat(Math.max(0, 31 - formatContext(contextWindow).length - 8))}${dimColor}│${reset}\n`;
+
   if (capabilities.length > 0) {
     const capStr = capabilities.slice(0, 3).join(' • ');
-    output += `${dimColor}│${reset} ${accentColor}Capabilities:${reset}${' '.repeat(38 - capStr.length - 14)}${dimColor}│${reset}\n`;
-    output += `${dimColor}│${reset} ${dimColor}${capStr}${' '.repeat(52 - capStr.length)}${dimColor}│${reset}\n`;
+    output += `${dimColor}│${reset} ${accentColor}Capabilities:${reset}${' '.repeat(Math.max(0, 38 - capStr.length - 14))}${dimColor}│${reset}\n`;
+    output += `${dimColor}│${reset} ${dimColor}${capStr}${' '.repeat(Math.max(0, 52 - capStr.length))}${dimColor}│${reset}\n`;
   }
   
   output += `${dimColor}└─────────────────────────────────────────────────────────────┘${reset}\n`;
