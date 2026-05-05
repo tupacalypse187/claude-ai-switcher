@@ -249,6 +249,9 @@ function createModelCard() {
  * Create context usage bar
  */
 function createContextBar(usedTokens, totalTokens) {
+  if (!totalTokens || totalTokens <= 0) {
+    return '\x1b[32m' + '░'.repeat(30) + '\x1b[0m   0.0%';
+  }
   const percentage = Math.min((usedTokens / totalTokens) * 100, 100);
   const barWidth = 30;
   const filled = Math.round((percentage / 100) * barWidth);

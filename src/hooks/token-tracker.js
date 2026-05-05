@@ -204,10 +204,13 @@ function displayTokenUsage() {
   const reset = '\x1b[0m';
   const bar = createContextBar(percentage);
   
-  // Format model name
-  const modelName = model.split('-').map(
+  // Format model name (truncate if too long for the box)
+  let modelName = model.split('-').map(
     word => word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ');
+  if (modelName.length > 41) {
+    modelName = modelName.substring(0, 38) + '...';
+  }
   
   console.log('');
   console.log(`${color}╔══════════════════════════════════════════════════════════════╗${reset}`);
@@ -265,5 +268,11 @@ module.exports = {
 
 // Auto-run if called directly
 if (require.main === module) {
-  displayTokenUsage();
+  const args = process.argv.slice(2);
+  if (args.includes('--reset')) {
+    resetTokenUsage();
+    console.log('Token usage reset.');
+  } else {
+    displayTokenUsage();
+  }
 }

@@ -12,6 +12,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as os from "os";
+import { execFileSync } from "child_process";
 
 const CLAUDE_DIR = path.join(os.homedir(), ".claude");
 const TOKEN_TRACKER_SRC = path.join(__dirname, "..", "hooks", "token-tracker.js");
@@ -50,8 +51,7 @@ export async function installTokenTracker(): Promise<void> {
 
   await fs.ensureDir(CLAUDE_DIR);
   await fs.copy(TOKEN_TRACKER_SRC, TOKEN_TRACKER_DEST, { overwrite: true });
-  
-  // Update hooks config
+
   const config = await readHooksConfig();
   config.tokenTracking = true;
   config.lastInstalled = new Date().toISOString();
@@ -68,8 +68,7 @@ export async function installVisualEnhancements(): Promise<void> {
 
   await fs.ensureDir(CLAUDE_DIR);
   await fs.copy(VISUAL_ENHANCEMENTS_SRC, VISUAL_ENHANCEMENTS_DEST, { overwrite: true });
-  
-  // Update hooks config
+
   const config = await readHooksConfig();
   config.visualEnhancements = true;
   config.lastInstalled = new Date().toISOString();
@@ -91,7 +90,7 @@ export async function removeTokenTracker(): Promise<void> {
   if (await fs.pathExists(TOKEN_TRACKER_DEST)) {
     await fs.remove(TOKEN_TRACKER_DEST);
   }
-  
+
   const config = await readHooksConfig();
   config.tokenTracking = false;
   await writeHooksConfig(config);
@@ -104,7 +103,7 @@ export async function removeVisualEnhancements(): Promise<void> {
   if (await fs.pathExists(VISUAL_ENHANCEMENTS_DEST)) {
     await fs.remove(VISUAL_ENHANCEMENTS_DEST);
   }
-  
+
   const config = await readHooksConfig();
   config.visualEnhancements = false;
   await writeHooksConfig(config);
@@ -150,6 +149,16 @@ async function writeHooksConfig(config: HooksConfig): Promise<void> {
 }
 
 /**
+ * Run a hook script in a subprocess for isolation
+ */
+function runHookScript(scriptPath: string, args: string[] = []): void {
+  execFileSync("node", [scriptPath, ...args], {
+    stdio: "inherit",
+    timeout: 10000
+  });
+}
+
+/**
  * Run token tracker display
  */
 export async function showTokenStatus(): Promise<void> {
@@ -159,11 +168,9 @@ export async function showTokenStatus(): Promise<void> {
   }
 
   try {
-    delete require.cache[require.resolve(TOKEN_TRACKER_DEST)];
-    const tracker = require(TOKEN_TRACKER_DEST);
-    tracker.showStatus();
+    runHookScript(TOKEN_TRACKER_DEST);
   } catch (error) {
-    console.error("Failed to run token tracker:", error);
+    console.error("Failed to run token tracker:", error instanceof Error ? error.message : error);
   }
 }
 
@@ -177,11 +184,9 @@ export async function showVisualStatus(): Promise<void> {
   }
 
   try {
-    delete require.cache[require.resolve(VISUAL_ENHANCEMENTS_DEST)];
-    const visuals = require(VISUAL_ENHANCEMENTS_DEST);
-    visuals.displayStatus();
+    runHookScript(VISUAL_ENHANCEMENTS_DEST);
   } catch (error) {
-    console.error("Failed to run visual enhancements:", error);
+    console.error("Failed to run visual enhancements:", error instanceof Error ? error.message : error);
   }
 }
 
@@ -195,11 +200,9 @@ export async function resetTokenUsage(): Promise<void> {
   }
 
   try {
-    delete require.cache[require.resolve(TOKEN_TRACKER_DEST)];
-    const tracker = require(TOKEN_TRACKER_DEST);
-    tracker.resetTokenUsage();
+    runHookScript(TOKEN_TRACKER_DEST, ["--reset"]);
     console.log("Token usage reset complete.");
   } catch (error) {
-    console.error("Failed to reset token usage:", error);
+    console.error("Failed to reset token usage:", error instanceof Error ? error.message : error);
   }
 }
