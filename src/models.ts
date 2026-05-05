@@ -132,14 +132,14 @@ export const alibabaModels: Model[] = [
   {
     id: "kimi-k2.5",
     name: "Kimi K2.5",
-    contextWindow: 1000000,
+    contextWindow: 200000,
     capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding"],
-    description: "Moonshot AI's Kimi model with 1M context and multimodal capabilities."
+    description: "Moonshot AI's Kimi model with 200K context and multimodal capabilities."
   },
   {
     id: "MiniMax-M2.5",
     name: "MiniMax-M2.5",
-    contextWindow: 256000,
+    contextWindow: 200000,
     capabilities: ["Text Generation", "Deep Thinking"],
     description: "MiniMax's advanced model with strong reasoning and generation capabilities."
   }

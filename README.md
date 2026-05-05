@@ -12,6 +12,8 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 - **Google Gemini**: Access Gemini 2.5 Pro/Flash models with 1M context via LiteLLM proxy
 - **Auto Proxy Management**: Automatically starts LiteLLM translation proxy for Ollama and Gemini
 - **Model Information**: See model capabilities, context windows, and descriptions when switching
+- **Token Tracking**: Visual context bar with percentage usage display
+- **Visual Enhancements**: Model card with provider info, active model display, and context usage
 - **Secure Storage**: API keys stored locally in `~/.claude-ai-switcher/config.json`
 - **Safe Configuration**: Backs up existing settings before any modifications
 - **Auto Onboarding**: Automatically sets `hasCompletedOnboarding: true` to prevent connection errors
@@ -208,6 +210,117 @@ claude-switch key gemini
 
 > **Note**: Ollama does not require an API key (runs locally). Anthropic uses the `ANTHROPIC_API_KEY` environment variable.
 
+### Hooks - Token Tracking & Visual Enhancements
+
+Install visual enhancements and token tracking for Claude Code:
+
+```bash
+# Install all hooks (token tracker + visual enhancements)
+claude-switch hooks install
+
+✓ Hooks installed successfully!
+
+  Installed:
+    • Token Tracker (~/.claude/token-tracker.js)
+    • Visual Enhancements (~/.claude/visual-enhancements.js)
+
+  Usage:
+    • Token usage is tracked automatically
+    • Run 'claude-switch hooks status' to see current usage
+    • Run 'claude-switch hooks reset' to reset counters
+```
+
+```bash
+# Show current token usage and visual status
+claude-switch hooks status
+
+=== Hooks Status ===
+
+  Token Tracker: ✓ Installed
+  Visual Enhancements: ✓ Installed
+
+╔══════════════════════════════════════════════════════════════╗
+║  🤖 Active Model: Qwen3 6 Plus                                ║
+╠══════════════════════════════════════════════════════════════╣
+║  📊 Token Usage:                                              ║
+║    Input:  12,450      tokens                                   ║
+║    Output: 8,320       tokens                                   ║
+║    Total:  20,770      tokens                                   ║
+╠══════════════════════════════════════════════════════════════╣
+║  📈 Context Window:                                           ║
+║    Used:   20,770      tokens                                   ║
+║    Total:  1,000,000   tokens                                   ║
+║    ████░░░░░░░░░░░░░░░░   2.1%                                  ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+```bash
+# Reset token usage counters
+claude-switch hooks reset
+
+Token usage reset complete.
+```
+
+```bash
+# Remove all hooks
+claude-switch hooks remove
+
+✓ All hooks removed
+```
+
+**What you get:**
+
+| Feature | Description |
+|---------|-------------|
+| **Token Tracker** | Tracks input/output tokens across your session with visual percentage bar |
+| **Model Card** | Shows active model, provider, context window, and capabilities |
+| **Context Bar** | Visual progress bar showing context usage percentage (color-coded) |
+| **Auto Display** | Shows model info and token usage when you start a Claude Code session |
+
+**Context Bar Colors:**
+
+| Color | Usage Range | Meaning |
+|-------|-------------|---------|
+| 🟢 Green | 0-50% | Safe usage |
+| 🟡 Yellow | 50-75% | Moderate usage |
+| 🔴 Red | 75-90% | High usage |
+| 🟣 Magenta | 90-100% | Critical - approaching limit |
+
+**Example Output:**
+
+```bash
+# Token tracker standalone display
+node ~/.claude/token-tracker.js
+
+╔══════════════════════════════════════════════════════════════╗
+║  🤖 Active Model: GLM 5 1                                     ║
+╠══════════════════════════════════════════════════════════════╣
+║  📊 Token Usage:                                              ║
+║    Input:  45,200      tokens                                   ║
+║    Output: 32,100      tokens                                   ║
+║    Total:  77,300      tokens                                   ║
+╠══════════════════════════════════════════════════════════════╣
+║  📈 Context Window:                                           ║
+║    Used:   77,300      tokens                                   ║
+║    Total:  200,000     tokens                                   ║
+║    ████████████░░░░░░░░  38.7%                                  ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+```bash
+# Visual enhancements standalone display
+node ~/.claude/visual-enhancements.js
+
+┌─────────────────────────────────────────────────────────────┐
+│ 🤖 Alibaba Model Studio                                          │
+├─────────────────────────────────────────────────────────────┤
+│ Model: qwen3.6-plus                                             │
+│ Context: 1M tokens                                              │
+│ Capabilities:                                                    │
+│   Text Generation • Deep Thinking • Visual Understanding        │
+─────────────────────────────────────────────────────────────┘
+```
+
 ### Setup
 
 ```bash
@@ -228,8 +341,8 @@ claude-switch setup
 | glm-5 | 200K tokens | Text Generation, Deep Thinking |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
 | glm-4.7-flash | 256K tokens | Text Generation, Fast Inference |
-| kimi-k2.5 | 1M tokens | Text Generation, Deep Thinking, Visual |
-| MiniMax-M2.5 | 256K tokens | Text Generation, Deep Thinking |
+| kimi-k2.5 | 200K tokens | Text Generation, Deep Thinking, Visual |
+| MiniMax-M2.5 | 200K tokens | Text Generation, Deep Thinking |
 
 ### GLM/Z.AI (via coding-helper)
 

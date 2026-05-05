@@ -10,15 +10,19 @@ Claude AI Switcher is a TypeScript CLI tool that enables seamless switching betw
 
 ```
 claude-ai-switcher/
-├── src/
+── src/
 │   ├── index.ts           # Main CLI entry point (Commander.js)
 │   ├── config.ts          # API key and config management
 │   ├── models.ts          # Provider/model definitions + ModelTierMap
 │   ├── verify.ts          # API key verification (lightweight HTTP checks)
 │   ├── display.ts         # Console output utilities (chalk)
+│   ├── hooks/
+│   │   ├── index.ts       # Hook manager (install/remove hooks)
+│   │   ├── token-tracker.js       # Token tracking script
+│   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
-│   │   └── opencode.ts    # OpenCode config handler (~/.opencode.json)
+│   │   ── opencode.ts    # OpenCode config handler (~/.opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
@@ -28,7 +32,7 @@ claude-ai-switcher/
 │       └── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuration
+── tsconfig.json          # TypeScript configuration
 └── README.md              # User documentation
 ```
 
@@ -159,6 +163,29 @@ claude-switch key alibaba <key>   # Set API key
 claude-switch setup               # Interactive setup wizard
 ```
 
+### Hooks - Token Tracking & Visual Enhancements
+```bash
+# Install all hooks (token tracker + visual enhancements)
+claude-switch hooks install
+
+# Install individual hooks
+claude-switch hooks install-token   # Token tracker only
+claude-switch hooks install-visual  # Visual enhancements only
+
+# View status and manage hooks
+claude-switch hooks status          # Show current token usage and visual status
+claude-switch hooks reset           # Reset token usage counters
+claude-switch hooks remove          # Remove all hooks
+claude-switch hooks remove-token    # Remove token tracker
+claude-switch hooks remove-visual   # Remove visual enhancements
+```
+
+**Hook Files:**
+- `~/.claude/token-tracker.js` - Tracks input/output tokens with visual context bar
+- `~/.claude/visual-enhancements.js` - Shows active model, provider, context window, capabilities
+- `~/.claude/hooks-config.json` - Hook installation status
+- `~/.claude/token-usage.json` - Session token usage data
+
 ## Configuration Files
 
 | Client | Config File | Purpose |
@@ -167,6 +194,10 @@ claude-switch setup               # Interactive setup wizard
 | Claude Code | `~/.claude.json` | Onboarding flag (`hasCompletedOnboarding`) |
 | OpenCode | `~/.opencode.json` | Provider and agent configuration |
 | API Keys | `~/.claude-ai-switcher/config.json` | Secure API key storage |
+| Hooks | `~/.claude/hooks-config.json` | Hook installation status and configuration |
+| Token Tracker | `~/.claude/token-tracker.js` | Token tracking script (installed via hooks) |
+| Visual Enhancements | `~/.claude/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
+| Token Usage Data | `~/.claude/token-usage.json` | Session token usage tracking |
 
 ## Safety Features
 1. **Backup Before Modify**: All config file modifications create timestamped backups
@@ -175,6 +206,8 @@ claude-switch setup               # Interactive setup wizard
 4. **Local-Only Storage**: No cloud sync of API keys or configurations
 5. **Existence Checks**: Validates config files before reading/writing
 6. **Env Var Cleanup**: Clears provider-specific env vars when switching between providers
+7. **Hook Safety**: Hooks are optional and can be removed at any time without affecting core functionality
+8. **Token Usage Privacy**: Token usage data stored locally only, never transmitted
 
 ## External Dependencies
 - Claude Code and/or OpenCode must be installed separately

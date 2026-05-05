@@ -1,13 +1,14 @@
 {
   "name": "claude-ai-switcher",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, Gemini) for Claude Code and OpenCode",
   "main": "dist/index.js",
   "bin": {
     "claude-switch": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-hooks",
+    "copy-hooks": "xcopy /Y /I src\\hooks\\*.js dist\\hooks\\",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
     "clean": "rimraf dist"

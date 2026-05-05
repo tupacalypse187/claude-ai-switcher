@@ -149,7 +149,7 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
           }
         },
         limit: {
-          context: 196608,
+          context: 200000,
           output: 24576
         }
       },
@@ -166,7 +166,7 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
           }
         },
         limit: {
-          context: 202752,
+          context: 200000,
           output: 16384
         }
       },
@@ -183,7 +183,7 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
           }
         },
         limit: {
-          context: 202752,
+          context: 256000,
           output: 16384
         }
       },
@@ -200,7 +200,7 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
           }
         },
         limit: {
-          context: 262144,
+          context: 200000,
           output: 32768
         }
       }
