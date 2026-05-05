@@ -5,11 +5,13 @@
 **Claude AI Switcher** is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI) for **Claude Code** and **OpenCode** clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
 ### Key Features
-- Quick switching between Anthropic (default), Alibaba Coding Plan, and GLM/Z.AI providers
+- Quick switching between Anthropic (default), Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, and Gemini providers
 - **Model alias env vars** written to `~/.claude/settings.json` so Claude Code routes model tiers to the correct provider model (`ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`)
 - **Separate client control** — `claude-switch claude <provider>` targets Claude Code only, `claude-switch opencode <provider>` targets OpenCode only, bare `claude-switch <provider>` updates both
 - **Custom tier overrides** via `--opus`, `--sonnet`, `--haiku` flags
 - Model information display with context windows and capabilities
+- **Token tracking** — Visual context bar with percentage usage display (green/yellow/red/magenta color-coded)
+- **Visual enhancements** — Model card showing active model, provider, context window, and capabilities
 - Secure API key storage in `~/.claude-ai-switcher/config.json`
 - Automatic backup of existing configurations
 - Auto-onboarding to prevent Anthropic connection errors
@@ -23,16 +25,24 @@ claude-ai-switcher/
 │   ├── config.ts          # API key and config management
 │   ├── models.ts          # Provider/model definitions + ModelTierMap
 │   ├── display.ts         # Console output utilities (chalk)
+│   ├── verify.ts          # API key verification
+│   ├── hooks/
+│   │   ├── index.ts       # Hook manager (install/remove hooks)
+│   │   ├── token-tracker.js       # Token tracking script
+│   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
 │   │   └── opencode.ts    # OpenCode config handler (~/.opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
-│       └── glm.ts         # GLM/Z.AI provider (coding-helper)
+│       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
+│       ├── ollama.ts      # Ollama provider (LiteLLM proxy)
+│       ├── gemini.ts      # Gemini provider (LiteLLM proxy)
+│       ── openrouter.ts  # OpenRouter provider config
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuration
+── tsconfig.json          # TypeScript configuration
 └── README.md              # User documentation
 ```
 
@@ -78,6 +88,9 @@ claude-switch anthropic
 claude-switch alibaba
 claude-switch alibaba qwen3.6-plus
 claude-switch glm
+claude-switch openrouter
+claude-switch ollama
+claude-switch gemini
 
 # Switch Claude Code only
 claude-switch claude anthropic
@@ -104,6 +117,12 @@ claude-switch models alibaba      # Show models for specific provider
 # API key management
 claude-switch key alibaba         # Check if API key is set
 claude-switch key alibaba <key>   # Set API key
+
+# Hooks - Token tracking and visual enhancements
+claude-switch hooks install       # Install token tracker + visual enhancements
+claude-switch hooks status        # Show current token usage and visual status
+claude-switch hooks reset         # Reset token usage counters
+claude-switch hooks remove        # Remove all hooks
 ```
 
 ## Configuration Files
@@ -112,8 +131,12 @@ claude-switch key alibaba <key>   # Set API key
 |--------|-------------|---------|
 | Claude Code | `~/.claude/settings.json` | Environment variables for provider config + model alias env vars |
 | Claude Code | `~/.claude.json` | Onboarding flag (`hasCompletedOnboarding`) |
-| OpenCode | `~/.opencode.json` | Provider and agent configuration |
+| OpenCode | `~/.config/opencode/opencode.json` | Provider and agent configuration |
 | API Keys | `~/.claude-ai-switcher/config.json` | Secure API key storage |
+| Hooks | `~/.claude/hooks-config.json` | Hook installation status and configuration |
+| Token Tracker | `~/.claude/token-tracker.js` | Token tracking script (installed via hooks) |
+| Visual Enhancements | `~/.claude/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
+| Token Usage Data | `~/.claude/token-usage.json` | Session token usage tracking |
 
 ## How It Works
 
@@ -176,6 +199,15 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 - **Endpoint**: `https://coding-intl.dashscope.aliyuncs.com/apps/anthropic`
 - **Models**: qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, glm-5, glm-4.7, glm-4.7-flash, kimi-k2.5, MiniMax-M2.5
 - **Context Windows**: 200K - 1M tokens
+  - **qwen3.6-plus**: 1M tokens (balanced, 1M context)
+  - **qwen3-coder-plus**: 1M tokens (code, 1M context)
+  - **qwen3-max-2026-01-23**: 262K tokens (complex reasoning)
+  - **qwen3-coder-next**: 262K tokens (coding agent)
+  - **glm-5**: 200K tokens (flagship GLM)
+  - **glm-4.7**: 256K tokens (balanced GLM)
+  - **glm-4.7-flash**: 256K tokens (fast GLM)
+  - **kimi-k2.5**: 200K tokens (multimodal, 200K context)
+  - **MiniMax-M2.5**: 200K tokens (reasoning, 200K context)
 - **API Key Required**: Yes (from Alibaba Cloud Model Studio)
 
 ### GLM/Z.AI
@@ -188,6 +220,102 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 - **Models**: claude-opus-4-6, claude-opus-4-5, claude-sonnet-4-6, claude-sonnet-4-5, claude-haiku-4-5
 - **Context Windows**: 200K tokens
 - **Configuration**: Clears all provider env vars and model alias env vars to use native Claude
+
+## Hooks - Token Tracking & Visual Enhancements
+
+### Token Tracker (`~/.claude/token-tracker.js`)
+
+Tracks token usage across Claude Code sessions with:
+- **Input/Output token counting**
+- **Total session token usage**
+- **Visual context bar with percentage**
+- **Color-coded alerts** (green <50%, yellow <75%, red <90%, magenta <100%)
+
+#### Installation
+```bash
+claude-switch hooks install      # Install all hooks
+claude-switch hooks install-token  # Install only token tracker
+```
+
+#### Usage
+```bash
+claude-switch hooks status     # Show current token usage
+claude-switch hooks reset      # Reset token counters
+claude-switch hooks remove-token  # Remove token tracker
+```
+
+#### Output Example
+```
+╔══════════════════════════════════════════════════════════════╗
+║  🤖 Active Model: Qwen3 6 Plus                                ║
+╠══════════════════════════════════════════════════════════════╣
+║  📊 Token Usage:                                              ║
+║    Input:  12,450      tokens                                   ║
+║    Output: 8,320       tokens                                   ║
+║    Total:  20,770      tokens                                   ║
+╠══════════════════════════════════════════════════════════════╣
+║   Context Window:                                           ║
+║    Used:   20,770      tokens                                   ║
+║    Total:  1,000,000   tokens                                   ║
+║    ████░░░░░░░░░░░░░░░░   2.1%                                  ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+### Visual Enhancements (`~/.claude/visual-enhancements.js`)
+
+Provides visual display of active model and provider information:
+- **Model card** with provider name, model, context window, and capabilities
+- **Provider detection** from Claude Code settings
+- **Context usage percentage bar**
+- **Custom system prompt generation**
+
+#### Installation
+```bash
+claude-switch hooks install         # Install all hooks
+claude-switch hooks install-visual  # Install only visual enhancements
+```
+
+#### Usage
+```bash
+claude-switch hooks status          # Show visual status
+claude-switch hooks remove-visual   # Remove visual enhancements
+```
+
+#### Output Example
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 🤖 Alibaba Model Studio                                          │
+├─────────────────────────────────────────────────────────────┤
+│ Model: qwen3.6-plus                                             │
+│ Context: 1M tokens                                              │
+│ Capabilities:                                                    │
+│   Text Generation • Deep Thinking • Visual Understanding        │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Hook Configuration
+
+Hooks are managed via `~/.claude/hooks-config.json`:
+```json
+{
+  "tokenTracking": true,
+  "visualEnhancements": true,
+  "customPrompts": false,
+  "lastInstalled": "2026-05-05T07:00:00.000Z"
+}
+```
+
+### Token Usage Tracking
+
+Token usage is stored in `~/.claude/token-usage.json`:
+```json
+{
+  "totalInputTokens": 12450,
+  "totalOutputTokens": 8320,
+  "sessionStart": "2026-05-05T07:00:00.000Z",
+  "lastUpdated": "2026-05-05T08:30:00.000Z"
+}
+```
 
 ## Development Conventions
 
@@ -239,6 +367,16 @@ Tier override flags (Claude Code only):
   --opus <model>
   --sonnet <model>
   --haiku <model>
+
+Hooks commands:
+  claude-switch hooks install               → Install all hooks
+  claude-switch hooks install-token         → Install token tracker only
+  claude-switch hooks install-visual        → Install visual enhancements only
+  claude-switch hooks status                → Show current status
+  claude-switch hooks reset                 → Reset token counters
+  claude-switch hooks remove                → Remove all hooks
+  claude-switch hooks remove-token          → Remove token tracker
+  claude-switch hooks remove-visual         → Remove visual enhancements
 ```
 
 ### Testing Practices
@@ -272,6 +410,8 @@ Tier override flags (Claude Code only):
 4. **Local-Only Storage**: No cloud sync of API keys or configurations
 5. **Existence Checks**: Validates config files before reading/writing
 6. **Env Var Cleanup**: Clears provider-specific env vars when switching between providers
+7. **Hook Safety**: Hooks are optional and can be removed at any time without affecting core functionality
+8. **Token Usage Privacy**: Token usage data stored locally only, never transmitted
 
 ## Common Issues & Solutions
 
@@ -282,3 +422,7 @@ Tier override flags (Claude Code only):
 | `Unable to connect to Anthropic services` | Run any switch command to auto-set onboarding flag |
 | Config file issues | Run `claude-switch current` to diagnose |
 | Model aliases not working | Check `~/.claude/settings.json` for `env` section |
+| Hooks not installed | Run `claude-switch hooks install` |
+| Token tracker not showing | Check `~/.claude/token-tracker.js` exists |
+| Visual enhancements not showing | Check `~/.claude/visual-enhancements.js` exists |
+| Token usage not resetting | Run `claude-switch hooks reset` |

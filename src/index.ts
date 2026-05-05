@@ -65,13 +65,25 @@ import {
   findModel as findGeminiModel
 } from "./providers/gemini.js";
 import { verifyAllKeys, maskKey } from "./verify.js";
+import {
+  installAllHooks,
+  installTokenTracker,
+  installVisualEnhancements,
+  removeTokenTracker,
+  removeVisualEnhancements,
+  removeAllHooks,
+  areHooksInstalled,
+  showTokenStatus,
+  showVisualStatus,
+  resetTokenUsage
+} from "./hooks/index.js";
 
 const program = new Command();
 
 program
   .name("claude-switch")
   .description("Switch between AI providers for Claude Code. Also provides OpenCode helper commands.")
-  .version("1.1.0");
+  .version("1.1.1");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -1022,9 +1034,161 @@ program
       console.log(chalk.dim("  claude-switch list                     - List all providers"));
       console.log(chalk.dim("  claude-switch status                   - Show current config + verify API keys"));
       console.log(chalk.dim("  claude-switch current                  - Show current config"));
+      console.log(chalk.dim("  claude-switch hooks install            - Install token tracking & visual enhancements"));
+      console.log(chalk.dim("  claude-switch hooks status             - Show token usage and visual status"));
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Setup failed");
+      process.exit(1);
+    }
+  });
+
+// ---------------------------------------------------------------------------
+// Hooks commands - Token tracking and visual enhancements
+// ---------------------------------------------------------------------------
+
+const hooksCmd = program
+  .command("hooks")
+  .description("Manage Claude Code hooks (token tracking, visual enhancements)");
+
+hooksCmd
+  .command("install")
+  .description("Install all visual enhancements and token tracking")
+  .action(async () => {
+    try {
+      const ora = await import("ora").catch(() => null);
+      const spinner = ora ? ora.default("Installing hooks...").start() : null;
+
+      await installAllHooks();
+
+      spinner?.stop();
+      
+      console.log(chalk.green("\n✓ Hooks installed successfully!\n"));
+      console.log(chalk.cyan.bold("  Installed:"));
+      console.log(chalk.dim("    • Token Tracker (~/.claude/token-tracker.js)"));
+      console.log(chalk.dim("    • Visual Enhancements (~/.claude/visual-enhancements.js)"));
+      console.log();
+      console.log(chalk.yellow("  Usage:"));
+      console.log(chalk.dim("    • Token usage is tracked automatically"));
+      console.log(chalk.dim("    • Run 'claude-switch hooks status' to see current usage"));
+      console.log(chalk.dim("    • Run 'claude-switch hooks reset' to reset counters"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to install hooks");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("install-token")
+  .description("Install only token tracker")
+  .action(async () => {
+    try {
+      await installTokenTracker();
+      displaySuccess("Token tracker installed");
+      console.log(chalk.dim("  Location: ~/.claude/token-tracker.js"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to install token tracker");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("install-visual")
+  .description("Install only visual enhancements")
+  .action(async () => {
+    try {
+      await installVisualEnhancements();
+      displaySuccess("Visual enhancements installed");
+      console.log(chalk.dim("  Location: ~/.claude/visual-enhancements.js"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to install visual enhancements");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("status")
+  .description("Show token usage and visual status")
+  .action(async () => {
+    try {
+      const installed = await areHooksInstalled();
+      
+      console.log(chalk.green("\n=== Hooks Status ===\n"));
+      console.log(`  Token Tracker: ${installed.tokenTracking ? chalk.green("✓ Installed") : chalk.red("Not installed")}`);
+      console.log(`  Visual Enhancements: ${installed.visualEnhancements ? chalk.green("✓ Installed") : chalk.red("Not installed")}`);
+      console.log();
+      
+      if (installed.tokenTracking) {
+        await showTokenStatus();
+      }
+      
+      if (installed.visualEnhancements) {
+        await showVisualStatus();
+      }
+      
+      if (!installed.tokenTracking && !installed.visualEnhancements) {
+        console.log(chalk.yellow("  Run 'claude-switch hooks install' to install hooks"));
+        console.log();
+      }
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to get hooks status");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("reset")
+  .description("Reset token usage counters")
+  .action(async () => {
+    try {
+      await resetTokenUsage();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to reset token usage");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("remove")
+  .description("Remove all hooks")
+  .action(async () => {
+    try {
+      await removeAllHooks();
+      displaySuccess("All hooks removed");
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove hooks");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("remove-token")
+  .description("Remove token tracker")
+  .action(async () => {
+    try {
+      await removeTokenTracker();
+      displaySuccess("Token tracker removed");
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove token tracker");
+      process.exit(1);
+    }
+  });
+
+hooksCmd
+  .command("remove-visual")
+  .description("Remove visual enhancements")
+  .action(async () => {
+    try {
+      await removeVisualEnhancements();
+      displaySuccess("Visual enhancements removed");
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove visual enhancements");
       process.exit(1);
     }
   });
