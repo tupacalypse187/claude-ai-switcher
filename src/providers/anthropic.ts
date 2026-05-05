@@ -5,7 +5,7 @@
  * by removing MCP overrides and using default settings.
  */
 
-import { providers } from "../models.js";
+import { providers } from "../models";
 
 export const ANTHROPIC_PROVIDER = providers.anthropic;
 

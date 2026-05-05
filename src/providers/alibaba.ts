@@ -5,7 +5,7 @@
  * with Qwen, GLM, Kimi, and MiniMax models via Anthropic-compatible API.
  */
 
-import { providers, alibabaModels } from "../models.js";
+import { providers, alibabaModels } from "../models";
 
 export const ALIBABA_PROVIDER = providers.alibaba;
 

@@ -7,7 +7,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as os from "os";
-import { ModelTierMap } from "../models.js";
+import { ModelTierMap } from "../models";
 
 export interface ClaudeSettings {
   mcpServers?: Record<string, any>;

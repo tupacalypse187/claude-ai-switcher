@@ -5,7 +5,7 @@
  * with models like Qwen3.6 Plus and OpenRouter Free via Anthropic-compatible API.
  */
 
-import { providers, openrouterModels } from "../models.js";
+import { providers, openrouterModels } from "../models";
 
 export const OPENROUTER_PROVIDER = providers.openrouter;
 

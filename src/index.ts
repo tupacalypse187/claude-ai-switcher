@@ -21,7 +21,7 @@ import {
   OLLAMA_DEFAULT_TIER_MAP,
   GEMINI_DEFAULT_TIER_MAP,
   getAlibabaTierMap
-} from "./models.js";
+} from "./models";
 import {
   configureAnthropic as configureClaudeAnthropic,
   configureAlibaba as configureClaudeAlibaba,
@@ -31,7 +31,7 @@ import {
   configureGemini as configureClaudeGemini,
   getCurrentProvider as getClaudeProvider,
   claudeSettingsExists
-} from "./clients/claude-code.js";
+} from "./clients/claude-code";
 import {
   configureAlibaba as configureOpenCodeAlibaba,
   configureOpenRouter as configureOpenCodeOpenRouter,
@@ -39,16 +39,16 @@ import {
   configureGemini as configureOpenCodeGemini,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
-} from "./clients/opencode.js";
-import { getApiKey, setApiKey, hasApiKey } from "./config.js";
+} from "./clients/opencode";
+import { getApiKey, setApiKey, hasApiKey } from "./config";
 import {
   displayModels,
   displaySuccess,
   displayError,
   displayWarning,
   displayProviders
-} from "./display.js";
-import { reloadGLMConfig, isCodingHelperInstalled } from "./providers/glm.js";
+} from "./display";
+import { reloadGLMConfig, isCodingHelperInstalled } from "./providers/glm";
 import {
   isLitellmInstalled as isLitellmInstalledForOllama,
   isOllamaInstalled,
@@ -56,15 +56,15 @@ import {
   startLitellmProxy,
   getOllamaConfig,
   findModel as findOllamaModel
-} from "./providers/ollama.js";
+} from "./providers/ollama";
 import {
   isLitellmInstalled as isLitellmInstalledForGemini,
   isGeminiKeyValid,
   startGeminiLitellmProxy,
   getGeminiConfig,
   findModel as findGeminiModel
-} from "./providers/gemini.js";
-import { verifyAllKeys, maskKey } from "./verify.js";
+} from "./providers/gemini";
+import { verifyAllKeys, maskKey } from "./verify";
 import {
   installAllHooks,
   installTokenTracker,
@@ -76,7 +76,7 @@ import {
   showTokenStatus,
   showVisualStatus,
   resetTokenUsage
-} from "./hooks/index.js";
+} from "./hooks/index";
 
 const program = new Command();
 
