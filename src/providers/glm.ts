@@ -6,7 +6,7 @@
  */
 
 import { platform } from "os";
-import { providers, glmModels } from "../models.js";
+import { providers, glmModels } from "../models";
 
 export const GLM_PROVIDER = providers.glm;
 

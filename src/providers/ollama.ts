@@ -12,7 +12,7 @@
  */
 
 import { platform } from "os";
-import { providers, ollamaModels } from "../models.js";
+import { providers, ollamaModels } from "../models";
 
 export const OLLAMA_PROVIDER = providers.ollama;
 

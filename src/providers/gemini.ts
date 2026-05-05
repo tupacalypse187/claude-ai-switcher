@@ -11,7 +11,7 @@
  * - LiteLLM proxy running on port 4001
  */
 
-import { providers, geminiModels } from "../models.js";
+import { providers, geminiModels } from "../models";
 
 export const GEMINI_PROVIDER = providers.gemini;
 
