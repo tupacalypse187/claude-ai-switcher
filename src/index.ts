@@ -657,7 +657,7 @@ opencodeRemoveCmd
   .description("Remove Alibaba Coding Plan provider from OpenCode")
   .action(async () => {
     try {
-      const { removeProvider } = await import("./clients/opencode.js");
+      const { removeProvider } = await import("./clients/opencode");
       await removeProvider("bailian-coding-plan");
 
       displaySuccess("Removed Alibaba Coding Plan provider from OpenCode");
@@ -674,7 +674,7 @@ opencodeRemoveCmd
   .description("Remove OpenRouter provider from OpenCode")
   .action(async () => {
     try {
-      const { removeProvider } = await import("./clients/opencode.js");
+      const { removeProvider } = await import("./clients/opencode");
       await removeProvider("openrouter");
 
       displaySuccess("Removed OpenRouter provider from OpenCode");
@@ -691,7 +691,7 @@ opencodeRemoveCmd
   .description("Remove Ollama provider from OpenCode")
   .action(async () => {
     try {
-      const { removeProvider } = await import("./clients/opencode.js");
+      const { removeProvider } = await import("./clients/opencode");
       await removeProvider("ollama");
 
       displaySuccess("Removed Ollama provider from OpenCode");
@@ -708,7 +708,7 @@ opencodeRemoveCmd
   .description("Remove Gemini provider from OpenCode")
   .action(async () => {
     try {
-      const { removeProvider } = await import("./clients/opencode.js");
+      const { removeProvider } = await import("./clients/opencode");
       await removeProvider("gemini");
 
       displaySuccess("Removed Gemini provider from OpenCode");
