@@ -73,15 +73,17 @@ claude-switch opencode add alibaba
 # Add OpenRouter provider to OpenCode
 claude-switch opencode add openrouter
 
-# Add Ollama or Gemini provider to OpenCode
+# Add Ollama, Gemini, or GLM provider to OpenCode
 claude-switch opencode add ollama
 claude-switch opencode add gemini
+claude-switch opencode add glm
 
 # Remove providers
 claude-switch opencode remove alibaba
 claude-switch opencode remove openrouter
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
+claude-switch opencode remove glm
 ```
 
 ## Commands
@@ -126,12 +128,14 @@ claude-switch opencode add alibaba
 claude-switch opencode add openrouter
 claude-switch opencode add ollama
 claude-switch opencode add gemini
+claude-switch opencode add glm
 
 # Remove providers from OpenCode
 claude-switch opencode remove alibaba
 claude-switch opencode remove openrouter
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
+claude-switch opencode remove glm
 ```
 
 **Note**: OpenCode configuration is stored at `~/.config/opencode/opencode.json`. The `add` command adds the provider with all available models. The `remove` command removes only the specified provider, preserving any other providers you have configured.
@@ -539,7 +543,20 @@ Running `claude-switch opencode remove alibaba` removes only the `bailian-coding
 
 ### GLM/Z.AI Configuration
 
-GLM uses the `@z_ai/coding-helper` package to manage its configuration. The tool triggers `coding-helper auth reload claude` to apply GLM settings, plus sets the model tier aliases.
+GLM uses the `@z_ai/coding-helper` package to manage its configuration. For Claude Code, the tool triggers `coding-helper auth reload claude` to apply GLM settings, plus sets the model tier aliases.
+
+For OpenCode, run `claude-switch opencode add glm` to add the GLM provider. This reads the auth credentials from Claude Code's settings (set by `coding-helper auth reload claude`) and writes the GLM provider config with all models to `~/.config/opencode/opencode.json`:
+
+```bash
+# Set up GLM auth in Claude Code first
+claude-switch glm
+
+# Then add to OpenCode
+claude-switch opencode add glm
+
+# Remove when done
+claude-switch opencode remove glm
+```
 
 ## Example Output
 

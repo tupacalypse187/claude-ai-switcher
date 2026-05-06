@@ -134,8 +134,10 @@ claude-switch opencode glm
 claude-switch opencode openrouter
 claude-switch opencode add ollama
 claude-switch opencode add gemini
+claude-switch opencode add glm
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
+claude-switch opencode remove glm
 ```
 
 ### Configure Model Tiers
