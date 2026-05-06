@@ -319,7 +319,7 @@ export async function getCurrentProvider(): Promise<{
   }
 
   // Check for GLM via z.ai endpoint (set by coding-helper auth reload)
-  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("z.ai")) {
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes(".z.ai")) {
     return {
       provider: "glm",
       model: settings.env["ANTHROPIC_MODEL"],

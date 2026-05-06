@@ -669,7 +669,7 @@ opencodeAddCmd
       let baseURL = claudeSettings.env?.["ANTHROPIC_BASE_URL"] || "";
       let apiKey = claudeSettings.env?.["ANTHROPIC_AUTH_TOKEN"] || "";
 
-      if (!baseURL || !baseURL.includes("z.ai")) {
+      if (!baseURL || !baseURL.includes(".z.ai")) {
         displayWarning("GLM not configured in Claude Code yet");
         console.log(chalk.dim("  Run 'claude-switch glm' first to set up coding-helper auth"));
         console.log();
