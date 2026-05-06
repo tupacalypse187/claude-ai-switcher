@@ -30,6 +30,7 @@ import {
   configureOllama as configureClaudeOllama,
   configureGemini as configureClaudeGemini,
   getCurrentProvider as getClaudeProvider,
+  readClaudeSettings as readClaudeSettings,
   claudeSettingsExists
 } from "./clients/claude-code";
 import {
@@ -37,6 +38,7 @@ import {
   configureOpenRouter as configureOpenCodeOpenRouter,
   configureOllama as configureOpenCodeOllama,
   configureGemini as configureOpenCodeGemini,
+  configureGLM as configureOpenCodeGLM,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
 } from "./clients/opencode";
@@ -83,7 +85,7 @@ const program = new Command();
 program
   .name("claude-switch")
   .description("Switch between AI providers for Claude Code. Also provides OpenCode helper commands.")
-  .version("1.1.1");
+  .version("1.1.2");
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -648,6 +650,46 @@ opencodeAddCmd
     }
   });
 
+opencodeAddCmd
+  .command("glm")
+  .description("Add GLM/Z.AI provider to OpenCode (requires @z_ai/coding-helper)")
+  .action(async () => {
+    try {
+      // Check coding-helper
+      const hasCodingHelper = await isCodingHelperInstalled();
+      if (!hasCodingHelper) {
+        displayWarning("coding-helper not found");
+        console.log(chalk.dim("  Install with: npm install -g @z_ai/coding-helper"));
+        console.log(chalk.dim("  Then run: coding-helper auth"));
+        console.log();
+      }
+
+      // Read GLM auth from Claude settings (set by coding-helper auth reload claude)
+      const claudeSettings = await readClaudeSettings();
+      let baseURL = claudeSettings.env?.["ANTHROPIC_BASE_URL"] || "";
+      let apiKey = claudeSettings.env?.["ANTHROPIC_AUTH_TOKEN"] || "";
+
+      if (!baseURL || !baseURL.includes("z.ai")) {
+        displayWarning("GLM not configured in Claude Code yet");
+        console.log(chalk.dim("  Run 'claude-switch glm' first to set up coding-helper auth"));
+        console.log();
+        return;
+      }
+
+      await configureOpenCodeGLM(baseURL, apiKey);
+
+      displaySuccess("Added GLM/Z.AI provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: glm"));
+      console.log(chalk.dim("  Models: glm-5.1, glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7, glm-4.7-flash"));
+      if (hasCodingHelper) console.log(chalk.dim("  Managed by: coding-helper"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to add GLM provider");
+      process.exit(1);
+    }
+  });
+
 const opencodeRemoveCmd = opencodeCmd
   .command("remove")
   .description("Remove a provider from OpenCode");
@@ -716,6 +758,23 @@ opencodeRemoveCmd
       console.log();
     } catch (error) {
       displayError(error instanceof Error ? error.message : "Failed to remove Gemini provider");
+      process.exit(1);
+    }
+  });
+
+opencodeRemoveCmd
+  .command("glm")
+  .description("Remove GLM/Z.AI provider from OpenCode")
+  .action(async () => {
+    try {
+      const { removeProvider } = await import("./clients/opencode");
+      await removeProvider("glm");
+
+      displaySuccess("Removed GLM/Z.AI provider from OpenCode");
+      console.log(chalk.dim("  Other providers remain unchanged"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove GLM provider");
       process.exit(1);
     }
   });
@@ -1026,10 +1085,12 @@ program
       console.log(chalk.dim("  claude-switch opencode add openrouter  - Add OpenRouter provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add ollama      - Add Ollama provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add gemini      - Add Gemini provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode add glm         - Add GLM/Z.AI provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove alibaba  - Remove Alibaba from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove openrouter - Remove OpenRouter from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove ollama   - Remove Ollama from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove gemini   - Remove Gemini from OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove glm      - Remove GLM/Z.AI from OpenCode"));
       console.log(chalk.dim("  claude-switch openrouter --opus <model> - Custom model aliases"));
       console.log(chalk.dim("  claude-switch list                     - List all providers"));
       console.log(chalk.dim("  claude-switch status                   - Show current config + verify API keys"));

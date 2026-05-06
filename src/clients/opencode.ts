@@ -237,6 +237,11 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.provider["gemini"];
   }
 
+  // Remove glm provider
+  if (settings.provider?.["glm"]) {
+    delete settings.provider["glm"];
+  }
+
   // Clean up empty provider object
   if (settings.provider && Object.keys(settings.provider).length === 0) {
     delete settings.provider;
@@ -246,12 +251,123 @@ export async function configureAnthropic(): Promise<void> {
 }
 
 /**
- * Configure OpenCode for GLM
- * GLM is managed by coding-helper, so we don't modify the config here
+ * Configure OpenCode for GLM/Z.AI
+ * Auth is managed by coding-helper — reads baseURL and apiKey from Claude settings
  */
-export async function configureGLM(): Promise<void> {
-  // GLM configuration is managed by coding-helper
-  // No changes needed to opencode.json
+export async function configureGLM(baseURL: string, apiKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  settings.$schema = "https://opencode.ai/config.json";
+
+  settings.provider = settings.provider || {};
+  settings.provider["glm"] = {
+    npm: "@ai-sdk/anthropic",
+    name: "GLM/Z.AI",
+    options: {
+      baseURL,
+      apiKey
+    },
+    models: {
+      "glm-5.1": {
+        name: "GLM-5.1",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 200000,
+          output: 16384
+        }
+      },
+      "glm-5v-turbo": {
+        name: "GLM-5V-Turbo",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 200000,
+          output: 16384
+        }
+      },
+      "glm-5-turbo": {
+        name: "GLM-5-Turbo",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 200000,
+          output: 16384
+        }
+      },
+      "glm-5": {
+        name: "GLM-5",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 200000,
+          output: 16384
+        }
+      },
+      "glm-4.7": {
+        name: "GLM-4.7",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 256000,
+          output: 16384
+        }
+      },
+      "glm-4.7-flash": {
+        name: "GLM-4.7-Flash",
+        modalities: {
+          input: ["text"],
+          output: ["text"]
+        },
+        limit: {
+          context: 256000,
+          output: 16384
+        }
+      }
+    }
+  };
+
+  await writeOpenCodeSettings(settings);
 }
 
 /**
@@ -487,6 +603,14 @@ export async function getCurrentProvider(): Promise<{
     return {
       provider: "gemini",
       endpoint: "http://localhost:4001/v1"
+    };
+  }
+
+  // Check for glm configuration
+  if (settings.provider?.["glm"]) {
+    return {
+      provider: "glm",
+      endpoint: settings.provider["glm"].options?.baseURL
     };
   }
 
