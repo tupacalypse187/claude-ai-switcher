@@ -103,11 +103,11 @@ claude-switch opencode alibaba qwen3.6-plus
 claude-switch opencode glm
 
 # Custom model tier aliases (Claude Code only)
-claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku glm-5
-claude-switch glm --opus glm-5.1 --sonnet glm-5v-turbo --haiku glm-5-turbo
+claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku kimi-k2.5
+claude-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
 
-# Specific configuration with qwen3.6-plus for opus, kimi-k2.5 for sonnet, glm-5 for haiku
-claude-switch claude alibaba --opus qwen3.6-plus --sonnet kimi-k2.5 --haiku glm-5
+# Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
+claude-switch claude alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
 
 # View information
 claude-switch current             # Show current configuration (both clients)
@@ -149,19 +149,19 @@ When switching Claude Code to Alibaba, the tool writes these environment variabl
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "YOUR_API_KEY",
     "ANTHROPIC_BASE_URL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic",
-    "ANTHROPIC_MODEL": "qwen3.6-plus",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.6-plus",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "kimi-k2.5",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5"
+    "ANTHROPIC_MODEL": "qwen3.7-plus",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.7-plus",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "kimi-k2.5"
   }
 }
 ```
 
 - `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_BASE_URL`, `ANTHROPIC_MODEL` — Route Claude Code to Alibaba's endpoint
 - `ANTHROPIC_DEFAULT_*_MODEL` — Map Claude's model tiers (opus/sonnet/haiku) to specific Alibaba models
-  - **Opus**: `qwen3.6-plus` (default balanced model)
-  - **Sonnet**: `kimi-k2.5` (fast with 1M context)
-  - **Haiku**: `glm-5` (efficient)
+  - **Opus**: `qwen3.7-plus` (default, 1M context)
+  - **Sonnet**: `qwen3.6-plus` (balanced, 1M context)
+  - **Haiku**: `kimi-k2.5` (200K context)
 
 Switching back to Anthropic clears all these env vars.
 
@@ -187,8 +187,8 @@ Default tier maps per provider:
 
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
-| Alibaba | qwen3.6-plus (default), selected model (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) | glm-5 (default), kimi-k2.5 (when specific model chosen) |
-| GLM | glm-5.1 | glm-5v-turbo | glm-5-turbo |
+| Alibaba | qwen3.7-plus (default), selected model (when specific model chosen) | qwen3.6-plus (default), qwen3.7-plus (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) |
+| GLM | glm-5.2[1m] | glm-5-turbo | glm-5v-turbo |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Switching to Anthropic clears all three vars.
@@ -197,8 +197,9 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 
 ### Alibaba Coding Plan
 - **Endpoint**: `https://coding-intl.dashscope.aliyuncs.com/apps/anthropic`
-- **Models**: qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, glm-5, glm-4.7, glm-4.7-flash, kimi-k2.5, MiniMax-M2.5
+- **Models**: qwen3.7-plus, qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, glm-5, glm-4.7, glm-4.7-flash, kimi-k2.5, MiniMax-M2.5
 - **Context Windows**: 200K - 1M tokens
+  - **qwen3.7-plus**: 1M tokens (balanced, 1M context)
   - **qwen3.6-plus**: 1M tokens (balanced, 1M context)
   - **qwen3-coder-plus**: 1M tokens (code, 1M context)
   - **qwen3-max-2026-01-23**: 262K tokens (complex reasoning)
@@ -212,8 +213,8 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 
 ### GLM/Z.AI
 - **Managed by**: `@z_ai/coding-helper` package
-- **Models**: glm-5.1, glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7
-- **Context Windows**: 200K - 256K tokens
+- **Models**: glm-5.2[1m], glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7
+- **Context Windows**: 200K - 1M tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
 
 ### Anthropic (Default)
@@ -347,12 +348,12 @@ interface ModelTierMap {
 
 // GLM default: best model per tier
 const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
-  opus: "glm-5.1",
-  sonnet: "glm-5v-turbo",
-  haiku: "glm-5-turbo"
+  opus: "glm-5.2[1m]",
+  sonnet: "glm-5-turbo",
+  haiku: "glm-5v-turbo"
 };
 
-// Alibaba default: opus = selected model, sonnet = qwen3.6-plus, haiku = kimi-k2.5
+// Alibaba default: opus = selected model, sonnet = qwen3.7-plus, haiku = qwen3.6-plus
 function getAlibabaTierMap(model: string): ModelTierMap
 ```
 

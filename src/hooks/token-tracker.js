@@ -17,6 +17,7 @@ const SETTINGS_FILE = path.join(os.homedir(), '.claude', 'settings.json');
 // Model context windows (matches src/models.ts)
 const MODEL_CONTEXT_WINDOWS = {
   // Alibaba Models
+  'qwen3.7-plus': 1000000,
   'qwen3.6-plus': 1000000,
   'qwen3-max-2026-01-23': 262144,
   'qwen3-coder-next': 262144,
@@ -28,7 +29,7 @@ const MODEL_CONTEXT_WINDOWS = {
   'MiniMax-M2.5': 200000,
 
   // GLM Models
-  'glm-5.1': 200000,
+  'glm-5.2[1m]': 1000000,
   'glm-5v-turbo': 200000,
   'glm-5-turbo': 200000,
 
