@@ -174,7 +174,7 @@ dist/
 ├── config.d.ts
 ├── models.js
 ├── verify.js
-├── display.ts
+├── display.js
 ├── clients/
 │   ├── claude-code.js
 │   ├── claude-code.d.ts

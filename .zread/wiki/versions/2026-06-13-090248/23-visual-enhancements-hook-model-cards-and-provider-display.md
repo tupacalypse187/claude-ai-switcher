@@ -51,7 +51,7 @@ Each detected provider resolves to a static metadata object in the `PROVIDER_INF
 | Provider | Icon | Display Name | Endpoint |
 |---|---|---|---|
 | `anthropic` | 🎭 | Anthropic | `api.anthropic.com` |
-| `alibaba` | 🤖 | Alibaba Model Studio | `coding-intl.dashscale.aliyuncs.com` |
+| `alibaba` | 🤖 | Alibaba Model Studio | `coding-intl.dashscope.aliyuncs.com` |
 | `glm` | 🤖 | GLM/Z.AI | `z.ai` |
 | `openrouter` | 🌐 | OpenRouter | `openrouter.ai` |
 | `ollama` | 🖥️ | Ollama (Local) | `localhost:4000` |
