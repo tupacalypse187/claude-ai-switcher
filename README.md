@@ -23,10 +23,12 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 
 ```bash
 cd claude-ai-switcher
-npm install
+npm ci  # reproducible install from package-lock.json (does NOT modify it)
 npm run build
 npm link  # Install globally
 ```
+
+> **Dependency flow:** Use `npm ci` for routine installs and after every pull — it installs exactly from `package-lock.json` and never modifies it, so it can't drift the lockfile or cause pull conflicts. Use `npm install <package>` or `npm update` only when intentionally adding or upgrading a dependency, then commit the updated `package-lock.json`.
 
 ## Platform Support
 
@@ -38,7 +40,7 @@ npm link  # Install globally
 
 ### Windows Notes
 
-- Build commands (`npm install`, `npm run build`) should be run in Git Bash, WSL, or PowerShell
+- Build commands (`npm ci`, `npm run build`) should be run in Git Bash, WSL, or PowerShell
 - The CLI works in any terminal after installation
 - GLM/Z.AI provider requires `coding-helper` to be in your PATH
 - The `clean` script uses `rimraf` for cross-platform compatibility

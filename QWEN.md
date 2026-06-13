@@ -55,8 +55,8 @@ claude-ai-switcher/
 ### Build Commands
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies (reproducible install from package-lock.json; does NOT modify it)
+npm ci
 
 # Build TypeScript to JavaScript
 npm run build
