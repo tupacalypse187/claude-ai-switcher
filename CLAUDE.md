@@ -22,7 +22,7 @@ claude-ai-switcher/
 │   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
-│   │   ── opencode.ts    # OpenCode config handler (~/.opencode.json)
+│   │   ── opencode.ts    # OpenCode config handler (~/.config/opencode/opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
@@ -194,7 +194,7 @@ claude-switch hooks remove-visual   # Remove visual enhancements
 |--------|-------------|---------|
 | Claude Code | `~/.claude/settings.json` | Environment variables for provider config + model alias env vars |
 | Claude Code | `~/.claude.json` | Onboarding flag (`hasCompletedOnboarding`) |
-| OpenCode | `~/.opencode.json` | Provider and agent configuration |
+| OpenCode | `~/.config/opencode/opencode.json` | Provider and agent configuration |
 | API Keys | `~/.claude-ai-switcher/config.json` | Secure API key storage |
 | Hooks | `~/.claude/hooks-config.json` | Hook installation status and configuration |
 | Token Tracker | `~/.claude/token-tracker.js` | Token tracking script (installed via hooks) |
@@ -260,7 +260,7 @@ The `.zread/` directory contains an AI-generated project wiki maintained with [Z
 
 **Path Handling**:
 - Always use `path.join()` and `os.homedir()` for cross-platform paths
-- The tool uses Unix-style dotfiles (`~/.claude/`, `~/.opencode.json`) which matches Claude Code's cross-platform convention
+- The tool writes to each client's native config path (`~/.claude/`, `~/.config/opencode/opencode.json`) for cross-platform compatibility
 
 **Build Scripts**:
 - `rimraf` is used instead of `rm -rf` for cross-platform directory deletion

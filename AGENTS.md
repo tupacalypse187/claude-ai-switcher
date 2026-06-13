@@ -22,7 +22,7 @@ Codex-ai-switcher/
 │   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── Codex.ts # Codex config handler (~/.Codex/)
-│   │   ── opencode.ts    # OpenCode config handler (~/.opencode.json)
+│   │   ── opencode.ts    # OpenCode config handler (~/.config/opencode/opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
@@ -192,7 +192,7 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 |--------|-------------|---------|
 | Codex | `~/.Codex/settings.json` | Environment variables for provider config + model alias env vars |
 | Codex | `~/.Codex.json` | Onboarding flag (`hasCompletedOnboarding`) |
-| OpenCode | `~/.opencode.json` | Provider and agent configuration |
+| OpenCode | `~/.config/opencode/opencode.json` | Provider and agent configuration |
 | API Keys | `~/.Codex-ai-switcher/config.json` | Secure API key storage |
 | Hooks | `~/.Codex/hooks-config.json` | Hook installation status and configuration |
 | Token Tracker | `~/.Codex/token-tracker.js` | Token tracking script (installed via hooks) |
@@ -258,7 +258,7 @@ The `.zread/` directory contains an AI-generated project wiki maintained with [Z
 
 **Path Handling**:
 - Always use `path.join()` and `os.homedir()` for cross-platform paths
-- The tool uses Unix-style dotfiles (`~/.Codex/`, `~/.opencode.json`) which matches Codex's cross-platform convention
+- The tool writes to each client's native config path (`~/.Codex/`, `~/.config/opencode/opencode.json`) for cross-platform compatibility
 
 **Build Scripts**:
 - `rimraf` is used instead of `rm -rf` for cross-platform directory deletion

@@ -32,7 +32,7 @@ claude-ai-switcher/
 │   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
-│   │   └── opencode.ts    # OpenCode config handler (~/.opencode.json)
+│   │   └── opencode.ts    # OpenCode config handler (~/.config/opencode/opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
