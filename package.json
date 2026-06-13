@@ -4,7 +4,7 @@
   "description": "Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, Gemini) for Claude Code and OpenCode",
   "main": "dist/index.js",
   "bin": {
-    "claude-switch": "./dist/index.js"
+    "claude-switch": "dist/index.js"
   },
   "files": [
     "dist/",
