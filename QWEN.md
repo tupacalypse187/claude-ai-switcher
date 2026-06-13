@@ -32,7 +32,7 @@ claude-ai-switcher/
 │   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
 │   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
-│   │   └── opencode.ts    # OpenCode config handler (~/.opencode.json)
+│   │   └── opencode.ts    # OpenCode config handler (~/.config/opencode/opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
 │       ├── alibaba.ts     # Alibaba Coding Plan config
@@ -213,7 +213,7 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 
 ### GLM/Z.AI
 - **Managed by**: `@z_ai/coding-helper` package
-- **Models**: glm-5.2[1m], glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7
+- **Models**: glm-5.2[1m], glm-5v-turbo, glm-5-turbo, glm-5.1, glm-4.7
 - **Context Windows**: 200K - 1M tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
 

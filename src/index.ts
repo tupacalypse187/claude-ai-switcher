@@ -10,6 +10,8 @@
 import { Command } from "commander";
 import chalk from "chalk";
 import * as readline from "readline";
+import * as fs from "fs-extra";
+import * as path from "path";
 
 import {
   providers,
@@ -80,12 +82,16 @@ import {
   resetTokenUsage
 } from "./hooks/index";
 
+// Read version from package.json at runtime so `claude-switch --version` never drifts.
+// package.json lives outside src/rootDir, so resolve it relative to this compiled file.
+const pkgVersion = (fs.readJsonSync(path.join(__dirname, "..", "package.json")) as { version: string }).version;
+
 const program = new Command();
 
 program
   .name("claude-switch")
   .description("Switch between AI providers for Claude Code. Also provides OpenCode helper commands.")
-  .version("1.1.2");
+  .version(pkgVersion);
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -681,7 +687,7 @@ opencodeAddCmd
       displaySuccess("Added GLM/Z.AI provider to OpenCode");
       console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
       console.log(chalk.dim("  Provider: glm"));
-      console.log(chalk.dim("  Models: glm-5.1, glm-5v-turbo, glm-5-turbo, glm-5, glm-4.7, glm-4.7-flash"));
+      console.log(chalk.dim("  Models: glm-5.1, glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash"));
       if (hasCodingHelper) console.log(chalk.dim("  Managed by: coding-helper"));
       console.log();
     } catch (error) {

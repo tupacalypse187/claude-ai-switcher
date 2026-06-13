@@ -177,11 +177,11 @@ export const glmModels: Model[] = [
     description: "Zhipu's fast turbo model combining strong reasoning with low latency."
   },
   {
-    id: "glm-5",
-    name: "GLM-5",
+    id: "glm-5.1",
+    name: "GLM-5.1",
     contextWindow: 200000,
     capabilities: ["Text Generation", "Deep Thinking"],
-    description: "Zhipu's flagship model with enhanced reasoning and deep thinking capabilities."
+    description: "Zhipu's GLM-5.1 model with enhanced reasoning and deep thinking capabilities."
   },
   {
     id: "glm-4.7",

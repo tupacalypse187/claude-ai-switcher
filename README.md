@@ -358,7 +358,7 @@ claude-switch setup
 | glm-5.2[1m] | 1M tokens | Text Generation, Deep Thinking |
 | glm-5v-turbo | 200K tokens | Text Generation, Deep Thinking, Visual Understanding, Visual Programming |
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
-| glm-5 | 200K tokens | Text Generation, Deep Thinking |
+| glm-5.1 | 200K tokens | Text Generation, Deep Thinking |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
 
 ### Anthropic (Default)

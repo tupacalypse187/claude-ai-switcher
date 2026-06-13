@@ -336,23 +336,6 @@ export async function configureGLM(baseURL: string, apiKey: string): Promise<voi
           output: 16384
         }
       },
-      "glm-5": {
-        name: "GLM-5",
-        modalities: {
-          input: ["text"],
-          output: ["text"]
-        },
-        options: {
-          thinking: {
-            type: "enabled",
-            budgetTokens: 8192
-          }
-        },
-        limit: {
-          context: 200000,
-          output: 16384
-        }
-      },
       "glm-4.7": {
         name: "GLM-4.7",
         modalities: {
