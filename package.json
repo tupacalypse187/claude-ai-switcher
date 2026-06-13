@@ -6,6 +6,16 @@
   "bin": {
     "claude-switch": "./dist/index.js"
   },
+  "files": [
+    "dist/",
+    "src/",
+    "scripts/",
+    "tsconfig.json",
+    "AGENTS.md",
+    "ARCHITECTURE.md",
+    "CLAUDE.md",
+    "QWEN.md"
+  ],
   "scripts": {
     "build": "tsc && npm run copy-hooks",
     "copy-hooks": "node scripts/copy-hooks.js",
@@ -26,7 +36,7 @@
     "gemini",
     "litellm"
   ],
-  "author": "",
+  "author": "Chad Yantorno",
   "license": "MIT",
   "dependencies": {
     "commander": "^11.1.0",
