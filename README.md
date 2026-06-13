@@ -142,21 +142,21 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 
 | Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) |
 |---------|-------------------|---------------|---------------------|-----------------|-----------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.6-plus` | `glm-5.1` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-5` | `glm-5-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.2[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` |
 
 Override any tier at switch time:
 
 ```bash
 # Set all three tiers (default for Alibaba)
-claude-switch alibaba qwen3.6-plus
+claude-switch alibaba qwen3.7-plus
 
 # Override individual tiers
-claude-switch alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku glm-5
+claude-switch alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku kimi-k2.5
 
 # Custom configuration with specific model assignments
-claude-switch alibaba --opus qwen3.6-plus --sonnet kimi-k2.5 --haiku glm-5
+claude-switch alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
 
 # GLM with custom haiku tier
 claude-switch glm --haiku glm-4.7
@@ -334,6 +334,7 @@ claude-switch setup
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
+| qwen3.7-plus | 1M tokens | Text Generation, Deep Thinking, Visual Understanding |
 | qwen3.6-plus | 1M tokens | Text Generation, Deep Thinking, Visual Understanding |
 | qwen3-max-2026-01-23 | 262K tokens | Text Generation, Deep Thinking |
 | qwen3-coder-next | 262K tokens | Text Generation (Advanced Coding Agent) |
@@ -348,7 +349,7 @@ claude-switch setup
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
-| glm-5.1 | 200K tokens | Text Generation, Deep Thinking |
+| glm-5.2[1m] | 1M tokens | Text Generation, Deep Thinking |
 | glm-5v-turbo | 200K tokens | Text Generation, Deep Thinking, Visual Understanding, Visual Programming |
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
 | glm-5 | 200K tokens | Text Generation, Deep Thinking |
@@ -432,10 +433,10 @@ When you switch Claude Code to Alibaba, the tool writes these environment variab
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "YOUR_API_KEY",
     "ANTHROPIC_BASE_URL": "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic",
-    "ANTHROPIC_MODEL": "qwen3.6-plus",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.6-plus",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "kimi-k2.5",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-5"
+    "ANTHROPIC_MODEL": "qwen3.7-plus",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.7-plus",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "kimi-k2.5"
   }
 }
 ```
@@ -564,20 +565,20 @@ $ claude-switch status
 ```
 
 ```bash
-$ claude-switch alibaba qwen3.6-plus
+$ claude-switch alibaba qwen3.7-plus
 
 ✓ Switched to: Alibaba Coding Plan
 ────────────────────────────────────────────────────────────
-  Model: Qwen3.6-Plus
+  Model: Qwen3.7-Plus
   Context: 1M tokens
   Endpoint: https://coding-intl.dashscope.aliyuncs.com/apps/anthropic
   Capabilities: Text Generation, Deep Thinking, Visual Understanding
-  Balanced performance, speed, and cost. Supports thinking/non-thinking...
+  Most capable Qwen model with balanced performance, speed, and cost...
 
   Claude model aliases:
-    ANTHROPIC_DEFAULT_OPUS_MODEL   → qwen3.6-plus
-    ANTHROPIC_DEFAULT_SONNET_MODEL → kimi-k2.5
-    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → qwen3.7-plus
+    ANTHROPIC_DEFAULT_SONNET_MODEL → qwen3.6-plus
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → kimi-k2.5
 ```
 
 ```bash
@@ -586,18 +587,18 @@ $ claude-switch opencode add alibaba
 ✓ Added Alibaba Coding Plan provider to OpenCode
   Config: ~/.config/opencode/opencode.json
   Provider: bailian-coding-plan
-  Models: qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5
+  Models: qwen3.7-plus, qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, MiniMax-M2.5, glm-5, glm-4.7, kimi-k2.5
 ```
 
 ```bash
-$ claude-switch glm --opus glm-5.1 --sonnet glm-5v-turbo --haiku glm-5-turbo
+$ claude-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
 
 ✓ Switched to GLM/Z.AI
 
   Claude model aliases:
-    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.1
-    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5v-turbo
-    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5-turbo
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.2[1m]
+    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5-turbo
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5v-turbo
 ```
 
 ```bash

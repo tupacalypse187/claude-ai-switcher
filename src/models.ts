@@ -19,11 +19,12 @@ export interface ModelTierMap {
   haiku: string;
 }
 
-// Default GLM tier map: best model per tier
+// Default GLM tier map per Z.AI docs (https://docs.z.ai/devpack/latest-model)
+// GLM-5.2 with 1M context leads opus, with the fast turbo models filling sonnet/haiku
 export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
-  opus: "glm-5.1",
-  sonnet: "glm-5v-turbo",
-  haiku: "glm-5-turbo"
+  opus: "glm-5.2[1m]",
+  sonnet: "glm-5-turbo",
+  haiku: "glm-5v-turbo"
 };
 
 // Default OpenRouter tier map
@@ -48,22 +49,22 @@ export const GEMINI_DEFAULT_TIER_MAP: ModelTierMap = {
 };
 
 // For Alibaba: tier mapping based on model capabilities
-// Default mapping when no specific model chosen: Opus = qwen3.6-plus, Sonnet = kimi-k2.5, Haiku = glm-5
-// When specific model selected: Opus = selected model, Sonnet = qwen3.6-plus, Haiku = kimi-k2.5
+// Default mapping when no specific model chosen: Opus = qwen3.7-plus, Sonnet = qwen3.6-plus, Haiku = kimi-k2.5
+// When specific model selected: Opus = selected model, Sonnet = qwen3.7-plus, Haiku = qwen3.6-plus
 export function getAlibabaTierMap(model: string): ModelTierMap {
   // Use custom defaults when using the default model
-  if (model === "qwen3.6-plus") {
+  if (model === "qwen3.7-plus") {
     return {
-      opus: "qwen3.6-plus",
-      sonnet: "kimi-k2.5",
-      haiku: "glm-5"
+      opus: "qwen3.7-plus",
+      sonnet: "qwen3.6-plus",
+      haiku: "kimi-k2.5"
     };
   } else {
     // For other specific models, use the selected model as opus
     return {
       opus: model,
-      sonnet: "qwen3.6-plus",
-      haiku: "kimi-k2.5"
+      sonnet: "qwen3.7-plus",
+      haiku: "qwen3.6-plus"
     };
   }
 }
@@ -80,6 +81,13 @@ export function formatContext(tokens: number): string {
 
 // Alibaba Coding Plan Models
 export const alibabaModels: Model[] = [
+  {
+    id: "qwen3.7-plus",
+    name: "Qwen3.7-Plus",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding"],
+    description: "Most capable Qwen model with balanced performance, speed, and cost. Supports thinking/non-thinking modes, visual understanding, and a 1M context window."
+  },
   {
     id: "qwen3.6-plus",
     name: "Qwen3.6-Plus",
@@ -148,11 +156,11 @@ export const alibabaModels: Model[] = [
 // GLM/Z.AI Models (via coding-helper)
 export const glmModels: Model[] = [
   {
-    id: "glm-5.1",
-    name: "GLM-5.1",
-    contextWindow: 200000,
+    id: "glm-5.2[1m]",
+    name: "GLM-5.2 (1M Context)",
+    contextWindow: 1000000,
     capabilities: ["Text Generation", "Deep Thinking"],
-    description: "Zhipu's most advanced model with state-of-the-art reasoning and deep thinking capabilities."
+    description: "Zhipu's latest flagship model with state-of-the-art reasoning and a 1M context window. Recommended by Z.AI for the opus tier."
   },
   {
     id: "glm-5v-turbo",

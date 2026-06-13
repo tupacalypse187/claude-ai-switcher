@@ -86,6 +86,23 @@ export async function configureAlibaba(apiKey: string): Promise<void> {
       apiKey: apiKey
     },
     models: {
+      "qwen3.7-plus": {
+        name: "Qwen3.7 Plus",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 1000000,
+          output: 65536
+        }
+      },
       "qwen3.6-plus": {
         name: "Qwen3.6 Plus",
         modalities: {

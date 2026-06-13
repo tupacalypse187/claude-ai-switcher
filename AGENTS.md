@@ -1,15 +1,15 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
+Codex AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini) for Codex and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Codex.
 
 ## Project Structure
 
 ```
-claude-ai-switcher/
+Codex-ai-switcher/
 ── src/
 │   ├── index.ts           # Main CLI entry point (Commander.js)
 │   ├── config.ts          # API key and config management
@@ -21,7 +21,7 @@ claude-ai-switcher/
 │   │   ├── token-tracker.js       # Token tracking script
 │   │   └── visual-enhancements.js # Visual enhancements script
 │   ├── clients/
-│   │   ├── claude-code.ts # Claude Code config handler (~/.claude/)
+│   │   ├── Codex.ts # Codex config handler (~/.Codex/)
 │   │   ── opencode.ts    # OpenCode config handler (~/.opencode.json)
 │   └── providers/
 │       ├── anthropic.ts   # Anthropic provider config
@@ -58,7 +58,7 @@ npm run clean
 
 ### Global Installation
 ```bash
-npm link  # Install CLI globally as 'claude-switch'
+npm link  # Install CLI globally as 'Codex-switch'
 ```
 
 ## Key Architecture Patterns
@@ -70,7 +70,7 @@ npm link  # Install CLI globally as 'claude-switch'
 - `display.ts` handles all console output formatting
 
 ### Model Alias Environment Variables
-When switching Claude Code to a non-Anthropic provider, the tool writes into `~/.claude/settings.json`:
+When switching Codex to a non-Anthropic provider, the tool writes into `~/.Codex/settings.json`:
 ```json
 {
   "env": {
@@ -92,7 +92,7 @@ Default tier maps per provider:
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Status Command
-`claude-switch status` — Shows current provider/model for both clients, displays masked API keys, and verifies each key by making a lightweight API call. Uses `src/verify.ts` which performs:
+`Codex-switch status` — Shows current provider/model for both clients, displays masked API keys, and verifies each key by making a lightweight API call. Uses `src/verify.ts` which performs:
 - Alibaba: GET to DashScope models endpoint
 - OpenRouter: GET to OpenRouter models endpoint
 - Anthropic: GET to Anthropic models endpoint (uses `ANTHROPIC_API_KEY` env var)
@@ -114,90 +114,90 @@ interface ModelTierMap {
 
 ### Switch Providers
 ```bash
-# Switch both Claude Code and OpenCode
-claude-switch anthropic
-claude-switch alibaba
-claude-switch glm
+# Switch both Codex and OpenCode
+Codex-switch anthropic
+Codex-switch alibaba
+Codex-switch glm
 
-# Switch Claude Code only
-claude-switch claude anthropic
-claude-switch claude alibaba
-claude-switch claude glm
-claude-switch claude openrouter
-claude-switch claude ollama
-claude-switch claude gemini
+# Switch Codex only
+Codex-switch Codex anthropic
+Codex-switch Codex alibaba
+Codex-switch Codex glm
+Codex-switch Codex openrouter
+Codex-switch Codex ollama
+Codex-switch Codex gemini
 
 # Switch OpenCode only
-claude-switch opencode anthropic
-claude-switch opencode alibaba
-claude-switch opencode glm
-claude-switch opencode openrouter
-claude-switch opencode add ollama
-claude-switch opencode add gemini
-claude-switch opencode remove ollama
-claude-switch opencode remove gemini
+Codex-switch opencode anthropic
+Codex-switch opencode alibaba
+Codex-switch opencode glm
+Codex-switch opencode openrouter
+Codex-switch opencode add ollama
+Codex-switch opencode add gemini
+Codex-switch opencode remove ollama
+Codex-switch opencode remove gemini
 ```
 
 ### Configure Model Tiers
 ```bash
-# Custom model tier aliases (Claude Code only)
-claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
-claude-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
+# Custom model tier aliases (Codex only)
+Codex-switch Codex alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
+Codex-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
 
 # Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
-claude-switch claude alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
+Codex-switch Codex alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
 ```
 
 ### View Information
 ```bash
-claude-switch status              # Show current config + verify API keys
-claude-switch current             # Show current configuration (both clients)
-claude-switch list                # List all providers and models
-claude-switch models alibaba      # Show models for specific provider
+Codex-switch status              # Show current config + verify API keys
+Codex-switch current             # Show current configuration (both clients)
+Codex-switch list                # List all providers and models
+Codex-switch models alibaba      # Show models for specific provider
 ```
 
 ### API Key Management
 ```bash
-claude-switch key alibaba         # Check if API key is set
-claude-switch key alibaba <key>   # Set API key
-claude-switch setup               # Interactive setup wizard
+Codex-switch key alibaba         # Check if API key is set
+Codex-switch key alibaba <key>   # Set API key
+Codex-switch setup               # Interactive setup wizard
 ```
 
 ### Hooks - Token Tracking & Visual Enhancements
 ```bash
 # Install all hooks (token tracker + visual enhancements)
-claude-switch hooks install
+Codex-switch hooks install
 
 # Install individual hooks
-claude-switch hooks install-token   # Token tracker only
-claude-switch hooks install-visual  # Visual enhancements only
+Codex-switch hooks install-token   # Token tracker only
+Codex-switch hooks install-visual  # Visual enhancements only
 
 # View status and manage hooks
-claude-switch hooks status          # Show current token usage and visual status
-claude-switch hooks reset           # Reset token usage counters
-claude-switch hooks remove          # Remove all hooks
-claude-switch hooks remove-token    # Remove token tracker
-claude-switch hooks remove-visual   # Remove visual enhancements
+Codex-switch hooks status          # Show current token usage and visual status
+Codex-switch hooks reset           # Reset token usage counters
+Codex-switch hooks remove          # Remove all hooks
+Codex-switch hooks remove-token    # Remove token tracker
+Codex-switch hooks remove-visual   # Remove visual enhancements
 ```
 
 **Hook Files:**
-- `~/.claude/token-tracker.js` - Tracks input/output tokens with visual context bar
-- `~/.claude/visual-enhancements.js` - Shows active model, provider, context window, capabilities
-- `~/.claude/hooks-config.json` - Hook installation status
-- `~/.claude/token-usage.json` - Session token usage data
+- `~/.Codex/token-tracker.js` - Tracks input/output tokens with visual context bar
+- `~/.Codex/visual-enhancements.js` - Shows active model, provider, context window, capabilities
+- `~/.Codex/hooks-config.json` - Hook installation status
+- `~/.Codex/token-usage.json` - Session token usage data
 
 ## Configuration Files
 
 | Client | Config File | Purpose |
 |--------|-------------|---------|
-| Claude Code | `~/.claude/settings.json` | Environment variables for provider config + model alias env vars |
-| Claude Code | `~/.claude.json` | Onboarding flag (`hasCompletedOnboarding`) |
+| Codex | `~/.Codex/settings.json` | Environment variables for provider config + model alias env vars |
+| Codex | `~/.Codex.json` | Onboarding flag (`hasCompletedOnboarding`) |
 | OpenCode | `~/.opencode.json` | Provider and agent configuration |
-| API Keys | `~/.claude-ai-switcher/config.json` | Secure API key storage |
-| Hooks | `~/.claude/hooks-config.json` | Hook installation status and configuration |
-| Token Tracker | `~/.claude/token-tracker.js` | Token tracking script (installed via hooks) |
-| Visual Enhancements | `~/.claude/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
-| Token Usage Data | `~/.claude/token-usage.json` | Session token usage tracking |
+| API Keys | `~/.Codex-ai-switcher/config.json` | Secure API key storage |
+| Hooks | `~/.Codex/hooks-config.json` | Hook installation status and configuration |
+| Token Tracker | `~/.Codex/token-tracker.js` | Token tracking script (installed via hooks) |
+| Visual Enhancements | `~/.Codex/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
+| Token Usage Data | `~/.Codex/token-usage.json` | Session token usage tracking |
 
 ## Safety Features
 1. **Backup Before Modify**: All config file modifications create timestamped backups
@@ -210,7 +210,7 @@ claude-switch hooks remove-visual   # Remove visual enhancements
 8. **Token Usage Privacy**: Token usage data stored locally only, never transmitted
 
 ## External Dependencies
-- Claude Code and/or OpenCode must be installed separately
+- Codex and/or OpenCode must be installed separately
 - `@z_ai/coding-helper` package required for GLM/Z.AI provider support
 - API keys required for Alibaba (from Alibaba Cloud Model Studio)
 - [LiteLLM](https://github.com/BerriAI/litellm) with proxy support required for Ollama and Gemini (`pip install 'litellm[proxy]'`)
@@ -258,7 +258,7 @@ The `.zread/` directory contains an AI-generated project wiki maintained with [Z
 
 **Path Handling**:
 - Always use `path.join()` and `os.homedir()` for cross-platform paths
-- The tool uses Unix-style dotfiles (`~/.claude/`, `~/.opencode.json`) which matches Claude Code's cross-platform convention
+- The tool uses Unix-style dotfiles (`~/.Codex/`, `~/.opencode.json`) which matches Codex's cross-platform convention
 
 **Build Scripts**:
 - `rimraf` is used instead of `rm -rf` for cross-platform directory deletion
