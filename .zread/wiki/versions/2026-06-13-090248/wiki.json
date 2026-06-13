@@ -1,0 +1,219 @@
+{
+  "id": "2026-06-13-090248",
+  "generated_at": "2026-06-13T13:02:48.0288998Z",
+  "language": "en",
+  "pages": [
+    {
+      "slug": "1-overview-what-claude-ai-switcher-does-and-why-it-matters",
+      "title": "Overview: What Claude AI Switcher Does and Why It Matters",
+      "file": "1-overview-what-claude-ai-switcher-does-and-why-it-matters.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "2-quick-start-installation-and-first-provider-switch",
+      "title": "Quick Start: Installation and First Provider Switch",
+      "file": "2-quick-start-installation-and-first-provider-switch.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "3-interactive-setup-wizard-configuring-api-keys",
+      "title": "Interactive Setup Wizard: Configuring API Keys",
+      "file": "3-interactive-setup-wizard-configuring-api-keys.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "4-command-reference-complete-cli-cheatsheet",
+      "title": "Command Reference: Complete CLI Cheatsheet",
+      "file": "4-command-reference-complete-cli-cheatsheet.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "5-system-architecture-and-module-responsibilities",
+      "title": "System Architecture and Module Responsibilities",
+      "file": "5-system-architecture-and-module-responsibilities.md",
+      "section": "Deep Dive",
+      "group": "Core Architecture",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "6-provider-switching-flow-from-command-to-settings-write",
+      "title": "Provider Switching Flow: From Command to Settings Write",
+      "file": "6-provider-switching-flow-from-command-to-settings-write.md",
+      "section": "Deep Dive",
+      "group": "Core Architecture",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "7-configuration-file-map-where-everything-lives-on-disk",
+      "title": "Configuration File Map: Where Everything Lives on Disk",
+      "file": "7-configuration-file-map-where-everything-lives-on-disk.md",
+      "section": "Deep Dive",
+      "group": "Core Architecture",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "8-direct-api-providers-anthropic-alibaba-and-openrouter",
+      "title": "Direct API Providers: Anthropic, Alibaba, and OpenRouter",
+      "file": "8-direct-api-providers-anthropic-alibaba-and-openrouter.md",
+      "section": "Deep Dive",
+      "group": "Provider Integration Patterns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "9-litellm-proxy-providers-ollama-and-gemini-protocol-translation",
+      "title": "LiteLLM Proxy Providers: Ollama and Gemini Protocol Translation",
+      "file": "9-litellm-proxy-providers-ollama-and-gemini-protocol-translation.md",
+      "section": "Deep Dive",
+      "group": "Provider Integration Patterns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "10-litellm-proxy-lifecycle-spawning-health-checks-and-port-allocation",
+      "title": "LiteLLM Proxy Lifecycle: Spawning, Health Checks, and Port Allocation",
+      "file": "10-litellm-proxy-lifecycle-spawning-health-checks-and-port-allocation.md",
+      "section": "Deep Dive",
+      "group": "Provider Integration Patterns",
+      "level": "Advanced"
+    },
+    {
+      "slug": "11-glm-z-ai-provider-coding-helper-mcp-integration",
+      "title": "GLM/Z.AI Provider: coding-helper MCP Integration",
+      "file": "11-glm-z-ai-provider-coding-helper-mcp-integration.md",
+      "section": "Deep Dive",
+      "group": "Provider Integration Patterns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "12-opencode-helper-adding-and-removing-providers",
+      "title": "OpenCode Helper: Adding and Removing Providers",
+      "file": "12-opencode-helper-adding-and-removing-providers.md",
+      "section": "Deep Dive",
+      "group": "Provider Integration Patterns",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "13-model-tier-aliases-opus-sonnet-and-haiku-mapping",
+      "title": "Model Tier Aliases: Opus, Sonnet, and Haiku Mapping",
+      "file": "13-model-tier-aliases-opus-sonnet-and-haiku-mapping.md",
+      "section": "Deep Dive",
+      "group": "Model Tier System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "14-custom-tier-overrides-with-opus-sonnet-haiku-flags",
+      "title": "Custom Tier Overrides with --opus, --sonnet, --haiku Flags",
+      "file": "14-custom-tier-overrides-with-opus-sonnet-haiku-flags.md",
+      "section": "Deep Dive",
+      "group": "Model Tier System",
+      "level": "Advanced"
+    },
+    {
+      "slug": "15-model-and-provider-type-definitions",
+      "title": "Model and Provider Type Definitions",
+      "file": "15-model-and-provider-type-definitions.md",
+      "section": "Deep Dive",
+      "group": "Model Tier System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "16-api-key-storage-and-local-configuration-management",
+      "title": "API Key Storage and Local Configuration Management",
+      "file": "16-api-key-storage-and-local-configuration-management.md",
+      "section": "Deep Dive",
+      "group": "Configuration Management",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "17-api-key-verification-lightweight-http-health-checks",
+      "title": "API Key Verification: Lightweight HTTP Health Checks",
+      "file": "17-api-key-verification-lightweight-http-health-checks.md",
+      "section": "Deep Dive",
+      "group": "Configuration Management",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "18-safe-configuration-backup-strategy-and-onboarding-auto-set",
+      "title": "Safe Configuration: Backup Strategy and Onboarding Auto-Set",
+      "file": "18-safe-configuration-backup-strategy-and-onboarding-auto-set.md",
+      "section": "Deep Dive",
+      "group": "Configuration Management",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "19-provider-detection-inferring-active-provider-from-settings",
+      "title": "Provider Detection: Inferring Active Provider from Settings",
+      "file": "19-provider-detection-inferring-active-provider-from-settings.md",
+      "section": "Deep Dive",
+      "group": "Configuration Management",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "20-claude-code-client-writing-environment-variables-and-mcp-servers",
+      "title": "Claude Code Client: Writing Environment Variables and MCP Servers",
+      "file": "20-claude-code-client-writing-environment-variables-and-mcp-servers.md",
+      "section": "Deep Dive",
+      "group": "Client Adapters",
+      "level": "Advanced"
+    },
+    {
+      "slug": "21-opencode-client-provider-schema-and-json-configuration",
+      "title": "OpenCode Client: Provider Schema and JSON Configuration",
+      "file": "21-opencode-client-provider-schema-and-json-configuration.md",
+      "section": "Deep Dive",
+      "group": "Client Adapters",
+      "level": "Advanced"
+    },
+    {
+      "slug": "22-token-tracker-hook-context-usage-monitoring",
+      "title": "Token Tracker Hook: Context Usage Monitoring",
+      "file": "22-token-tracker-hook-context-usage-monitoring.md",
+      "section": "Deep Dive",
+      "group": "Hooks and Visual Enhancements",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "23-visual-enhancements-hook-model-cards-and-provider-display",
+      "title": "Visual Enhancements Hook: Model Cards and Provider Display",
+      "file": "23-visual-enhancements-hook-model-cards-and-provider-display.md",
+      "section": "Deep Dive",
+      "group": "Hooks and Visual Enhancements",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "24-hook-installation-and-lifecycle-management",
+      "title": "Hook Installation and Lifecycle Management",
+      "file": "24-hook-installation-and-lifecycle-management.md",
+      "section": "Deep Dive",
+      "group": "Hooks and Visual Enhancements",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "25-build-toolchain-typescript-configuration-and-npm-scripts",
+      "title": "Build Toolchain: TypeScript Configuration and npm Scripts",
+      "file": "25-build-toolchain-typescript-configuration-and-npm-scripts.md",
+      "section": "Deep Dive",
+      "group": "Build and Extensibility",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "26-cross-platform-compatibility-macos-linux-and-windows",
+      "title": "Cross-Platform Compatibility: macOS, Linux, and Windows",
+      "file": "26-cross-platform-compatibility-macos-linux-and-windows.md",
+      "section": "Deep Dive",
+      "group": "Build and Extensibility",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "27-adding-a-new-provider-step-by-step-implementation-guide",
+      "title": "Adding a New Provider: Step-by-Step Implementation Guide",
+      "file": "27-adding-a-new-provider-step-by-step-implementation-guide.md",
+      "section": "Deep Dive",
+      "group": "Build and Extensibility",
+      "level": "Advanced"
+    }
+  ]
+}
