@@ -2,10 +2,10 @@
 
 ## Project Overview
 
-**Claude AI Switcher** is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI) for **Claude Code** and **OpenCode** clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
+**Claude AI Switcher** is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, Muse) for **Claude Code** and **OpenCode** clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
 ### Key Features
-- Quick switching between Anthropic (default), Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, and Gemini providers
+- Quick switching between Anthropic (default), Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, and Muse providers
 - **Model alias env vars** written to `~/.claude/settings.json` so Claude Code routes model tiers to the correct provider model (`ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`)
 - **Separate client control** — `claude-switch claude <provider>` targets Claude Code only, `claude-switch opencode <provider>` targets OpenCode only, bare `claude-switch <provider>` updates both
 - **Custom tier overrides** via `--opus`, `--sonnet`, `--haiku` flags
@@ -39,7 +39,8 @@ claude-ai-switcher/
 │       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
 │       ├── ollama.ts      # Ollama provider (LiteLLM proxy)
 │       ├── gemini.ts      # Gemini provider (LiteLLM proxy)
-│       ── openrouter.ts  # OpenRouter provider config
+│       ├── openrouter.ts  # OpenRouter provider config
+│       └── muse.ts        # Muse provider (Meta, https://api.meta.ai)
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
 ── tsconfig.json          # TypeScript configuration
@@ -91,11 +92,14 @@ claude-switch glm
 claude-switch openrouter
 claude-switch ollama
 claude-switch gemini
+claude-switch muse
+claude-switch muse muse-spark-1.2
 
 # Switch Claude Code only
 claude-switch claude anthropic
 claude-switch claude alibaba qwen3.6-plus
 claude-switch claude glm
+claude-switch claude muse
 
 # Switch OpenCode only
 claude-switch opencode anthropic
@@ -189,6 +193,10 @@ Default tier maps per provider:
 |----------|------|--------|-------|
 | Alibaba | qwen3.7-plus (default), selected model (when specific model chosen) | qwen3.6-plus (default), qwen3.7-plus (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) |
 | GLM | glm-5.2[1m] | glm-5-turbo | glm-5v-turbo |
+| OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
+| Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
+| Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
+| Muse | muse-spark-1.2-contributor | muse-spark-1.2-contributor | muse-spark-1.2-contributor |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Switching to Anthropic clears all three vars.
@@ -216,6 +224,13 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 - **Models**: glm-5.2[1m], glm-5v-turbo, glm-5-turbo, glm-5.1, glm-4.7
 - **Context Windows**: 200K - 1M tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
+
+### Muse (Meta, direct)
+- **Endpoint**: `https://api.meta.ai`
+- **Models**: muse-spark-1.2-contributor (discounted default), muse-spark-1.2
+- **Context Windows**: 256K tokens
+- **API Key Required**: Yes (`MODEL_API_KEY` for https://api.meta.ai, stored as `museApiKey`)
+- **Env**: `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`, tier aliases, `CLAUDE_CODE_SUBAGENT_MODEL`, `ENABLE_TOOL_SEARCH=true`
 
 ### Anthropic (Default)
 - **Models**: claude-opus-4-6, claude-opus-4-5, claude-sonnet-4-6, claude-sonnet-4-5, claude-haiku-4-5
@@ -401,6 +416,7 @@ Hooks commands:
 ### API Key Sources
 - **Alibaba**: [Alibaba Cloud Model Studio](https://modelstudio.console.alibabacloud.com/)
 - **GLM/Z.AI**: Via `coding-helper auth` interactive setup
+- **Muse**: https://api.meta.ai (`MODEL_API_KEY` → `claude-switch key muse <key>` or `claude-switch setup`)
 - **Anthropic**: Uses system/default Anthropic configuration
 
 ## Safety Features

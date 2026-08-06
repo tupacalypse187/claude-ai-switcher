@@ -1,15 +1,16 @@
 # Claude AI Switcher
 
-Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, Gemini) for **Claude Code** with ease. Also provides helper commands to manage providers for **OpenCode**.
+Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, Gemini, Muse) for **Claude Code** with ease. Also provides helper commands to manage providers for **OpenCode**.
 
 ## Features
 
-- **Quick Switching**: Switch between Anthropic, GLM/Z.AI, Alibaba Coding Plan, OpenRouter, Ollama (local), and Gemini (Google) with a single command
+- **Quick Switching**: Switch between Anthropic, GLM/Z.AI, Alibaba Coding Plan, OpenRouter, Ollama (local), Gemini (Google), and Muse (Meta) with a single command
 - **Model Aliases**: Automatically sets `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` in Claude Code's settings so you always know what model is active
 - **Custom Tier Overrides**: Use `--opus`, `--sonnet`, `--haiku` to pin specific models per tier
 - **API Key Verification**: Run `claude-switch status` to check current config and verify API keys are valid
 - **Local Models**: Use Ollama for fully local, private AI with DeepSeek R1, Qwen, Llama, and more
 - **Google Gemini**: Access Gemini 2.5 Pro/Flash models with 1M context via LiteLLM proxy
+- **Meta Muse**: Access Muse Spark 1.2 models (including discounted contributor variant) via https://api.meta.ai — direct Anthropic-compatible, no proxy
 - **Auto Proxy Management**: Automatically starts LiteLLM translation proxy for Ollama and Gemini
 - **Model Information**: See model capabilities, context windows, and descriptions when switching
 - **Token Tracking**: Visual context bar with percentage usage display
@@ -66,6 +67,10 @@ claude-switch ollama
 # Switch to Google Gemini (requires LiteLLM proxy)
 claude-switch gemini
 
+# Switch to Muse (Meta) — discounted contributor is the default
+claude-switch muse
+claude-switch muse muse-spark-1.2   # full model
+
 # Switch back to default Anthropic
 claude-switch anthropic
 
@@ -75,10 +80,11 @@ claude-switch opencode add alibaba
 # Add OpenRouter provider to OpenCode
 claude-switch opencode add openrouter
 
-# Add Ollama, Gemini, or GLM provider to OpenCode
+# Add Ollama, Gemini, GLM or Muse provider to OpenCode
 claude-switch opencode add ollama
 claude-switch opencode add gemini
 claude-switch opencode add glm
+claude-switch opencode add muse
 
 # Remove providers
 claude-switch opencode remove alibaba
@@ -86,6 +92,7 @@ claude-switch opencode remove openrouter
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
 claude-switch opencode remove glm
+claude-switch opencode remove muse
 ```
 
 ## Commands
@@ -103,6 +110,8 @@ claude-switch ollama                       # default: deepseek-r1:latest (starts
 claude-switch ollama qwen2.5-coder:latest  # specific model
 claude-switch gemini                       # default: gemini-2.5-pro (starts proxy)
 claude-switch gemini gemini-2.5-flash      # specific model
+claude-switch muse                         # default: muse-spark-1.2-contributor (discounted)
+claude-switch muse muse-spark-1.2          # specific model (full)
 ```
 
 ### Switch Claude Code (explicit targeting)
@@ -118,6 +127,8 @@ claude-switch claude ollama
 claude-switch claude ollama deepseek-r1:latest
 claude-switch claude gemini
 claude-switch claude gemini gemini-2.5-flash
+claude-switch claude muse
+claude-switch claude muse muse-spark-1.2
 ```
 
 ### OpenCode Helper Commands
@@ -131,6 +142,7 @@ claude-switch opencode add openrouter
 claude-switch opencode add ollama
 claude-switch opencode add gemini
 claude-switch opencode add glm
+claude-switch opencode add muse
 
 # Remove providers from OpenCode
 claude-switch opencode remove alibaba
@@ -138,6 +150,7 @@ claude-switch opencode remove openrouter
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
 claude-switch opencode remove glm
+claude-switch opencode remove muse
 ```
 
 **Note**: OpenCode configuration is stored at `~/.config/opencode/opencode.json`. The `add` command adds the provider with all available models. The `remove` command removes only the specified provider, preserving any other providers you have configured.
@@ -146,11 +159,11 @@ claude-switch opencode remove glm
 
 When switching Claude Code to a non-Anthropic provider, the tool writes model alias env vars into `~/.claude/settings.json` so Claude Code knows which model to route each tier to:
 
-| Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) |
-|---------|-------------------|---------------|---------------------|-----------------|-----------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.2[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` |
+| Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) | Default (Muse) |
+|---------|-------------------|---------------|---------------------|-----------------|-----------------|-----------------|
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.2[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` | `muse-spark-1.2-contributor` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` | `muse-spark-1.2-contributor` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` | `muse-spark-1.2-contributor` |
 
 Override any tier at switch time:
 
@@ -175,6 +188,9 @@ claude-switch ollama --opus deepseek-r1:latest --sonnet qwen2.5-coder:latest
 
 # Gemini with custom tiers
 claude-switch gemini --opus gemini-2.5-pro --haiku gemini-2.5-flash-lite
+
+# Muse with custom tiers (contributor is default, override to full)
+claude-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --haiku muse-spark-1.2-contributor
 ```
 
 Switching back to Anthropic clears these env vars so native Claude models are used again.
@@ -198,6 +214,7 @@ claude-switch models anthropic
 claude-switch models openrouter
 claude-switch models ollama
 claude-switch models gemini
+claude-switch models muse
 ```
 
 ### API Key Management
@@ -207,11 +224,13 @@ claude-switch models gemini
 claude-switch key alibaba <your-api-key>
 claude-switch key openrouter <your-api-key>
 claude-switch key gemini <your-api-key>
+claude-switch key muse <your-api-key>          # MODEL_API_KEY for https://api.meta.ai
 
 # Check if API key is set
 claude-switch key alibaba
 claude-switch key openrouter
 claude-switch key gemini
+claude-switch key muse
 ```
 
 > **Note**: Ollama does not require an API key (runs locally). Anthropic uses the `ANTHROPIC_API_KEY` environment variable.
@@ -399,6 +418,15 @@ claude-switch setup
 
 > **Prerequisites**: Google API key from [AI Studio](https://aistudio.google.com/apikey). [LiteLLM](https://github.com/BerriAI/litellm) proxy is auto-started on port 4001.
 
+### Muse (Meta, direct — no proxy)
+
+| Model | Context | Capabilities |
+|-------|---------|--------------|
+| `muse-spark-1.2-contributor` | 256K tokens | Text Generation, Code, Reasoning, Tool Use, Discounted |
+| `muse-spark-1.2` | 256K tokens | Text Generation, Code, Reasoning, Tool Use |
+
+> **Prerequisites**: Muse API key (`MODEL_API_KEY`) for `https://api.meta.ai`. Discounted `contributor` variant is the default — same capabilities at lower price. Direct Anthropic-compatible endpoint, no LiteLLM needed.
+
 ## Configuration Files
 
 | Client | Config File | Purpose |
@@ -421,6 +449,7 @@ claude-switch setup
                                           │ Alibaba  (direct)│
                                           │ OpenRouter(direct)│
                                           │ GLM (via helper) │
+                                          │ Muse  (direct)  │
                                           ├───────────────────┤
                                           │ LiteLLM Proxy     │
                                           │ ├─ Ollama :4000   │
@@ -428,7 +457,7 @@ claude-switch setup
                                           └───────────────────┘
 ```
 
-Anthropic, Alibaba, OpenRouter, and GLM speak the Anthropic API format natively. Ollama and Gemini only speak OpenAI format, so a **LiteLLM proxy** translates between protocols. The proxy is auto-started when you switch to Ollama or Gemini.
+Anthropic, Alibaba, OpenRouter, GLM, and Muse speak the Anthropic API format natively. Ollama and Gemini only speak OpenAI format, so a **LiteLLM proxy** translates between protocols. The proxy is auto-started when you switch to Ollama or Gemini. Muse goes direct to `https://api.meta.ai` with no proxy.
 
 ### Claude Code Configuration
 
@@ -493,6 +522,42 @@ When you switch Claude Code to Gemini, the tool:
     "ANTHROPIC_DEFAULT_HAIKU_MODEL": "gemini-2.5-flash-lite"
   }
 }
+```
+
+### Muse Configuration (Meta)
+
+When you switch Claude Code to Muse, the tool writes these environment variables to `~/.claude/settings.json` (per Muse docs — https://api.meta.ai):
+
+```json
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.meta.ai",
+    "ANTHROPIC_AUTH_TOKEN": "YOUR_MUSE_API_KEY",
+    "ANTHROPIC_MODEL": "muse-spark-1.2-contributor",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "muse-spark-1.2-contributor",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "muse-spark-1.2-contributor",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "muse-spark-1.2-contributor",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "muse-spark-1.2-contributor",
+    "ENABLE_TOOL_SEARCH": "true"
+  }
+}
+```
+
+- `ANTHROPIC_BASE_URL` → `https://api.meta.ai` (direct, no LiteLLM)
+- `ANTHROPIC_AUTH_TOKEN` → your `MODEL_API_KEY` (stored via `claude-switch key muse <key>` → `~/.claude-ai-switcher/config.json`)
+- `ANTHROPIC_MODEL` + tier aliases + `CLAUDE_CODE_SUBAGENT_MODEL` → selected model (`muse-spark-1.2-contributor` default, `muse-spark-1.2` optional)
+- `ENABLE_TOOL_SEARCH` → `true`
+
+Switching back to Anthropic clears all six; switching to another provider clears the Muse extras (`CLAUDE_CODE_SUBAGENT_MODEL`, `ENABLE_TOOL_SEARCH`).
+
+For OpenCode, `claude-switch opencode add muse` writes provider `muse` (npm `@ai-sdk/anthropic`, `baseURL: https://api.meta.ai`) with both models to `~/.config/opencode/opencode.json`:
+
+```bash
+claude-switch key muse <key>   # or `claude-switch setup` (Muse prompt)
+claude-switch muse             # Claude Code → contributor default
+claude-switch muse muse-spark-1.2 --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor
+claude-switch opencode add muse
+claude-switch opencode remove muse
 ```
 
 ### OpenRouter Configuration
@@ -671,6 +736,23 @@ $ claude-switch gemini
     ANTHROPIC_DEFAULT_HAIKU_MODEL  → gemini-2.5-flash-lite
 ```
 
+```bash
+$ claude-switch muse
+
+✓ Switched to: Muse (Meta)
+────────────────────────────────────────────────────────────
+  Model: Muse Spark 1.2 Contributor
+  Context: 256K tokens
+  Endpoint: https://api.meta.ai
+  Capabilities: Text Generation, Code, Reasoning, Tool Use, Discounted
+  Discounted contributor variant — same capabilities at lower price.
+
+  Claude model aliases:
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → muse-spark-1.2-contributor
+    ANTHROPIC_DEFAULT_SONNET_MODEL → muse-spark-1.2-contributor
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → muse-spark-1.2-contributor
+```
+
 ## Project Documentation (Zread)
 
 This repository includes an AI-generated project wiki in `.zread/` created with [Zread CLI](https://zread.ai/cli). It provides detailed architectural walkthroughs, module breakdowns, and implementation guides.
@@ -708,6 +790,7 @@ After making significant code changes:
 - [LiteLLM](https://github.com/BerriAI/litellm) (for Ollama and Gemini support)
 - [Ollama](https://ollama.com) (for Ollama local models)
 - Google API Key (for Gemini)
+- Muse API Key (`MODEL_API_KEY` for https://api.meta.ai)
 
 ## LiteLLM Setup
 
@@ -755,6 +838,24 @@ The tool automatically starts the proxy when you switch to Ollama (port 4000) or
 3. Pull a model: `ollama pull deepseek-r1`
 4. Ensure LiteLLM is installed: `pip install 'litellm[proxy]'`
 5. No API key needed — everything runs locally
+
+### Muse (Meta)
+
+1. Get your `MODEL_API_KEY` for Muse (Meta)
+2. Run `claude-switch key muse <key>` or `claude-switch setup` (Muse prompt appears after Gemini)
+3. Verify: `claude-switch status` shows `muse` with masked key and validation
+4. Switch: `claude-switch muse` (contributor default) or `claude-switch muse muse-spark-1.2`
+5. Direct to `https://api.meta.ai` — no LiteLLM proxy needed. `CLAUDE_CODE_SUBAGENT_MODEL` and `ENABLE_TOOL_SEARCH=true` are set automatically.
+
+**Muse env (written to `~/.claude/settings.json`):**
+```
+ANTHROPIC_BASE_URL="https://api.meta.ai"
+ANTHROPIC_AUTH_TOKEN="<MODEL_API_KEY>"
+ANTHROPIC_MODEL="muse-spark-1.2-contributor"
+ANTHROPIC_DEFAULT_OPUS/SONNET/HAIKU="muse-spark-1.2-contributor"
+CLAUDE_CODE_SUBAGENT_MODEL="muse-spark-1.2-contributor"
+ENABLE_TOOL_SEARCH="true"
+```
 
 ## Safety Features
 
@@ -811,6 +912,7 @@ claude-switch setup
 # or
 claude-switch key alibaba <your-api-key>
 claude-switch key gemini <your-api-key>
+claude-switch key muse <your-api-key>      # MODEL_API_KEY for https://api.meta.ai
 ```
 
 ### "Unable to connect to Anthropic services"

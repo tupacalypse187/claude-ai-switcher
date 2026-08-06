@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-Codex AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini) for Codex and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Codex.
+Codex AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, Muse) for Codex and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Codex.
 
 ## Project Structure
 
@@ -29,7 +29,8 @@ Codex-ai-switcher/
 │       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
 │       ├── openrouter.ts # OpenRouter provider config
 │       ├── ollama.ts     # Ollama provider (local, LiteLLM proxy on :4000)
-│       └── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
+│       ├── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
+│       └── muse.ts       # Muse provider (Meta, https://api.meta.ai)
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
 ── tsconfig.json          # TypeScript configuration
@@ -89,6 +90,7 @@ Default tier maps per provider:
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
 | Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
+| Muse | muse-spark-1.2-contributor | muse-spark-1.2-contributor | muse-spark-1.2-contributor |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Status Command
@@ -99,6 +101,7 @@ Default tier maps per provider:
 - GLM: Checks if `coding-helper` CLI is installed
 - Ollama: Checks LiteLLM proxy on port 4000, then Ollama on port 11434
 - Gemini: Checks LiteLLM proxy on port 4001, then validates Google API key
+- Muse: GET to https://api.meta.ai/v1/models (Bearer + x-api-key fallback)
 
 ### Type Definitions
 ```typescript
@@ -126,6 +129,8 @@ Codex-switch Codex glm
 Codex-switch Codex openrouter
 Codex-switch Codex ollama
 Codex-switch Codex gemini
+Codex-switch Codex muse
+Codex-switch Codex muse muse-spark-1.2  # full model (contributor is default)
 
 # Switch OpenCode only
 Codex-switch opencode anthropic
@@ -134,8 +139,10 @@ Codex-switch opencode glm
 Codex-switch opencode openrouter
 Codex-switch opencode add ollama
 Codex-switch opencode add gemini
+Codex-switch opencode add muse
 Codex-switch opencode remove ollama
 Codex-switch opencode remove gemini
+Codex-switch opencode remove muse
 ```
 
 ### Configure Model Tiers
@@ -143,6 +150,7 @@ Codex-switch opencode remove gemini
 # Custom model tier aliases (Codex only)
 Codex-switch Codex alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
 Codex-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
+Codex-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --haiku muse-spark-1.2-contributor
 
 # Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
 Codex-switch Codex alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
@@ -154,13 +162,15 @@ Codex-switch status              # Show current config + verify API keys
 Codex-switch current             # Show current configuration (both clients)
 Codex-switch list                # List all providers and models
 Codex-switch models alibaba      # Show models for specific provider
+Codex-switch models muse         # Muse models
 ```
 
 ### API Key Management
 ```bash
 Codex-switch key alibaba         # Check if API key is set
 Codex-switch key alibaba <key>   # Set API key
-Codex-switch setup               # Interactive setup wizard
+Codex-switch key muse <key>      # Set Muse MODEL_API_KEY (https://api.meta.ai)
+Codex-switch setup               # Interactive setup wizard (now prompts for Muse after Gemini)
 ```
 
 ### Hooks - Token Tracking & Visual Enhancements
@@ -216,6 +226,7 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 - [LiteLLM](https://github.com/BerriAI/litellm) with proxy support required for Ollama and Gemini (`pip install 'litellm[proxy]'`)
 - [Ollama](https://ollama.com) must be installed and running for local model support
 - Google API key (from [AI Studio](https://aistudio.google.com/apikey)) required for Gemini
+- Muse API key (`MODEL_API_KEY` for https://api.meta.ai) required for Muse — discounted `muse-spark-1.2-contributor` is the default
 
 ## Zread Project Wiki
 

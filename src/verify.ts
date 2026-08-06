@@ -154,6 +154,7 @@ export async function verifyAllKeys(keys: {
   checkGLM?: boolean;
   checkOllama?: boolean;
   gemini?: string;
+  muse?: string;
 }): Promise<VerifyResult[]> {
   const checks: Promise<VerifyResult>[] = [];
 
@@ -193,6 +194,12 @@ export async function verifyAllKeys(keys: {
     checks.push(Promise.resolve({ provider: "gemini", status: "missing" }));
   }
 
+  if (keys.muse) {
+    checks.push(verifyMuse(keys.muse));
+  } else {
+    checks.push(Promise.resolve({ provider: "muse", status: "missing" }));
+  }
+
   return Promise.all(checks);
 }
 
@@ -223,6 +230,52 @@ async function verifyOllama(): Promise<VerifyResult> {
     }
   } catch {
     return { provider: "ollama", status: "error", message: "Check failed" };
+  }
+}
+
+/**
+ * Verify Muse API key via Meta endpoint (Anthropic-compatible).
+ */
+async function verifyMuse(apiKey: string): Promise<VerifyResult> {
+  try {
+    const res = await fetchWithTimeout(
+      "https://api.meta.ai/v1/models",
+      {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    if (res.ok) {
+      return { provider: "muse", status: "ok", message: "Key valid" };
+    }
+    if (res.status === 401 || res.status === 403) {
+      return { provider: "muse", status: "invalid", message: "Authentication failed" };
+    }
+    // Try Anthropic-style header as fallback — Meta docs use ANTHROPIC_AUTH_TOKEN
+    // but endpoint may also accept x-api-key
+    const res2 = await fetchWithTimeout(
+      "https://api.meta.ai/v1/models",
+      {
+        method: "GET",
+        headers: {
+          "x-api-key": apiKey,
+          "anthropic-version": "2023-06-01"
+        }
+      }
+    );
+    if (res2.ok) {
+      return { provider: "muse", status: "ok", message: "Key valid" };
+    }
+    if (res2.status === 401 || res2.status === 403) {
+      return { provider: "muse", status: "invalid", message: "Authentication failed" };
+    }
+    return { provider: "muse", status: "error", message: `HTTP ${res.status}` };
+  } catch {
+    return { provider: "muse", status: "error", message: "Connection failed" };
   }
 }
 

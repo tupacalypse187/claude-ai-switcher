@@ -48,6 +48,13 @@ export const GEMINI_DEFAULT_TIER_MAP: ModelTierMap = {
   haiku: "gemini-2.5-flash-lite"
 };
 
+// Default Muse tier map — contributor variant is the preferred default (discounted)
+export const MUSE_DEFAULT_TIER_MAP: ModelTierMap = {
+  opus: "muse-spark-1.2-contributor",
+  sonnet: "muse-spark-1.2-contributor",
+  haiku: "muse-spark-1.2-contributor"
+};
+
 // For Alibaba: tier mapping based on model capabilities
 // Default mapping when no specific model chosen: Opus = qwen3.7-plus, Sonnet = qwen3.6-plus, Haiku = kimi-k2.5
 // When specific model selected: Opus = selected model, Sonnet = qwen3.7-plus, Haiku = qwen3.6-plus
@@ -274,6 +281,24 @@ export const geminiModels: Model[] = [
   }
 ];
 
+// Muse Models (Meta — via https://api.meta.ai, Anthropic-compatible)
+export const museModels: Model[] = [
+  {
+    id: "muse-spark-1.2",
+    name: "Muse Spark 1.2",
+    contextWindow: 256000,
+    capabilities: ["Text Generation", "Code", "Reasoning", "Tool Use"],
+    description: "Meta's Muse Spark 1.2 — full-capability Anthropic-compatible model via api.meta.ai."
+  },
+  {
+    id: "muse-spark-1.2-contributor",
+    name: "Muse Spark 1.2 Contributor",
+    contextWindow: 256000,
+    capabilities: ["Text Generation", "Code", "Reasoning", "Tool Use", "Discounted"],
+    description: "Discounted contributor variant of Muse Spark 1.2 — same capabilities at reduced pricing. Preferred default."
+  }
+];
+
 // Anthropic Models (default)
 export const anthropicModels: Model[] = [
   {
@@ -348,6 +373,12 @@ export const providers: Record<string, Provider> = {
     name: "Gemini (Google)",
     endpoint: "http://localhost:4001",
     models: geminiModels
+  },
+  muse: {
+    id: "muse",
+    name: "Muse (Meta)",
+    endpoint: "https://api.meta.ai",
+    models: museModels
   }
 };
 

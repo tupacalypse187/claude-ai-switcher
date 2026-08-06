@@ -22,6 +22,7 @@ import {
   OPENROUTER_DEFAULT_TIER_MAP,
   OLLAMA_DEFAULT_TIER_MAP,
   GEMINI_DEFAULT_TIER_MAP,
+  MUSE_DEFAULT_TIER_MAP,
   getAlibabaTierMap
 } from "./models";
 import {
@@ -31,6 +32,7 @@ import {
   configureOpenRouter as configureClaudeOpenRouter,
   configureOllama as configureClaudeOllama,
   configureGemini as configureClaudeGemini,
+  configureMuse as configureClaudeMuse,
   getCurrentProvider as getClaudeProvider,
   readClaudeSettings as readClaudeSettings,
   claudeSettingsExists
@@ -41,6 +43,7 @@ import {
   configureOllama as configureOpenCodeOllama,
   configureGemini as configureOpenCodeGemini,
   configureGLM as configureOpenCodeGLM,
+  configureMuse as configureOpenCodeMuse,
   getCurrentProvider as getOpenCodeProvider,
   opencodeSettingsExists
 } from "./clients/opencode";
@@ -68,6 +71,10 @@ import {
   getGeminiConfig,
   findModel as findGeminiModel
 } from "./providers/gemini";
+import {
+  getMuseConfig,
+  findModel as findMuseModel
+} from "./providers/muse";
 import { verifyAllKeys, maskKey } from "./verify";
 import {
   installAllHooks,
@@ -377,6 +384,46 @@ async function switchGemini(
   console.log();
 }
 
+async function switchMuse(
+  model: string | undefined,
+  tierOpts: { opus?: string; sonnet?: string; haiku?: string }
+): Promise<void> {
+  const selectedModel = model || "muse-spark-1.2-contributor";
+
+  const validModel = findMuseModel(selectedModel);
+  if (!validModel) {
+    const museModels = getModels("muse");
+    displayError(`Invalid model: ${selectedModel}`);
+    console.log(chalk.dim("  Valid models: ") + museModels.map((m) => m.id).join(", "));
+    process.exit(1);
+  }
+
+  let apiKey = await getApiKey("muse");
+  if (!apiKey) {
+    apiKey = await promptApiKey(
+      "Muse",
+      "https://api.meta.ai (MODEL_API_KEY)"
+    );
+    await setApiKey("muse", apiKey);
+  }
+
+  const tierMap = buildTierMap(MUSE_DEFAULT_TIER_MAP, tierOpts);
+
+  await configureClaudeMuse(apiKey, selectedModel, tierMap);
+
+  console.log(chalk.green(`\n✓ Switched to: Muse (Meta)`));
+  console.log(chalk.dim("─".repeat(60)));
+  console.log(`  ${chalk.cyan.bold("Model:")} ${chalk.white(validModel.name)}`);
+  console.log(`  ${chalk.cyan.bold("Context:")} ${chalk.yellow(formatContext(validModel.contextWindow))}`);
+  console.log(`  ${chalk.cyan.bold("Endpoint:")} ${chalk.dim("https://api.meta.ai")}`);
+  console.log(`  ${chalk.cyan.bold("Capabilities:")} ${chalk.gray(validModel.capabilities.join(", "))}`);
+  console.log(chalk.dim(`  ${validModel.description}`));
+  console.log(chalk.dim(`  Subagent: ${selectedModel} | Tool search: enabled`));
+  console.log();
+  displayTierMap(tierMap);
+  console.log();
+}
+
 // ---------------------------------------------------------------------------
 // Top-level commands — Claude Code only
 // ---------------------------------------------------------------------------
@@ -454,6 +501,19 @@ addTierOptions(
     await switchGemini(model, options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to Gemini");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  program
+    .command("muse [model]")
+    .description("Switch Claude Code to Muse (Meta, https://api.meta.ai)")
+).action(async (model, options) => {
+  try {
+    await switchMuse(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Muse");
     process.exit(1);
   }
 });
@@ -539,6 +599,19 @@ addTierOptions(
     await switchGemini(model, options);
   } catch (error) {
     displayError(error instanceof Error ? error.message : "Failed to switch to Gemini");
+    process.exit(1);
+  }
+});
+
+addTierOptions(
+  claudeCmd
+    .command("muse [model]")
+    .description("Switch Claude Code to Muse (Meta)")
+).action(async (model, options) => {
+  try {
+    await switchMuse(model, options);
+  } catch (error) {
+    displayError(error instanceof Error ? error.message : "Failed to switch to Muse");
     process.exit(1);
   }
 });
@@ -696,6 +769,33 @@ opencodeAddCmd
     }
   });
 
+opencodeAddCmd
+  .command("muse")
+  .description("Add Muse (Meta) provider to OpenCode")
+  .action(async () => {
+    try {
+      let apiKey = await getApiKey("muse");
+      if (!apiKey) {
+        apiKey = await promptApiKey(
+          "Muse",
+          "https://api.meta.ai (MODEL_API_KEY)"
+        );
+        await setApiKey("muse", apiKey);
+      }
+
+      await configureOpenCodeMuse(apiKey);
+
+      displaySuccess("Added Muse provider to OpenCode");
+      console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
+      console.log(chalk.dim("  Provider: muse"));
+      console.log(chalk.dim("  Models: muse-spark-1.2-contributor, muse-spark-1.2"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to add Muse provider");
+      process.exit(1);
+    }
+  });
+
 const opencodeRemoveCmd = opencodeCmd
   .command("remove")
   .description("Remove a provider from OpenCode");
@@ -785,6 +885,23 @@ opencodeRemoveCmd
     }
   });
 
+opencodeRemoveCmd
+  .command("muse")
+  .description("Remove Muse (Meta) provider from OpenCode")
+  .action(async () => {
+    try {
+      const { removeProvider } = await import("./clients/opencode");
+      await removeProvider("muse");
+
+      displaySuccess("Removed Muse provider from OpenCode");
+      console.log(chalk.dim("  Other providers remain unchanged"));
+      console.log();
+    } catch (error) {
+      displayError(error instanceof Error ? error.message : "Failed to remove Muse provider");
+      process.exit(1);
+    }
+  });
+
 // ---------------------------------------------------------------------------
 // Info commands
 // ---------------------------------------------------------------------------
@@ -844,6 +961,7 @@ program
       const openrouterKey = await getApiKey("openrouter");
       const anthropicKey = process.env.ANTHROPIC_API_KEY;
       const geminiKey = await getApiKey("gemini");
+      const museKey = await getApiKey("muse");
 
       // Show spinner while verifying
       const ora = (await import("ora")).default;
@@ -855,7 +973,8 @@ program
         anthropic: anthropicKey,
         checkGLM: true,
         checkOllama: true,
-        gemini: geminiKey
+        gemini: geminiKey,
+        muse: museKey
       });
 
       spinner.stop();
@@ -894,6 +1013,8 @@ program
           keyDisplay = chalk.dim(` (${maskKey(anthropicKey)})`);
         } else if (result.provider === "gemini" && geminiKey) {
           keyDisplay = chalk.dim(` (${maskKey(geminiKey)})`);
+        } else if (result.provider === "muse" && museKey) {
+          keyDisplay = chalk.dim(` (${maskKey(museKey)})`);
         }
 
         console.log(`    ${icon} ${chalk.white(label)} ${chalk.gray(detail)}${keyDisplay}`);
@@ -980,7 +1101,7 @@ program
   .description("Show models for a specific provider")
   .action((providerName) => {
     if (!providerName) {
-      displayError("Please specify a provider: anthropic, alibaba, openrouter, glm, ollama, or gemini");
+      displayError("Please specify a provider: anthropic, alibaba, openrouter, glm, ollama, gemini, or muse");
       console.log(chalk.dim("  Example: claude-switch models alibaba"));
       process.exit(1);
     }
@@ -1076,6 +1197,23 @@ program
         }
       }
 
+      const hasMuseKey = await hasApiKey("muse");
+      if (!hasMuseKey) {
+        console.log(chalk.yellow("\nMuse (Meta) Setup"));
+        console.log(chalk.dim("  Get your API key (MODEL_API_KEY) from: https://api.meta.ai"));
+        console.log(chalk.dim("  This is the same key used for ANTHROPIC_AUTH_TOKEN"));
+        console.log();
+
+        const answer = await new Promise<string>((resolve) => {
+          rl.question("Enter your Muse API Key (or press Enter to skip): ", resolve);
+        });
+
+        if (answer.trim()) {
+          await setApiKey("muse", answer.trim());
+          displaySuccess("Muse API key saved");
+        }
+      }
+
       rl.close();
 
       console.log(chalk.green("\n✓ Setup complete!\n"));
@@ -1086,17 +1224,20 @@ program
       console.log(chalk.dim("  claude-switch openrouter [model]       - Switch Claude Code to OpenRouter"));
       console.log(chalk.dim("  claude-switch ollama [model]           - Switch Claude Code to Ollama"));
       console.log(chalk.dim("  claude-switch gemini [model]           - Switch Claude Code to Gemini"));
+      console.log(chalk.dim("  claude-switch muse [model]             - Switch Claude Code to Muse (contributor default)"));
       console.log(chalk.dim("  claude-switch claude alibaba           - Explicit Claude Code targeting"));
       console.log(chalk.dim("  claude-switch opencode add alibaba     - Add Alibaba provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add openrouter  - Add OpenRouter provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add ollama      - Add Ollama provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add gemini      - Add Gemini provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode add glm         - Add GLM/Z.AI provider to OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode add muse        - Add Muse provider to OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove alibaba  - Remove Alibaba from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove openrouter - Remove OpenRouter from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove ollama   - Remove Ollama from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove gemini   - Remove Gemini from OpenCode"));
       console.log(chalk.dim("  claude-switch opencode remove glm      - Remove GLM/Z.AI from OpenCode"));
+      console.log(chalk.dim("  claude-switch opencode remove muse     - Remove Muse from OpenCode"));
       console.log(chalk.dim("  claude-switch openrouter --opus <model> - Custom model aliases"));
       console.log(chalk.dim("  claude-switch list                     - List all providers"));
       console.log(chalk.dim("  claude-switch status                   - Show current config + verify API keys"));
