@@ -22,14 +22,61 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 
 ## Installation
 
+### Option 1 — npm (recommended, easiest)
+Install `claude-switch` globally from the npm marketplace — no git/build needed:
+
 ```bash
-cd claude-ai-switcher
-npm ci  # reproducible install from package-lock.json (does NOT modify it)
-npm run build
-npm link  # Install globally
+npm install -g claude-ai-switcher
+claude-switch --version   # verify
+claude-switch status
 ```
 
-> **Dependency flow:** Use `npm ci` for routine installs and after every pull — it installs exactly from `package-lock.json` and never modifies it, so it can't drift the lockfile or cause pull conflicts. Use `npm install <package>` or `npm update` only when intentionally adding or upgrading a dependency, then commit the updated `package-lock.json`.
+Update / uninstall:
+
+```bash
+npm update -g claude-ai-switcher   # to latest (now 1.2.2)
+npm uninstall -g claude-ai-switcher
+```
+
+*Pros:* one command, auto-adds `claude-switch` to PATH.
+
+### Option 2 — npx (no install, try instantly)
+Run without installing (always latest unless pinned):
+
+```bash
+npx --package claude-ai-switcher claude-switch --help
+npx --package claude-ai-switcher claude-switch status
+npx --package claude-ai-switcher claude-switch muse
+# pin a version:
+npx --package claude-ai-switcher@1.2.2 claude-switch status
+```
+
+*Note:* the package is `claude-ai-switcher` but the binary is `claude-switch`, so the `--package` form is required; plain `npx claude-ai-switcher` will not find the binary.
+
+*Pros:* zero install, great for CI/one-offs; *Cons:* downloads on each run (cached) and no persistent `claude-switch` command.
+
+### Option 3 — git (development / latest `main`)
+For contributors or to track unreleased fixes before they hit npm:
+
+```bash
+git clone https://github.com/tupacalypse187/claude-ai-switcher.git
+cd claude-ai-switcher
+npm ci          # reproducible install from package-lock.json (does NOT modify it)
+npm run build   # tsc + copy-hooks
+npm link        # installs `claude-switch` globally via symlink
+claude-switch --version
+```
+
+Staying up to date:
+
+```bash
+git pull
+npm ci          # not `npm install` — keeps lockfile pristine
+npm run build
+# no need to re-link unless bin changed
+```
+
+> **Dependency flow:** use `npm ci` after every `git pull` — it never modifies `package-lock.json`. Use `npm install <pkg>` / `npm update` only when intentionally adding/upgrading a dep, then commit the updated lockfile.
 
 ## Platform Support
 
