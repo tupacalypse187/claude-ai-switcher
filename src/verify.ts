@@ -252,11 +252,9 @@ async function verifyMuse(apiKey: string): Promise<VerifyResult> {
     if (res.ok) {
       return { provider: "muse", status: "ok", message: "Key valid" };
     }
-    if (res.status === 401 || res.status === 403) {
-      return { provider: "muse", status: "invalid", message: "Authentication failed" };
-    }
-    // Try Anthropic-style header as fallback — Meta docs use ANTHROPIC_AUTH_TOKEN
-    // but endpoint may also accept x-api-key
+
+    // Try Anthropic-style header as fallback — if Bearer was 401/403 we
+    // should still attempt x-api-key before declaring invalid.
     const res2 = await fetchWithTimeout(
       "https://api.meta.ai/v1/models",
       {
@@ -270,10 +268,10 @@ async function verifyMuse(apiKey: string): Promise<VerifyResult> {
     if (res2.ok) {
       return { provider: "muse", status: "ok", message: "Key valid" };
     }
-    if (res2.status === 401 || res2.status === 403) {
+    if (res.status === 401 || res.status === 403 || res2.status === 401 || res2.status === 403) {
       return { provider: "muse", status: "invalid", message: "Authentication failed" };
     }
-    return { provider: "muse", status: "error", message: `HTTP ${res.status}` };
+    return { provider: "muse", status: "error", message: `HTTP ${res2.status}` };
   } catch {
     return { provider: "muse", status: "error", message: "Connection failed" };
   }
