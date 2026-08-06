@@ -268,7 +268,7 @@ async function verifyMuse(apiKey: string): Promise<VerifyResult> {
     if (res2.ok) {
       return { provider: "muse", status: "ok", message: "Key valid" };
     }
-    if (res.status === 401 || res.status === 403 || res2.status === 401 || res2.status === 403) {
+    if (res2.status === 401 || res2.status === 403) {
       return { provider: "muse", status: "invalid", message: "Authentication failed" };
     }
     return { provider: "muse", status: "error", message: `HTTP ${res2.status}` };
