@@ -15,6 +15,7 @@ export interface UserConfig {
   alibabaApiKey?: string;
   openrouterApiKey?: string;
   geminiApiKey?: string;
+  museApiKey?: string;
   defaultProvider?: string;
   defaultModel?: string;
 }
@@ -59,6 +60,8 @@ export async function getApiKey(provider: string): Promise<string | undefined> {
       return config.openrouterApiKey;
     case "gemini":
       return config.geminiApiKey;
+    case "muse":
+      return config.museApiKey;
     default:
       return undefined;
   }
@@ -79,6 +82,9 @@ export async function setApiKey(provider: string, apiKey: string): Promise<void>
       break;
     case "gemini":
       config.geminiApiKey = apiKey;
+      break;
+    case "muse":
+      config.museApiKey = apiKey;
       break;
   }
   

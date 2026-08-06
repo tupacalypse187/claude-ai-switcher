@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
+Claude AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, Muse) for Claude Code and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
 ## Project Structure
 
@@ -29,7 +29,8 @@ claude-ai-switcher/
 │       ├── glm.ts         # GLM/Z.AI provider (coding-helper)
 │       ├── openrouter.ts # OpenRouter provider config
 │       ├── ollama.ts     # Ollama provider (local, LiteLLM proxy on :4000)
-│       └── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
+│       ├── gemini.ts     # Gemini provider (Google, LiteLLM proxy on :4001)
+│       └── muse.ts       # Muse provider (Meta, https://api.meta.ai)
 ├── dist/                  # Compiled JavaScript output
 ├── package.json           # Dependencies and scripts
 ── tsconfig.json          # TypeScript configuration
@@ -89,6 +90,7 @@ Default tier maps per provider:
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
 | Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
+| Muse | muse-spark-1.2-contributor | muse-spark-1.2-contributor | muse-spark-1.2-contributor |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
 ### Status Command
@@ -99,6 +101,7 @@ Default tier maps per provider:
 - GLM: Checks if `coding-helper` CLI is installed
 - Ollama: Checks LiteLLM proxy on port 4000, then Ollama on port 11434
 - Gemini: Checks LiteLLM proxy on port 4001, then validates Google API key
+- Muse: GET to https://api.meta.ai/v1/models (Bearer + x-api-key fallback)
 
 ### Type Definitions
 ```typescript
@@ -126,6 +129,8 @@ claude-switch claude glm
 claude-switch claude openrouter
 claude-switch claude ollama
 claude-switch claude gemini
+claude-switch claude muse
+claude-switch claude muse muse-spark-1.2  # full (contributor is default)
 
 # Switch OpenCode only
 claude-switch opencode anthropic
@@ -134,9 +139,11 @@ claude-switch opencode glm
 claude-switch opencode openrouter
 claude-switch opencode add ollama
 claude-switch opencode add gemini
+claude-switch opencode add muse
 claude-switch opencode add glm
 claude-switch opencode remove ollama
 claude-switch opencode remove gemini
+claude-switch opencode remove muse
 claude-switch opencode remove glm
 ```
 
@@ -145,6 +152,7 @@ claude-switch opencode remove glm
 # Custom model tier aliases (Claude Code only)
 claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
 claude-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
+claude-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --haiku muse-spark-1.2-contributor
 
 # Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
 claude-switch claude alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
@@ -156,13 +164,15 @@ claude-switch status              # Show current config + verify API keys
 claude-switch current             # Show current configuration (both clients)
 claude-switch list                # List all providers and models
 claude-switch models alibaba      # Show models for specific provider
+claude-switch models muse         # Muse models
 ```
 
 ### API Key Management
 ```bash
 claude-switch key alibaba         # Check if API key is set
 claude-switch key alibaba <key>   # Set API key
-claude-switch setup               # Interactive setup wizard
+claude-switch key muse <key>      # Set Muse MODEL_API_KEY (https://api.meta.ai)
+claude-switch setup               # Interactive setup wizard (now prompts for Muse after Gemini)
 ```
 
 ### Hooks - Token Tracking & Visual Enhancements
@@ -218,6 +228,7 @@ claude-switch hooks remove-visual   # Remove visual enhancements
 - [LiteLLM](https://github.com/BerriAI/litellm) with proxy support required for Ollama and Gemini (`pip install 'litellm[proxy]'`)
 - [Ollama](https://ollama.com) must be installed and running for local model support
 - Google API key (from [AI Studio](https://aistudio.google.com/apikey)) required for Gemini
+- Muse API key (`MODEL_API_KEY` for https://api.meta.ai) required for Muse — discounted `muse-spark-1.2-contributor` is the default
 
 ## Zread Project Wiki
 

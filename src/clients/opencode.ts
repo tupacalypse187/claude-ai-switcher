@@ -259,6 +259,11 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.provider["glm"];
   }
 
+  // Remove muse provider
+  if (settings.provider?.["muse"]) {
+    delete settings.provider["muse"];
+  }
+
   // Clean up empty provider object
   if (settings.provider && Object.keys(settings.provider).length === 0) {
     delete settings.provider;
@@ -542,6 +547,52 @@ export async function configureGemini(apiKey: string): Promise<void> {
 }
 
 /**
+ * Configure OpenCode for Muse (Meta) via https://api.meta.ai
+ * Uses Anthropic-compatible API
+ */
+export async function configureMuse(apiKey: string): Promise<void> {
+  const settings = await readOpenCodeSettings();
+
+  settings.$schema = "https://opencode.ai/config.json";
+
+  settings.provider = settings.provider || {};
+  settings.provider["muse"] = {
+    npm: "@ai-sdk/anthropic",
+    name: "Muse (Meta)",
+    options: {
+      baseURL: "https://api.meta.ai",
+      apiKey: apiKey
+    },
+    models: {
+      "muse-spark-1.2": {
+        name: "Muse Spark 1.2",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        limit: {
+          context: 256000,
+          output: 65536
+        }
+      },
+      "muse-spark-1.2-contributor": {
+        name: "Muse Spark 1.2 Contributor",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        limit: {
+          context: 256000,
+          output: 65536
+        }
+      }
+    }
+  };
+
+  await writeOpenCodeSettings(settings);
+}
+
+/**
  * Remove a specific provider from OpenCode settings
  * Only removes the named provider, preserving others
  */
@@ -611,6 +662,14 @@ export async function getCurrentProvider(): Promise<{
     return {
       provider: "glm",
       endpoint: settings.provider["glm"].options?.baseURL
+    };
+  }
+
+  // Check for muse configuration
+  if (settings.provider?.["muse"]) {
+    return {
+      provider: "muse",
+      endpoint: settings.provider["muse"].options?.baseURL
     };
   }
 

@@ -147,6 +147,8 @@ export async function configureAlibaba(apiKey: string, model: string, tierMap: M
   settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
   settings.env["ANTHROPIC_BASE_URL"] = "https://coding-intl.dashscope.aliyuncs.com/apps/anthropic";
   settings.env["ANTHROPIC_MODEL"] = model;
+  delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+  delete settings.env["ENABLE_TOOL_SEARCH"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -166,11 +168,13 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.mcpServers["glm-coding-plan"];
   }
 
-  // Clear Alibaba env vars
+  // Clear all provider env vars including Muse extras
   if (settings.env) {
     delete settings.env["ANTHROPIC_AUTH_TOKEN"];
     delete settings.env["ANTHROPIC_BASE_URL"];
     delete settings.env["ANTHROPIC_MODEL"];
+    delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+    delete settings.env["ENABLE_TOOL_SEARCH"];
   }
 
   clearTierMap(settings);
@@ -186,11 +190,13 @@ export async function configureGLM(tierMap: ModelTierMap): Promise<void> {
 
   const settings = await readClaudeSettings();
 
-  // Clear other provider env vars (e.g. Alibaba)
+  // Clear other provider env vars (e.g. Alibaba, Muse)
   if (settings.env) {
     delete settings.env["ANTHROPIC_AUTH_TOKEN"];
     delete settings.env["ANTHROPIC_BASE_URL"];
     delete settings.env["ANTHROPIC_MODEL"];
+    delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+    delete settings.env["ENABLE_TOOL_SEARCH"];
   }
 
   applyTierMap(settings, tierMap);
@@ -210,6 +216,8 @@ export async function configureOpenRouter(apiKey: string, model: string, tierMap
   settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
   settings.env["ANTHROPIC_BASE_URL"] = "https://openrouter.ai/api/v1";
   settings.env["ANTHROPIC_MODEL"] = model;
+  delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+  delete settings.env["ENABLE_TOOL_SEARCH"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -227,6 +235,8 @@ export async function configureOllama(model: string, tierMap: ModelTierMap): Pro
   settings.env["ANTHROPIC_AUTH_TOKEN"] = "ollama";
   settings.env["ANTHROPIC_BASE_URL"] = "http://localhost:4000";
   settings.env["ANTHROPIC_MODEL"] = model;
+  delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+  delete settings.env["ENABLE_TOOL_SEARCH"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -244,6 +254,28 @@ export async function configureGemini(apiKey: string, model: string, tierMap: Mo
   settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
   settings.env["ANTHROPIC_BASE_URL"] = "http://localhost:4001";
   settings.env["ANTHROPIC_MODEL"] = model;
+  delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
+  delete settings.env["ENABLE_TOOL_SEARCH"];
+
+  applyTierMap(settings, tierMap);
+  await writeClaudeSettings(settings);
+}
+
+/**
+ * Configure Claude Code for Muse (Meta) via https://api.meta.ai
+ * Writes Muse-required env vars including subagent model and tool search
+ */
+export async function configureMuse(apiKey: string, model: string, tierMap: ModelTierMap): Promise<void> {
+  await ensureOnboardingComplete();
+
+  const settings = await readClaudeSettings();
+
+  settings.env = settings.env || {};
+  settings.env["ANTHROPIC_AUTH_TOKEN"] = apiKey;
+  settings.env["ANTHROPIC_BASE_URL"] = "https://api.meta.ai";
+  settings.env["ANTHROPIC_MODEL"] = model;
+  settings.env["CLAUDE_CODE_SUBAGENT_MODEL"] = model;
+  settings.env["ENABLE_TOOL_SEARCH"] = "true";
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -304,6 +336,16 @@ export async function getCurrentProvider(): Promise<{
   if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("localhost:4001")) {
     return {
       provider: "gemini",
+      model: settings.env["ANTHROPIC_MODEL"],
+      endpoint: settings.env["ANTHROPIC_BASE_URL"],
+      tierMap
+    };
+  }
+
+  // Check for Muse via api.meta.ai
+  if (settings.env?.["ANTHROPIC_BASE_URL"]?.includes("api.meta.ai")) {
+    return {
+      provider: "muse",
       model: settings.env["ANTHROPIC_MODEL"],
       endpoint: settings.env["ANTHROPIC_BASE_URL"],
       tierMap
