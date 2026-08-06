@@ -34,7 +34,7 @@ claude-switch status
 Update / uninstall:
 
 ```bash
-npm update -g claude-ai-switcher   # to latest (now 1.2.2)
+npm update -g claude-ai-switcher   # to latest (now 1.2.3)
 npm uninstall -g claude-ai-switcher
 ```
 
@@ -48,7 +48,7 @@ npx --package claude-ai-switcher claude-switch --help
 npx --package claude-ai-switcher claude-switch status
 npx --package claude-ai-switcher claude-switch muse
 # pin a version:
-npx --package claude-ai-switcher@1.2.2 claude-switch status
+npx --package claude-ai-switcher@1.2.3 claude-switch status
 ```
 
 *Note:* the package is `claude-ai-switcher` but the binary is `claude-switch`, so the `--package` form is required; plain `npx claude-ai-switcher` will not find the binary.
