@@ -37,6 +37,35 @@ Codex-ai-switcher/
 └── README.md              # User documentation
 ```
 
+## Installation
+
+### Option 1 — npm (recommended, easiest)
+```bash
+npm install -g claude-ai-switcher
+claude-switch --version
+claude-switch status
+# update: npm update -g claude-ai-switcher
+```
+
+### Option 2 — npx (no install)
+```bash
+npx --package claude-ai-switcher claude-switch --help
+npx --package claude-ai-switcher claude-switch status
+# pin: npx --package claude-ai-switcher@1.2.3 claude-switch status
+```
+Package is `claude-ai-switcher`, binary is `claude-switch` → `--package` form is required.
+
+### Option 3 — git (development / latest `main`)
+```bash
+git clone https://github.com/tupacalypse187/claude-ai-switcher.git
+cd claude-ai-switcher
+npm ci          # reproducible install (does NOT modify lockfile)
+npm run build   # tsc + copy-hooks
+npm link        # installs `claude-switch` globally via symlink
+```
+
+Staying up to date: `git pull` → `npm ci` → `npm run build`.
+
 ## Build and Development Commands
 
 ### Build Commands
@@ -59,7 +88,8 @@ npm run clean
 
 ### Global Installation
 ```bash
-npm link  # Install CLI globally as 'Codex-switch'
+npm link  # Install CLI globally as 'claude-switch'
+# or via npm marketplace: npm install -g claude-ai-switcher
 ```
 
 ## Key Architecture Patterns
