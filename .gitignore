@@ -28,6 +28,9 @@ npm-debug.log*
 .env
 .env.*
 
+# npm auth token (user-specific, secret)
+.npmrc
+
 # API key config (user-specific, may contain secrets)
 ~/.claude-ai-switcher/
 
