@@ -71,7 +71,7 @@ Two patterns are worth noting in that table. **Muse collapses all three tiers on
 
 Sources: [models.ts](src/models.ts#L52-L56), [models.ts](src/models.ts#L31-L35)
 
-One code-archaeology observation: the summary table in `ARCHITECTURE.md` lists the GLM opus alias as `glm-5.2[1m]`, while the executable source of truth in `src/models.ts` defines `glm-5.3[1m]`. When in doubt, trust `src/models.ts` — the markdown table has drifted one version behind the code.
+One code-archaeology observation: the summary table in `ARCHITECTURE.md` briefly listed the GLM opus alias as `glm-5.2[1m]` after `src/models.ts` moved to `glm-5.3[1m]` — the markdown table had drifted one version behind the code, and was resynced in the same change that introduced GLM-5.3. Both now agree; when in doubt, trust `src/models.ts`, the executable source of truth.
 
 Sources: [ARCHITECTURE.md](ARCHITECTURE.md#L98-L108), [models.ts](src/models.ts#L22-L28)
 
