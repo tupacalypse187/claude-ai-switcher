@@ -21,7 +21,8 @@
     "copy-hooks": "node scripts/copy-hooks.js",
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "keywords": [
     "claude",
