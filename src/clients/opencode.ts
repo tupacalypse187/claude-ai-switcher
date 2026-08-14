@@ -290,8 +290,8 @@ export async function configureGLM(baseURL: string, apiKey: string): Promise<voi
       apiKey
     },
     models: {
-      "glm-5.1": {
-        name: "GLM-5.1",
+      "glm-5.3[1m]": {
+        name: "GLM-5.3 (1M Context)",
         modalities: {
           input: ["text"],
           output: ["text"]
@@ -303,8 +303,8 @@ export async function configureGLM(baseURL: string, apiKey: string): Promise<voi
           }
         },
         limit: {
-          context: 200000,
-          output: 16384
+          context: 1000000,
+          output: 131072
         }
       },
       "glm-5v-turbo": {

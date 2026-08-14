@@ -208,7 +208,7 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 
 | Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) | Default (Muse) |
 |---------|-------------------|---------------|---------------------|-----------------|-----------------|-----------------|
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.2[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` | `muse-spark-1.2-contributor` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.3[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` | `muse-spark-1.2-contributor` |
 | `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5-turbo` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` | `muse-spark-1.2-contributor` |
 | `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` | `muse-spark-1.2-contributor` |
 
@@ -421,10 +421,9 @@ claude-switch setup
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
-| glm-5.2[1m] | 1M tokens | Text Generation, Deep Thinking |
+| glm-5.3[1m] | 1M tokens | Text Generation, Deep Thinking |
 | glm-5v-turbo | 200K tokens | Text Generation, Deep Thinking, Visual Understanding, Visual Programming |
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
-| glm-5.1 | 200K tokens | Text Generation, Deep Thinking |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
 
 ### Anthropic (Default)
@@ -722,12 +721,12 @@ $ claude-switch opencode add alibaba
 ```
 
 ```bash
-$ claude-switch glm --opus glm-5.2[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
+$ claude-switch glm --opus glm-5.3[1m] --sonnet glm-5-turbo --haiku glm-5v-turbo
 
 ✓ Switched to GLM/Z.AI
 
   Claude model aliases:
-    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.2[1m]
+    ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.3[1m]
     ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5-turbo
     ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5v-turbo
 ```

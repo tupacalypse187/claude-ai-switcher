@@ -19,7 +19,7 @@ export interface GLMConfig {
 export function getGLMConfig(): GLMConfig {
   return {
     provider: "glm",
-    model: process.env.ZHIPUAI_MODEL || process.env.ZAI_MODEL || "glm-5.1"
+    model: process.env.ZHIPUAI_MODEL || process.env.ZAI_MODEL || "glm-5.3[1m]"
   };
 }
 
