@@ -1,0 +1,243 @@
+{
+  "id": "2026-08-14-071129",
+  "generated_at": "2026-08-14T11:11:29.895673Z",
+  "language": "en",
+  "pages": [
+    {
+      "slug": "1-overview-what-claude-ai-switcher-does-and-why-it-matters",
+      "title": "Overview: What Claude AI Switcher Does and Why It Matters",
+      "file": "1-overview-what-claude-ai-switcher-does-and-why-it-matters.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "2-quick-start-installing-and-switching-your-first-provider-npm-npx-git",
+      "title": "Quick Start: Installing and Switching Your First Provider (npm, npx, git)",
+      "file": "2-quick-start-installing-and-switching-your-first-provider-npm-npx-git.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "3-developer-environment-setup-npm-ci-build-and-npm-link-workflow",
+      "title": "Developer Environment Setup: npm ci, Build, and npm link Workflow",
+      "file": "3-developer-environment-setup-npm-ci-build-and-npm-link-workflow.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "4-everyday-cli-commands-switching-providers-status-list-and-models",
+      "title": "Everyday CLI Commands: Switching Providers, Status, List, and Models",
+      "file": "4-everyday-cli-commands-switching-providers-status-list-and-models.md",
+      "section": "Get Started",
+      "level": "Beginner"
+    },
+    {
+      "slug": "5-interactive-setup-wizard-and-api-key-entry",
+      "title": "Interactive Setup Wizard and API Key Entry",
+      "file": "5-interactive-setup-wizard-and-api-key-entry.md",
+      "section": "Get Started",
+      "group": "First-Run Experience",
+      "level": "Beginner"
+    },
+    {
+      "slug": "6-installing-token-tracking-and-visual-enhancement-hooks",
+      "title": "Installing Token Tracking and Visual Enhancement Hooks",
+      "file": "6-installing-token-tracking-and-visual-enhancement-hooks.md",
+      "section": "Get Started",
+      "group": "First-Run Experience",
+      "level": "Beginner"
+    },
+    {
+      "slug": "7-architecture-overview-cli-clients-providers-and-config-storage-layers",
+      "title": "Architecture Overview: CLI, Clients, Providers, and Config Storage Layers",
+      "file": "7-architecture-overview-cli-clients-providers-and-config-storage-layers.md",
+      "section": "Deep Dive",
+      "group": "System Architecture",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "8-provider-connectivity-patterns-direct-api-vs-litellm-proxy-vs-coding-helper-mcp",
+      "title": "Provider Connectivity Patterns: Direct API vs LiteLLM Proxy vs coding-helper MCP",
+      "file": "8-provider-connectivity-patterns-direct-api-vs-litellm-proxy-vs-coding-helper-mcp.md",
+      "section": "Deep Dive",
+      "group": "System Architecture",
+      "level": "Advanced"
+    },
+    {
+      "slug": "9-the-provider-switch-flow-key-validation-tier-maps-proxy-startup-and-settings-writes",
+      "title": "The Provider Switch Flow: Key Validation, Tier Maps, Proxy Startup, and Settings Writes",
+      "file": "9-the-provider-switch-flow-key-validation-tier-maps-proxy-startup-and-settings-writes.md",
+      "section": "Deep Dive",
+      "group": "System Architecture",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "10-provider-detection-heuristics-in-getcurrentprovider",
+      "title": "Provider Detection Heuristics in getCurrentProvider()",
+      "file": "10-provider-detection-heuristics-in-getcurrentprovider.md",
+      "section": "Deep Dive",
+      "group": "System Architecture",
+      "level": "Advanced"
+    },
+    {
+      "slug": "11-model-catalog-and-metadata-ids-context-windows-and-capabilities",
+      "title": "Model Catalog and Metadata: IDs, Context Windows, and Capabilities",
+      "file": "11-model-catalog-and-metadata-ids-context-windows-and-capabilities.md",
+      "section": "Deep Dive",
+      "group": "Model Layer",
+      "level": "Beginner"
+    },
+    {
+      "slug": "12-the-model-tier-alias-system-opus-sonnet-and-haiku-environment-variables",
+      "title": "The Model Tier Alias System: Opus, Sonnet, and Haiku Environment Variables",
+      "file": "12-the-model-tier-alias-system-opus-sonnet-and-haiku-environment-variables.md",
+      "section": "Deep Dive",
+      "group": "Model Layer",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "13-custom-tier-overrides-with-opus-sonnet-and-haiku-flags",
+      "title": "Custom Tier Overrides with --opus, --sonnet, and --haiku Flags",
+      "file": "13-custom-tier-overrides-with-opus-sonnet-and-haiku-flags.md",
+      "section": "Deep Dive",
+      "group": "Model Layer",
+      "level": "Beginner"
+    },
+    {
+      "slug": "14-claude-code-client-managing-claude-settings-json-with-backups-and-onboarding",
+      "title": "Claude Code Client: Managing ~/.claude/settings.json with Backups and Onboarding",
+      "file": "14-claude-code-client-managing-claude-settings-json-with-backups-and-onboarding.md",
+      "section": "Deep Dive",
+      "group": "Client Configuration Handlers",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "15-opencode-client-adding-and-removing-providers-in-opencode-json",
+      "title": "OpenCode Client: Adding and Removing Providers in opencode.json",
+      "file": "15-opencode-client-adding-and-removing-providers-in-opencode-json.md",
+      "section": "Deep Dive",
+      "group": "Client Configuration Handlers",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "16-direct-anthropic-compatible-providers-anthropic-alibaba-openrouter-and-muse",
+      "title": "Direct Anthropic-Compatible Providers: Anthropic, Alibaba, OpenRouter, and Muse",
+      "file": "16-direct-anthropic-compatible-providers-anthropic-alibaba-openrouter-and-muse.md",
+      "section": "Deep Dive",
+      "group": "Provider Implementations",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "17-ollama-provider-local-models-with-detached-litellm-proxy-lifecycle-on-port-4000",
+      "title": "Ollama Provider: Local Models with Detached LiteLLM Proxy Lifecycle on Port 4000",
+      "file": "17-ollama-provider-local-models-with-detached-litellm-proxy-lifecycle-on-port-4000.md",
+      "section": "Deep Dive",
+      "group": "Provider Implementations",
+      "level": "Advanced"
+    },
+    {
+      "slug": "18-gemini-provider-litellm-proxy-translation-on-port-4001",
+      "title": "Gemini Provider: LiteLLM Proxy Translation on Port 4001",
+      "file": "18-gemini-provider-litellm-proxy-translation-on-port-4001.md",
+      "section": "Deep Dive",
+      "group": "Provider Implementations",
+      "level": "Advanced"
+    },
+    {
+      "slug": "19-glm-z-ai-provider-integration-via-the-coding-helper-mcp-server",
+      "title": "GLM/Z.AI Provider: Integration via the coding-helper MCP Server",
+      "file": "19-glm-z-ai-provider-integration-via-the-coding-helper-mcp-server.md",
+      "section": "Deep Dive",
+      "group": "Provider Implementations",
+      "level": "Advanced"
+    },
+    {
+      "slug": "20-api-key-storage-in-claude-ai-switcher-config-json",
+      "title": "API Key Storage in ~/.claude-ai-switcher/config.json",
+      "file": "20-api-key-storage-in-claude-ai-switcher-config-json.md",
+      "section": "Deep Dive",
+      "group": "Security and Verification",
+      "level": "Beginner"
+    },
+    {
+      "slug": "21-api-key-verification-lightweight-health-checks-and-key-masking",
+      "title": "API Key Verification: Lightweight Health Checks and Key Masking",
+      "file": "21-api-key-verification-lightweight-health-checks-and-key-masking.md",
+      "section": "Deep Dive",
+      "group": "Security and Verification",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "22-safety-features-timestamped-backups-env-var-cleanup-and-local-only-storage",
+      "title": "Safety Features: Timestamped Backups, Env Var Cleanup, and Local-Only Storage",
+      "file": "22-safety-features-timestamped-backups-env-var-cleanup-and-local-only-storage.md",
+      "section": "Deep Dive",
+      "group": "Security and Verification",
+      "level": "Beginner"
+    },
+    {
+      "slug": "23-hook-manager-installing-removing-and-tracking-hook-state",
+      "title": "Hook Manager: Installing, Removing, and Tracking Hook State",
+      "file": "23-hook-manager-installing-removing-and-tracking-hook-state.md",
+      "section": "Deep Dive",
+      "group": "Hooks System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "24-token-tracker-session-usage-counters-and-the-color-coded-context-bar",
+      "title": "Token Tracker: Session Usage Counters and the Color-Coded Context Bar",
+      "file": "24-token-tracker-session-usage-counters-and-the-color-coded-context-bar.md",
+      "section": "Deep Dive",
+      "group": "Hooks System",
+      "level": "Advanced"
+    },
+    {
+      "slug": "25-visual-enhancements-model-cards-provider-info-and-context-display",
+      "title": "Visual Enhancements: Model Cards, Provider Info, and Context Display",
+      "file": "25-visual-enhancements-model-cards-provider-info-and-context-display.md",
+      "section": "Deep Dive",
+      "group": "Hooks System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "26-hook-asset-build-pipeline-why-copy-hooks-js-exists-alongside-tsc",
+      "title": "Hook Asset Build Pipeline: Why copy-hooks.js Exists Alongside tsc",
+      "file": "26-hook-asset-build-pipeline-why-copy-hooks-js-exists-alongside-tsc.md",
+      "section": "Deep Dive",
+      "group": "Hooks System",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "27-build-and-release-workflow-version-resolution-and-lockfile-discipline",
+      "title": "Build and Release Workflow: Version Resolution and Lockfile Discipline",
+      "file": "27-build-and-release-workflow-version-resolution-and-lockfile-discipline.md",
+      "section": "Deep Dive",
+      "group": "Contributing and Engineering Practices",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "28-cross-platform-compatibility-path-handling-platform-detection-and-rimraf",
+      "title": "Cross-Platform Compatibility: Path Handling, Platform Detection, and rimraf",
+      "file": "28-cross-platform-compatibility-path-handling-platform-detection-and-rimraf.md",
+      "section": "Deep Dive",
+      "group": "Contributing and Engineering Practices",
+      "level": "Intermediate"
+    },
+    {
+      "slug": "29-step-by-step-guide-adding-a-new-ai-provider-to-the-switcher",
+      "title": "Step-by-Step Guide: Adding a New AI Provider to the Switcher",
+      "file": "29-step-by-step-guide-adding-a-new-ai-provider-to-the-switcher.md",
+      "section": "Deep Dive",
+      "group": "Contributing and Engineering Practices",
+      "level": "Advanced"
+    },
+    {
+      "slug": "30-repository-conventions-claude-md-agents-md-architecture-md-and-the-zread-wiki",
+      "title": "Repository Conventions: CLAUDE.md, AGENTS.md, ARCHITECTURE.md, and the Zread Wiki",
+      "file": "30-repository-conventions-claude-md-agents-md-architecture-md-and-the-zread-wiki.md",
+      "section": "Deep Dive",
+      "group": "Contributing and Engineering Practices",
+      "level": "Beginner"
+    }
+  ]
+}
