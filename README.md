@@ -209,8 +209,8 @@ When switching Claude Code to a non-Anthropic provider, the tool writes model al
 | Env Var | Default (Alibaba) | Default (GLM) | Default (OpenRouter) | Default (Ollama) | Default (Gemini) | Default (Muse) |
 |---------|-------------------|---------------|---------------------|-----------------|-----------------|-----------------|
 | `ANTHROPIC_DEFAULT_OPUS_MODEL` | `qwen3.7-plus` | `glm-5.3[1m]` | `qwen/qwen3.6-plus:free` | `deepseek-r1:latest` | `gemini-2.5-pro` | `muse-spark-1.2-contributor` |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5.3-flash` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` | `muse-spark-1.2-contributor` |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5v-turbo` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` | `muse-spark-1.2-contributor` |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | `qwen3.6-plus` | `glm-5.3-flash[1m]` | `openrouter/free` | `qwen2.5-coder:latest` | `gemini-2.5-flash` | `muse-spark-1.2-contributor` |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `kimi-k2.5` | `glm-5.3-flash` | `openrouter/free` | `llama3.1:latest` | `gemini-2.5-flash-lite` | `muse-spark-1.2-contributor` |
 
 Override any tier at switch time:
 
@@ -241,6 +241,8 @@ claude-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --h
 ```
 
 Switching back to Anthropic clears these env vars so native Claude models are used again.
+
+**1M context and autocompact (GLM):** the `[1m]` suffix on GLM model strings opts into the 1M-context variant. Claude Code cannot infer the context window of an aliased model, so switching to GLM also writes `CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000` into `~/.claude/settings.json` (per [Z.AI docs](https://docs.z.ai/devpack/latest-model)); Claude Code then autocompacts near 800K tokens. The var is removed when switching to any other provider. Note the window is a single global setting — it matches the `[1m]` sonnet/opus slots, while the plain `glm-5.3-flash` haiku alias serves the standard 200K window. OpenCode reads the window from the per-model `limit.context` the switcher writes in `opencode.json`.
 
 ### View Information
 
@@ -422,7 +424,8 @@ claude-switch setup
 | Model | Context | Capabilities |
 |-------|---------|--------------|
 | glm-5.3[1m] | 1M tokens | Text Generation, Deep Thinking |
-| glm-5.3-flash | 1M tokens | Text Generation, Deep Thinking, Visual Understanding, Fast Responses |
+| glm-5.3-flash[1m] | 1M tokens | Text Generation, Deep Thinking, Visual Understanding, Fast Responses |
+| glm-5.3-flash | 200K tokens (1M via `[1m]`) | Text Generation, Deep Thinking, Visual Understanding, Fast Responses |
 | glm-5v-turbo | 200K tokens | Text Generation, Deep Thinking, Visual Understanding, Visual Programming |
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
@@ -722,14 +725,14 @@ $ claude-switch opencode add alibaba
 ```
 
 ```bash
-$ claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash --haiku glm-5v-turbo
+$ claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash[1m] --haiku glm-5.3-flash
 
 ✓ Switched to GLM/Z.AI
 
   Claude model aliases:
     ANTHROPIC_DEFAULT_OPUS_MODEL   → glm-5.3[1m]
-    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5.3-flash
-    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5v-turbo
+    ANTHROPIC_DEFAULT_SONNET_MODEL → glm-5.3-flash[1m]
+    ANTHROPIC_DEFAULT_HAIKU_MODEL  → glm-5.3-flash
 ```
 
 ```bash

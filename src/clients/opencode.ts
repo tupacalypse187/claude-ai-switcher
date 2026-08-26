@@ -307,8 +307,8 @@ export async function configureGLM(baseURL: string, apiKey: string): Promise<voi
           output: 131072
         }
       },
-      "glm-5.3-flash": {
-        name: "GLM-5.3-Flash",
+      "glm-5.3-flash[1m]": {
+        name: "GLM-5.3-Flash (1M Context)",
         modalities: {
           input: ["text", "image"],
           output: ["text"]

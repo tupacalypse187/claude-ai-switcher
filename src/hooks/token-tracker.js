@@ -30,7 +30,8 @@ const MODEL_CONTEXT_WINDOWS = {
 
   // GLM Models
   'glm-5.3[1m]': 1000000,
-  'glm-5.3-flash': 1000000,
+  'glm-5.3-flash[1m]': 1000000,
+  'glm-5.3-flash': 200000,
   'glm-5v-turbo': 200000,
   'glm-5-turbo': 200000,
 
