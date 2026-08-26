@@ -67,6 +67,7 @@ const MODEL_CAPABILITIES = {
 
   // GLM Models
   'glm-5.3[1m]': ['Text Generation', 'Deep Thinking', '1M Context'],
+  'glm-5.3-flash': ['Text Generation', 'Deep Thinking', 'Multimodal', 'Fast', '1M Context'],
   'glm-5v-turbo': ['Text Generation', 'Deep Thinking', 'Multimodal'],
   'glm-5-turbo': ['Text Generation', 'Deep Thinking', 'Fast'],
 
@@ -173,6 +174,7 @@ function getContextWindow(modelId) {
     'kimi-k2.5': 200000,
     'MiniMax-M2.5': 200000,
     'glm-5.3[1m]': 1000000,
+    'glm-5.3-flash': 1000000,
     'glm-5v-turbo': 200000,
     'glm-5-turbo': 200000,
     'qwen/qwen3.6-plus:free': 131072,

@@ -760,7 +760,7 @@ opencodeAddCmd
       displaySuccess("Added GLM/Z.AI provider to OpenCode");
       console.log(chalk.dim("  Config: ~/.config/opencode/opencode.json"));
       console.log(chalk.dim("  Provider: glm"));
-      console.log(chalk.dim("  Models: glm-5.3[1m], glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash"));
+      console.log(chalk.dim("  Models: glm-5.3[1m], glm-5.3-flash, glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash"));
       if (hasCodingHelper) console.log(chalk.dim("  Managed by: coding-helper"));
       console.log();
     } catch (error) {

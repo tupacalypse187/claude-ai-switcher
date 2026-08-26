@@ -20,10 +20,10 @@ export interface ModelTierMap {
 }
 
 // Default GLM tier map per Z.AI docs (https://docs.z.ai/devpack/latest-model)
-// GLM-5.3 with 1M context leads opus, with the fast turbo models filling sonnet/haiku
+// GLM-5.3 with 1M context leads opus, GLM-5.3-Flash is the default sonnet alias, GLM-5V-Turbo covers haiku
 export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
   opus: "glm-5.3[1m]",
-  sonnet: "glm-5-turbo",
+  sonnet: "glm-5.3-flash",
   haiku: "glm-5v-turbo"
 };
 
@@ -168,6 +168,13 @@ export const glmModels: Model[] = [
     contextWindow: 1000000,
     capabilities: ["Text Generation", "Deep Thinking"],
     description: "Zhipu's latest flagship model with major advances in complex software engineering and agent tasks. 1M context window. Recommended by Z.AI for the opus tier."
+  },
+  {
+    id: "glm-5.3-flash",
+    name: "GLM-5.3-Flash",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding", "Fast Responses"],
+    description: "Zhipu's first native multimodal model in the GLM-5 series. High-efficiency MoE (320B total / 18B active) with a 1M context window, strong coding and agentic performance at flash-tier speed. Default sonnet tier."
   },
   {
     id: "glm-5v-turbo",
