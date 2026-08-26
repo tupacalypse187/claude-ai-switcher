@@ -307,6 +307,23 @@ export async function configureGLM(baseURL: string, apiKey: string): Promise<voi
           output: 131072
         }
       },
+      "glm-5.3-flash": {
+        name: "GLM-5.3-Flash",
+        modalities: {
+          input: ["text", "image"],
+          output: ["text"]
+        },
+        options: {
+          thinking: {
+            type: "enabled",
+            budgetTokens: 8192
+          }
+        },
+        limit: {
+          context: 1000000,
+          output: 16384
+        }
+      },
       "glm-5v-turbo": {
         name: "GLM-5V-Turbo",
         modalities: {
