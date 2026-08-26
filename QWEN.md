@@ -138,7 +138,7 @@ claude-switch opencode glm
 
 # Custom model tier aliases (Claude Code only)
 claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3.6-plus --haiku kimi-k2.5
-claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash --haiku glm-5v-turbo
+claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash[1m] --haiku glm-5.3-flash
 
 # Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
 claude-switch claude alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
@@ -222,7 +222,7 @@ Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
 | Alibaba | qwen3.7-plus (default), selected model (when specific model chosen) | qwen3.6-plus (default), qwen3.7-plus (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) |
-| GLM | glm-5.3[1m] | glm-5.3-flash | glm-5v-turbo |
+| GLM | glm-5.3[1m] | glm-5.3-flash[1m] | glm-5.3-flash |
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
 | Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
@@ -251,7 +251,7 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
 
 ### GLM/Z.AI
 - **Managed by**: `@z_ai/coding-helper` package
-- **Models**: glm-5.3[1m], glm-5.3-flash, glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash
+- **Models**: glm-5.3[1m], glm-5.3-flash[1m], glm-5.3-flash, glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash
 - **Context Windows**: 200K - 1M tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
 
@@ -394,8 +394,8 @@ interface ModelTierMap {
 // GLM default: best model per tier
 const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
   opus: "glm-5.3[1m]",
-  sonnet: "glm-5.3-flash",
-  haiku: "glm-5v-turbo"
+  sonnet: "glm-5.3-flash[1m]",
+  haiku: "glm-5.3-flash"
 };
 
 // Alibaba default: opus = selected model, sonnet = qwen3.7-plus, haiku = qwen3.6-plus

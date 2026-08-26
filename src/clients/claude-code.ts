@@ -149,6 +149,7 @@ export async function configureAlibaba(apiKey: string, model: string, tierMap: M
   settings.env["ANTHROPIC_MODEL"] = model;
   delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
   delete settings.env["ENABLE_TOOL_SEARCH"];
+  delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -175,6 +176,7 @@ export async function configureAnthropic(): Promise<void> {
     delete settings.env["ANTHROPIC_MODEL"];
     delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
     delete settings.env["ENABLE_TOOL_SEARCH"];
+    delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
   }
 
   clearTierMap(settings);
@@ -200,6 +202,11 @@ export async function configureGLM(tierMap: ModelTierMap): Promise<void> {
   }
 
   applyTierMap(settings, tierMap);
+  // Claude Code does not infer context windows for aliased models: the [1m] model
+  // strings select the 1M variant server-side, and this var tells it when to compact
+  // (https://docs.z.ai/devpack/latest-model — compact triggers near 80% of the window)
+  settings.env = settings.env || {};
+  settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"] = "1000000";
   await writeClaudeSettings(settings);
 }
 
@@ -218,6 +225,7 @@ export async function configureOpenRouter(apiKey: string, model: string, tierMap
   settings.env["ANTHROPIC_MODEL"] = model;
   delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
   delete settings.env["ENABLE_TOOL_SEARCH"];
+  delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -237,6 +245,7 @@ export async function configureOllama(model: string, tierMap: ModelTierMap): Pro
   settings.env["ANTHROPIC_MODEL"] = model;
   delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
   delete settings.env["ENABLE_TOOL_SEARCH"];
+  delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -256,6 +265,7 @@ export async function configureGemini(apiKey: string, model: string, tierMap: Mo
   settings.env["ANTHROPIC_MODEL"] = model;
   delete settings.env["CLAUDE_CODE_SUBAGENT_MODEL"];
   delete settings.env["ENABLE_TOOL_SEARCH"];
+  delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);
@@ -276,6 +286,7 @@ export async function configureMuse(apiKey: string, model: string, tierMap: Mode
   settings.env["ANTHROPIC_MODEL"] = model;
   settings.env["CLAUDE_CODE_SUBAGENT_MODEL"] = model;
   settings.env["ENABLE_TOOL_SEARCH"] = "true";
+  delete settings.env["CLAUDE_CODE_AUTO_COMPACT_WINDOW"];
 
   applyTierMap(settings, tierMap);
   await writeClaudeSettings(settings);

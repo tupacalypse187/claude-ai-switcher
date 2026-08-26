@@ -116,7 +116,7 @@ Default tier maps per provider:
 | Provider | opus | sonnet | haiku |
 |----------|------|--------|-------|
 | Alibaba | qwen3.7-plus (default), selected model (when specific model chosen) | qwen3.6-plus (default), qwen3.7-plus (when specific model chosen) | kimi-k2.5 (default), qwen3.6-plus (when specific model chosen) |
-| GLM | glm-5.3[1m] | glm-5.3-flash | glm-5v-turbo |
+| GLM | glm-5.3[1m] | glm-5.3-flash[1m] | glm-5.3-flash |
 | OpenRouter | qwen/qwen3.6-plus:free | openrouter/free | openrouter/free |
 | Ollama | deepseek-r1:latest | qwen2.5-coder:latest | llama3.1:latest |
 | Gemini | gemini-2.5-pro | gemini-2.5-flash | gemini-2.5-flash-lite |
@@ -181,7 +181,7 @@ claude-switch opencode remove glm
 ```bash
 # Custom model tier aliases (Claude Code only)
 claude-switch claude alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
-claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash --haiku glm-5v-turbo
+claude-switch glm --opus glm-5.3[1m] --sonnet glm-5.3-flash[1m] --haiku glm-5.3-flash
 claude-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --haiku muse-spark-1.2-contributor
 
 # Specific configuration with qwen3.7-plus for opus, qwen3.6-plus for sonnet, kimi-k2.5 for haiku
