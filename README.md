@@ -5,6 +5,7 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 ## 📑 Table of Contents
 
 - [✨ Features](#-features)
+- [🏗️ Architecture](#️-architecture)
 - [📦 Installation](#-installation)
 - [💬 Platform Support](#-platform-support)
 - [🚀 Quick Start](#-quick-start)
@@ -38,6 +39,38 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 - **Safe Configuration**: Backs up existing settings before any modifications
 - **Auto Onboarding**: Automatically sets `hasCompletedOnboarding: true` to prevent connection errors
 - **OpenCode Helper**: Add/remove provider configurations for OpenCode with simple commands
+
+
+## 🏗️ Architecture
+
+`claude-switch` is a TypeScript CLI: commands are routed to per-provider modules, a switch engine validates the key and builds a model tier map, and client modules write the result into Claude Code's or OpenCode's config files. Providers that don't speak the Anthropic API natively (Ollama, Gemini) are reached through an auto-managed LiteLLM proxy.
+
+```mermaid
+flowchart TD
+    User["👤 User runs claude-switch"] --> CLI["⌨️ CLI router<br/>src/index.ts (Commander)"]
+    CLI --> Providers["🔌 Provider modules<br/>src/providers/*.ts"]
+    Providers --> Engine["🔄 Switch engine<br/>validate key · build tier map"]
+    Config["🔑 Key store<br/>~/.claude-ai-switcher/config.json"] --> Engine
+    Engine --> Proxy["📌 LiteLLM proxy<br/>Ollama :4000 · Gemini :4001"]
+    Engine --> CCClient["🖥️ Claude Code client<br/>src/clients/claude-code.ts"]
+    Engine --> OCClient["🧩 OpenCode client<br/>src/clients/opencode.ts"]
+    CCClient --> CCSettings["⚙️ ~/.claude/settings.json<br/>env vars + model tier aliases"]
+    OCClient --> OCSettings["⚙️ ~/.config/opencode/opencode.json"]
+    CCSettings --> CC["🤖 Claude Code"]
+    Proxy -.-> Backends["🦙 Ollama / Gemini APIs"]
+```
+
+**Components**
+
+- **CLI router** (`src/index.ts`) — Commander.js commands for switching, status/verification, and the OpenCode helpers.
+- **Provider modules** (`src/providers/`) — one module per provider: Anthropic, GLM (z.ai), Alibaba Qwen, OpenRouter, Ollama, Gemini, and Muse (Meta), each with its endpoints and defaults.
+- **Model tier maps** (`src/models.ts`) — per-provider opus/sonnet/haiku mappings written as `ANTHROPIC_DEFAULT_*_MODEL` aliases; overridable per switch with `--opus` / `--sonnet` / `--haiku`.
+- **Clients** (`src/clients/claude-code.ts`, `src/clients/opencode.ts`) — back up, then write the target tool's settings; also detect the currently active provider from the existing config.
+- **Key store** (`src/config.ts`) — API keys kept locally in `~/.claude-ai-switcher/config.json`.
+- **LiteLLM proxy layer** — started automatically for Ollama (port 4000) and Gemini (port 4001) to translate between the Anthropic Messages API and OpenAI-style APIs; direct providers skip it.
+- **Hooks** (`src/hooks/`) — token tracker and visual enhancement hooks installed into Claude Code for the context bar and model card.
+
+**Main flow:** `claude-switch <provider>` → validate the stored API key → build the tier map → start LiteLLM if the provider needs it → back up and write settings → the next Claude Code (or OpenCode) session runs on the selected provider.
 
 ## 📦 Installation
 
