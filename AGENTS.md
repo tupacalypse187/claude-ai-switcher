@@ -1,12 +1,26 @@
-# AGENTS.md
+# 🤖 AGENTS.md
 
 This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
-## Project Overview
+## 📑 Table of Contents
+
+- [🌟 Project Overview](#-project-overview)
+- [🗂️ Project Structure](#️-project-structure)
+- [📦 Installation](#-installation)
+- [⌨️ Build and Development Commands](#️-build-and-development-commands)
+- [🏗️ Key Architecture Patterns](#️-key-architecture-patterns)
+- [🛠️ Common Tasks](#️-common-tasks)
+- [⚙️ Configuration Files](#️-configuration-files)
+- [✨ Safety Features](#-safety-features)
+- [📦 External Dependencies](#-external-dependencies)
+- [📖 Zread Project Wiki](#-zread-project-wiki)
+- [💻 Cross-Platform Development](#-cross-platform-development)
+
+## 🌟 Project Overview
 
 Codex AI Switcher is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, Muse) for Codex and OpenCode clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Codex.
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 Codex-ai-switcher/
@@ -37,9 +51,9 @@ Codex-ai-switcher/
 └── README.md              # User documentation
 ```
 
-## Installation
+## 📦 Installation
 
-### Option 1 — npm (recommended, easiest)
+### 🔹 Option 1 — npm (recommended, easiest)
 ```bash
 npm install -g claude-ai-switcher
 claude-switch --version
@@ -47,7 +61,7 @@ claude-switch status
 # update: npm update -g claude-ai-switcher
 ```
 
-### Option 2 — npx (no install)
+### 📦 Option 2 — npx (no install)
 ```bash
 npx --package claude-ai-switcher claude-switch --help
 npx --package claude-ai-switcher claude-switch status
@@ -55,7 +69,7 @@ npx --package claude-ai-switcher claude-switch status
 ```
 Package is `claude-ai-switcher`, binary is `claude-switch` → `--package` form is required.
 
-### Option 3 — git (development / latest `main`)
+### 🔀 Option 3 — git (development / latest `main`)
 ```bash
 git clone https://github.com/tupacalypse187/claude-ai-switcher.git
 cd claude-ai-switcher
@@ -66,9 +80,9 @@ npm link        # installs `claude-switch` globally via symlink
 
 Staying up to date: `git pull` → `npm ci` → `npm run build`.
 
-## Build and Development Commands
+## ⌨️ Build and Development Commands
 
-### Build Commands
+### ⌨️ Build Commands
 ```bash
 # Install dependencies (reproducible install from package-lock.json; does NOT modify it)
 npm ci
@@ -86,21 +100,21 @@ npm start
 npm run clean
 ```
 
-### Global Installation
+### 📦 Global Installation
 ```bash
 npm link  # Install CLI globally as 'claude-switch'
 # or via npm marketplace: npm install -g claude-ai-switcher
 ```
 
-## Key Architecture Patterns
+## 🏗️ Key Architecture Patterns
 
-### Separation of Concerns
+### 🔹 Separation of Concerns
 - `clients/` handles file I/O for specific AI clients
 - `providers/` contains provider-specific configuration logic
 - `models.ts` centralizes model definitions, tier maps, and ModelTierMap interface
 - `display.ts` handles all console output formatting
 
-### Model Alias Environment Variables
+### 🌍 Model Alias Environment Variables
 When switching Codex to a non-Anthropic provider, the tool writes into `~/.Codex/settings.json`:
 ```json
 {
@@ -123,7 +137,7 @@ Default tier maps per provider:
 | Muse | muse-spark-1.2-contributor | muse-spark-1.2-contributor | muse-spark-1.2-contributor |
 | Anthropic | (cleared) | (cleared) | (cleared) |
 
-### Status Command
+### 📊 Status Command
 `Codex-switch status` — Shows current provider/model for both clients, displays masked API keys, and verifies each key by making a lightweight API call. Uses `src/verify.ts` which performs:
 - Alibaba: GET to DashScope models endpoint
 - OpenRouter: GET to OpenRouter models endpoint
@@ -133,7 +147,7 @@ Default tier maps per provider:
 - Gemini: Checks LiteLLM proxy on port 4001, then validates Google API key
 - Muse: GET to https://api.meta.ai/v1/models (Bearer + x-api-key fallback)
 
-### Type Definitions
+### 🔹 Type Definitions
 ```typescript
 // ModelTierMap defines which model maps to each Anthropic tier
 interface ModelTierMap {
@@ -143,9 +157,9 @@ interface ModelTierMap {
 }
 ```
 
-## Common Tasks
+## 🛠️ Common Tasks
 
-### Switch Providers
+### 🔌 Switch Providers
 ```bash
 # Switch both Codex and OpenCode
 Codex-switch anthropic
@@ -175,7 +189,7 @@ Codex-switch opencode remove gemini
 Codex-switch opencode remove muse
 ```
 
-### Configure Model Tiers
+### 🧠 Configure Model Tiers
 ```bash
 # Custom model tier aliases (Codex only)
 Codex-switch Codex alibaba --opus qwen3-max-2026-01-23 --sonnet qwen3-coder-plus --haiku qwen3.6-plus
@@ -186,7 +200,7 @@ Codex-switch muse --opus muse-spark-1.2 --sonnet muse-spark-1.2-contributor --ha
 Codex-switch Codex alibaba --opus qwen3.7-plus --sonnet qwen3.6-plus --haiku kimi-k2.5
 ```
 
-### View Information
+### 🔹 View Information
 ```bash
 Codex-switch status              # Show current config + verify API keys
 Codex-switch current             # Show current configuration (both clients)
@@ -195,7 +209,7 @@ Codex-switch models alibaba      # Show models for specific provider
 Codex-switch models muse         # Muse models
 ```
 
-### API Key Management
+### 🔑 API Key Management
 ```bash
 Codex-switch key alibaba         # Check if API key is set
 Codex-switch key alibaba <key>   # Set API key
@@ -203,7 +217,7 @@ Codex-switch key muse <key>      # Set Muse MODEL_API_KEY (https://api.meta.ai)
 Codex-switch setup               # Interactive setup wizard (now prompts for Muse after Gemini)
 ```
 
-### Hooks - Token Tracking & Visual Enhancements
+### 🪝 Hooks - Token Tracking & Visual Enhancements
 ```bash
 # Install all hooks (token tracker + visual enhancements)
 Codex-switch hooks install
@@ -226,7 +240,7 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 - `~/.Codex/hooks-config.json` - Hook installation status
 - `~/.Codex/token-usage.json` - Session token usage data
 
-## Configuration Files
+## ⚙️ Configuration Files
 
 | Client | Config File | Purpose |
 |--------|-------------|---------|
@@ -239,7 +253,7 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 | Visual Enhancements | `~/.Codex/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
 | Token Usage Data | `~/.Codex/token-usage.json` | Session token usage tracking |
 
-## Safety Features
+## ✨ Safety Features
 1. **Backup Before Modify**: All config file modifications create timestamped backups
 2. **Directory Creation**: Uses `fs.ensureDir()` to safely create directories
 3. **Onboarding Auto-Complete**: Sets `hasCompletedOnboarding: true` to prevent connection errors
@@ -249,7 +263,7 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 7. **Hook Safety**: Hooks are optional and can be removed at any time without affecting core functionality
 8. **Token Usage Privacy**: Token usage data stored locally only, never transmitted
 
-## External Dependencies
+## 📦 External Dependencies
 - Codex and/or OpenCode must be installed separately
 - `@z_ai/coding-helper` package required for GLM/Z.AI provider support
 - API keys required for Alibaba (from Alibaba Cloud Model Studio)
@@ -258,11 +272,11 @@ Codex-switch hooks remove-visual   # Remove visual enhancements
 - Google API key (from [AI Studio](https://aistudio.google.com/apikey)) required for Gemini
 - Muse API key (`MODEL_API_KEY` for https://api.meta.ai) required for Muse — discounted `muse-spark-1.2-contributor` is the default
 
-## Zread Project Wiki
+## 📖 Zread Project Wiki
 
 The `.zread/` directory contains an AI-generated project wiki maintained with [Zread CLI](https://zread.ai/cli).
 
-### Structure
+### 🗂️ Structure
 ```
 .zread/
   wiki/
@@ -272,25 +286,25 @@ The `.zread/` directory contains an AI-generated project wiki maintained with [Z
     drafts/          ← in-progress generation (gitignored)
 ```
 
-### Workflow
+### 🔄 Workflow
 1. After meaningful code changes, run `zread generate` to update the wiki
 2. Prune old version snapshots before committing: delete all but the latest dated folder under `.zread/wiki/versions/`
 3. Commit `current` (the pointer) + the single latest version folder
 4. Git history tracks what changed over time — no need for multiple dated snapshots in the repo
 
-### Guidelines
+### 📏 Guidelines
 - Never commit `.zread/wiki/drafts/` (already in `.gitignore`)
 - Keep only one versioned snapshot in the repo at a time to avoid accumulation
 - The wiki is for developer reference and AI context — it does not affect build or runtime
 
-## Cross-Platform Development
+## 💻 Cross-Platform Development
 
-### Platform Support
+### 💬 Platform Support
 - **macOS**: Full support (primary development platform)
 - **Linux**: Full support
 - **Windows 11**: Full support (use Git Bash, WSL, or PowerShell for build commands)
 
-### Cross-Platform Code Guidelines
+### 📏 Cross-Platform Code Guidelines
 
 **Shell Commands**:
 - Avoid Unix-specific commands like `which`, `rm -rf`

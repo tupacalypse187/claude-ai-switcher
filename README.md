@@ -1,8 +1,27 @@
-# Claude AI Switcher
+# 🔀 Claude AI Switcher
 
 Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, Gemini, Muse) for **Claude Code** with ease. Also provides helper commands to manage providers for **OpenCode**.
 
-## Features
+## 📑 Table of Contents
+
+- [✨ Features](#-features)
+- [📦 Installation](#-installation)
+- [💬 Platform Support](#-platform-support)
+- [🚀 Quick Start](#-quick-start)
+- [⌨️ Commands](#️-commands)
+- [🧠 Available Models](#-available-models)
+- [⚙️ Configuration Files](#️-configuration-files)
+- [⚙️ How It Works](#️-how-it-works)
+- [💡 Example Output](#-example-output)
+- [📖 Project Documentation (Zread)](#-project-documentation-zread)
+- [📋 Requirements](#-requirements)
+- [🛠️ LiteLLM Setup](#️-litellm-setup)
+- [🔑 Getting API Keys](#-getting-api-keys)
+- [✨ Safety Features](#-safety-features)
+- [🆘 Troubleshooting](#-troubleshooting)
+- [📄 License](#-license)
+
+## ✨ Features
 
 - **Quick Switching**: Switch between Anthropic, GLM/Z.AI, Alibaba Coding Plan, OpenRouter, Ollama (local), Gemini (Google), and Muse (Meta) with a single command
 - **Model Aliases**: Automatically sets `ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, and `ANTHROPIC_DEFAULT_HAIKU_MODEL` in Claude Code's settings so you always know what model is active
@@ -20,9 +39,9 @@ Switch between AI providers (Anthropic, GLM, Alibaba Qwen, OpenRouter, Ollama, G
 - **Auto Onboarding**: Automatically sets `hasCompletedOnboarding: true` to prevent connection errors
 - **OpenCode Helper**: Add/remove provider configurations for OpenCode with simple commands
 
-## Installation
+## 📦 Installation
 
-### Option 1 — npm (recommended, easiest)
+### 🔹 Option 1 — npm (recommended, easiest)
 Install `claude-switch` globally from the npm marketplace — no git/build needed:
 
 ```bash
@@ -40,7 +59,7 @@ npm uninstall -g claude-ai-switcher
 
 *Pros:* one command, auto-adds `claude-switch` to PATH.
 
-### Option 2 — npx (no install, try instantly)
+### 📦 Option 2 — npx (no install, try instantly)
 Run without installing (always latest unless pinned):
 
 ```bash
@@ -55,7 +74,7 @@ npx --package claude-ai-switcher@1.2.3 claude-switch status
 
 *Pros:* zero install, great for CI/one-offs; *Cons:* downloads on each run (cached) and no persistent `claude-switch` command.
 
-### Option 3 — git (development / latest `main`)
+### 🔀 Option 3 — git (development / latest `main`)
 For contributors or to track unreleased fixes before they hit npm:
 
 ```bash
@@ -78,7 +97,7 @@ npm run build
 
 > **Dependency flow:** use `npm ci` after every `git pull` — it never modifies `package-lock.json`. Use `npm install <pkg>` / `npm update` only when intentionally adding/upgrading a dep, then commit the updated lockfile.
 
-## Platform Support
+## 💬 Platform Support
 
 | Platform | Status | Notes |
 |----------|--------|-------|
@@ -86,14 +105,14 @@ npm run build
 | Linux | ✅ Full Support | All features supported |
 | Windows 11 | ✅ Full Support | Use Git Bash, WSL, or PowerShell for build commands |
 
-### Windows Notes
+### 📝 Windows Notes
 
 - Build commands (`npm ci`, `npm run build`) should be run in Git Bash, WSL, or PowerShell
 - The CLI works in any terminal after installation
 - GLM/Z.AI provider requires `coding-helper` to be in your PATH
 - The `clean` script uses `rimraf` for cross-platform compatibility
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 # Run setup wizard (recommended for first-time use)
@@ -142,9 +161,9 @@ claude-switch opencode remove glm
 claude-switch opencode remove muse
 ```
 
-## Commands
+## ⌨️ Commands
 
-### Switch Claude Code (top-level commands)
+### ⌨️ Switch Claude Code (top-level commands)
 
 ```bash
 claude-switch anthropic
@@ -161,7 +180,7 @@ claude-switch muse                         # default: muse-spark-1.2-contributor
 claude-switch muse muse-spark-1.2          # specific model (full)
 ```
 
-### Switch Claude Code (explicit targeting)
+### 🔹 Switch Claude Code (explicit targeting)
 
 ```bash
 claude-switch claude anthropic
@@ -178,7 +197,7 @@ claude-switch claude muse
 claude-switch claude muse muse-spark-1.2
 ```
 
-### OpenCode Helper Commands
+### ⌨️ OpenCode Helper Commands
 
 Add or remove providers from OpenCode configuration:
 
@@ -202,7 +221,7 @@ claude-switch opencode remove muse
 
 **Note**: OpenCode configuration is stored at `~/.config/opencode/opencode.json`. The `add` command adds the provider with all available models. The `remove` command removes only the specified provider, preserving any other providers you have configured.
 
-### Model Aliases (Claude Code)
+### 🧠 Model Aliases (Claude Code)
 
 When switching Claude Code to a non-Anthropic provider, the tool writes model alias env vars into `~/.claude/settings.json` so Claude Code knows which model to route each tier to:
 
@@ -244,7 +263,7 @@ Switching back to Anthropic clears these env vars so native Claude models are us
 
 **1M context and autocompact (GLM):** the `[1m]` suffix on GLM model strings opts into the 1M-context variant. Claude Code cannot infer the context window of an aliased model, so switching to GLM also writes `CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000` into `~/.claude/settings.json` (per [Z.AI docs](https://docs.z.ai/devpack/latest-model)); Claude Code then autocompacts near 800K tokens. The var is removed when switching to any other provider. Note the window is a single global setting — it matches the `[1m]` sonnet/opus slots, while the plain `glm-5.3-flash` haiku alias serves the standard 200K window. OpenCode reads the window from the per-model `limit.context` the switcher writes in `opencode.json`.
 
-### View Information
+### 🔹 View Information
 
 ```bash
 # Show current config + verify API keys (recommended)
@@ -266,7 +285,7 @@ claude-switch models gemini
 claude-switch models muse
 ```
 
-### API Key Management
+### 🔑 API Key Management
 
 ```bash
 # Set API key
@@ -284,7 +303,7 @@ claude-switch key muse
 
 > **Note**: Ollama does not require an API key (runs locally). Anthropic uses the `ANTHROPIC_API_KEY` environment variable.
 
-### Hooks - Token Tracking & Visual Enhancements
+### 🪝 Hooks - Token Tracking & Visual Enhancements
 
 Install visual enhancements and token tracking for Claude Code:
 
@@ -395,16 +414,16 @@ node ~/.claude/visual-enhancements.js
 ─────────────────────────────────────────────────────────────┘
 ```
 
-### Setup
+### 🛠️ Setup
 
 ```bash
 # Interactive setup wizard
 claude-switch setup
 ```
 
-## Available Models
+## 🧠 Available Models
 
-### Alibaba Coding Plan
+### 🔹 Alibaba Coding Plan
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -419,7 +438,7 @@ claude-switch setup
 | kimi-k2.5 | 200K tokens | Text Generation, Deep Thinking, Visual |
 | MiniMax-M2.5 | 200K tokens | Text Generation, Deep Thinking |
 
-### GLM/Z.AI (via coding-helper)
+### 🔹 GLM/Z.AI (via coding-helper)
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -430,7 +449,7 @@ claude-switch setup
 | glm-5-turbo | 200K tokens | Text Generation, Deep Thinking, Fast Responses |
 | glm-4.7 | 256K tokens | Text Generation, Deep Thinking |
 
-### Anthropic (Default)
+### 🔹 Anthropic (Default)
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -440,14 +459,14 @@ claude-switch setup
 | claude-sonnet-4-5-20250814 | 200K tokens | Text, Code, Vision |
 | claude-haiku-4-5-20251015 | 200K tokens | Text, Fast Responses |
 
-### OpenRouter
+### 🔹 OpenRouter
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
 | `qwen/qwen3.6-plus:free` | 131K tokens | Text Generation, Deep Thinking |
 | `openrouter/free` | 131K tokens | Text Generation |
 
-### Ollama (Local, via LiteLLM proxy)
+### 🔹 Ollama (Local, via LiteLLM proxy)
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -458,7 +477,7 @@ claude-switch setup
 
 > **Prerequisites**: [Ollama](https://ollama.com) must be installed and running on port 11434. [LiteLLM](https://github.com/BerriAI/litellm) proxy is auto-started on port 4000.
 
-### Gemini (Google, via LiteLLM proxy)
+### 🔹 Gemini (Google, via LiteLLM proxy)
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -468,7 +487,7 @@ claude-switch setup
 
 > **Prerequisites**: Google API key from [AI Studio](https://aistudio.google.com/apikey). [LiteLLM](https://github.com/BerriAI/litellm) proxy is auto-started on port 4001.
 
-### Muse (Meta, direct — no proxy)
+### 🔹 Muse (Meta, direct — no proxy)
 
 | Model | Context | Capabilities |
 |-------|---------|--------------|
@@ -477,7 +496,7 @@ claude-switch setup
 
 > **Prerequisites**: Muse API key (`MODEL_API_KEY`) for `https://api.meta.ai`. Discounted `contributor` variant is the default — same capabilities at lower price. Direct Anthropic-compatible endpoint, no LiteLLM needed.
 
-## Configuration Files
+## ⚙️ Configuration Files
 
 | Client | Config File | Purpose |
 |--------|-------------|---------|
@@ -486,9 +505,9 @@ claude-switch setup
 | OpenCode | `~/.config/opencode/opencode.json` | Provider configuration (bailian-coding-plan) |
 | API Keys | `~/.claude-ai-switcher/config.json` | Secure local API key storage |
 
-## How It Works
+## ⚙️ How It Works
 
-### Provider Architecture
+### 🏗️ Provider Architecture
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌───────────────────┐
@@ -509,7 +528,7 @@ claude-switch setup
 
 Anthropic, Alibaba, OpenRouter, GLM, and Muse speak the Anthropic API format natively. Ollama and Gemini only speak OpenAI format, so a **LiteLLM proxy** translates between protocols. The proxy is auto-started when you switch to Ollama or Gemini. Muse goes direct to `https://api.meta.ai` with no proxy.
 
-### Claude Code Configuration
+### ⚙️ Claude Code Configuration
 
 When you switch Claude Code to Alibaba, the tool writes these environment variables to `~/.claude/settings.json`:
 
@@ -531,7 +550,7 @@ When you switch Claude Code to Alibaba, the tool writes these environment variab
 
 Switching back to Anthropic clears all these env vars.
 
-### Ollama Configuration
+### ⚙️ Ollama Configuration
 
 When you switch Claude Code to Ollama, the tool:
 
@@ -552,7 +571,7 @@ When you switch Claude Code to Ollama, the tool:
 }
 ```
 
-### Gemini Configuration
+### ⚙️ Gemini Configuration
 
 When you switch Claude Code to Gemini, the tool:
 
@@ -574,7 +593,7 @@ When you switch Claude Code to Gemini, the tool:
 }
 ```
 
-### Muse Configuration (Meta)
+### ⚙️ Muse Configuration (Meta)
 
 When you switch Claude Code to Muse, the tool writes these environment variables to `~/.claude/settings.json` (per Muse docs — https://api.meta.ai):
 
@@ -610,7 +629,7 @@ claude-switch opencode add muse
 claude-switch opencode remove muse
 ```
 
-### OpenRouter Configuration
+### ⚙️ OpenRouter Configuration
 
 When you switch Claude Code to OpenRouter, the tool writes these environment variables to `~/.claude/settings.json`:
 
@@ -627,7 +646,7 @@ When you switch Claude Code to OpenRouter, the tool writes these environment var
 }
 ```
 
-### OpenCode Configuration
+### ⚙️ OpenCode Configuration
 
 When you run `claude-switch opencode add alibaba`, the tool writes the `bailian-coding-plan` provider to `~/.config/opencode/opencode.json`:
 
@@ -659,7 +678,7 @@ When you run `claude-switch opencode add alibaba`, the tool writes the `bailian-
 
 Running `claude-switch opencode remove alibaba` removes only the `bailian-coding-plan` provider, preserving any other providers you have configured.
 
-### GLM/Z.AI Configuration
+### ⚙️ GLM/Z.AI Configuration
 
 GLM uses the `@z_ai/coding-helper` package to manage its configuration. For Claude Code, the tool triggers `coding-helper auth reload claude` to apply GLM settings, plus sets the model tier aliases.
 
@@ -676,7 +695,7 @@ claude-switch opencode add glm
 claude-switch opencode remove glm
 ```
 
-## Example Output
+## 💡 Example Output
 
 ```bash
 $ claude-switch status
@@ -803,11 +822,11 @@ $ claude-switch muse
     ANTHROPIC_DEFAULT_HAIKU_MODEL  → muse-spark-1.2-contributor
 ```
 
-## Project Documentation (Zread)
+## 📖 Project Documentation (Zread)
 
 This repository includes an AI-generated project wiki in `.zread/` created with [Zread CLI](https://zread.ai/cli). It provides detailed architectural walkthroughs, module breakdowns, and implementation guides.
 
-### Viewing the Wiki
+### 📖 Viewing the Wiki
 
 ```bash
 # Install Zread CLI
@@ -822,7 +841,7 @@ zread generate
 
 The wiki is versioned alongside the code. Contributors should prune old version snapshots before committing so the repo only contains the latest.
 
-### Contributing to the Wiki
+### 🤝 Contributing to the Wiki
 
 After making significant code changes:
 
@@ -830,7 +849,7 @@ After making significant code changes:
 2. Delete old dated folders under `.zread/wiki/versions/`, keeping only the latest
 3. Commit the updated `current` pointer and the new version folder
 
-## Requirements
+## 📋 Requirements
 
 - Node.js >= 18.0.0
 - Claude Code installed (for Claude Code support)
@@ -842,7 +861,7 @@ After making significant code changes:
 - Google API Key (for Gemini)
 - Muse API Key (`MODEL_API_KEY` for https://api.meta.ai)
 
-## LiteLLM Setup
+## 🛠️ LiteLLM Setup
 
 Ollama and Gemini require [LiteLLM](https://github.com/BerriAI/litellm) to translate between Claude Code's Anthropic API format and the OpenAI-compatible format used by these providers.
 
@@ -853,35 +872,35 @@ pip install 'litellm[proxy]'
 
 The tool automatically starts the proxy when you switch to Ollama (port 4000) or Gemini (port 4001). No manual proxy management is needed.
 
-## Getting API Keys
+## 🔑 Getting API Keys
 
-### Alibaba Coding Plan
+### 🔹 Alibaba Coding Plan
 
 1. Visit [Alibaba Cloud Model Studio](https://modelstudio.console.alibabacloud.com/)
 2. Navigate to API Key management
 3. Create a new API key
 4. Run `claude-switch setup` or `claude-switch key alibaba <key>`
 
-### GLM/Z.AI
+### 🔹 GLM/Z.AI
 
 1. Install coding-helper: `npm install -g @z_ai/coding-helper`
 2. Run: `coding-helper auth`
 3. Follow the interactive setup
 
-### OpenRouter
+### 🔹 OpenRouter
 
 1. Visit [OpenRouter Keys](https://openrouter.ai/settings/keys)
 2. Create a new API key
 3. Run `claude-switch setup` or `claude-switch key openrouter <key>`
 
-### Gemini (Google)
+### 🔹 Gemini (Google)
 
 1. Visit [Google AI Studio](https://aistudio.google.com/apikey)
 2. Create a new API key
 3. Run `claude-switch setup` or `claude-switch key gemini <key>`
 4. Ensure LiteLLM is installed: `pip install 'litellm[proxy]'`
 
-### Ollama (Local)
+### 🔹 Ollama (Local)
 
 1. Install [Ollama](https://ollama.com)
 2. Start Ollama: `ollama serve`
@@ -889,7 +908,7 @@ The tool automatically starts the proxy when you switch to Ollama (port 4000) or
 4. Ensure LiteLLM is installed: `pip install 'litellm[proxy]'`
 5. No API key needed — everything runs locally
 
-### Muse (Meta)
+### 🔹 Muse (Meta)
 
 1. Get your `MODEL_API_KEY` for Muse (Meta)
 2. Run `claude-switch key muse <key>` or `claude-switch setup` (Muse prompt appears after Gemini)
@@ -907,7 +926,7 @@ CLAUDE_CODE_SUBAGENT_MODEL="muse-spark-1.2-contributor"
 ENABLE_TOOL_SEARCH="true"
 ```
 
-## Safety Features
+## ✨ Safety Features
 
 - Checks if config files exist before creating
 - Backs up existing settings before modification
@@ -917,21 +936,21 @@ ENABLE_TOOL_SEARCH="true"
 - Clears model alias env vars when switching between providers
 - Preserves other OpenCode providers when adding/removing bailian-coding-plan
 
-## Troubleshooting
+## 🆘 Troubleshooting
 
-### "coding-helper not found"
+### 🔹 "coding-helper not found"
 
 ```bash
 npm install -g @z_ai/coding-helper
 ```
 
-### "LiteLLM is required for Ollama/Gemini support"
+### 💬 "LiteLLM is required for Ollama/Gemini support"
 
 ```bash
 pip install 'litellm[proxy]'
 ```
 
-### "Ollama is not installed"
+### 📦 "Ollama is not installed"
 
 Download and install from [ollama.com](https://ollama.com), then start it:
 
@@ -939,13 +958,13 @@ Download and install from [ollama.com](https://ollama.com), then start it:
 ollama serve
 ```
 
-### "Ollama is not running"
+### ▶️ "Ollama is not running"
 
 ```bash
 ollama serve
 ```
 
-### "Failed to start LiteLLM proxy"
+### 🔹 "Failed to start LiteLLM proxy"
 
 The proxy may take a moment to start. Check that port 4000 (Ollama) or 4001 (Gemini) is not already in use:
 
@@ -955,7 +974,7 @@ lsof -i :4000   # macOS/Linux
 netstat -ano | findstr :4000   # Windows
 ```
 
-### "API Key not found"
+### 🔑 "API Key not found"
 
 ```bash
 claude-switch setup
@@ -965,7 +984,7 @@ claude-switch key gemini <your-api-key>
 claude-switch key muse <your-api-key>      # MODEL_API_KEY for https://api.meta.ai
 ```
 
-### "Unable to connect to Anthropic services"
+### 🔹 "Unable to connect to Anthropic services"
 
 The tool automatically sets `hasCompletedOnboarding: true` in `~/.claude.json`. Run any switch command to trigger this:
 
@@ -973,13 +992,13 @@ The tool automatically sets `hasCompletedOnboarding: true` in `~/.claude.json`. 
 claude-switch anthropic
 ```
 
-### Check current configuration
+### ⚙️ Check current configuration
 
 ```bash
 claude-switch status    # Shows config + verifies API keys
 claude-switch current   # Shows config only
 ```
 
-## License
+## 📄 License
 
 MIT

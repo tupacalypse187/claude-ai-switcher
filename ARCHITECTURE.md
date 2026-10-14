@@ -1,6 +1,17 @@
-# Architecture
+# 🏗️ Architecture
 
-## High-Level Overview
+## 📑 Table of Contents
+
+- [🌟 High-Level Overview](#-high-level-overview)
+- [🏗️ Provider Architecture](#️-provider-architecture)
+- [🔄 Provider Switch Flow](#-provider-switch-flow)
+- [🧠 Model Tier Alias System](#-model-tier-alias-system)
+- [🔌 Provider Detection](#-provider-detection)
+- [📌 LiteLLM Proxy Layer](#-litellm-proxy-layer)
+- [⚙️ Config File Locations](#️-config-file-locations)
+- [💬 Cross-Platform Support](#-cross-platform-support)
+
+## 🌟 High-Level Overview
 
 ```
 claude-switch CLI
@@ -21,7 +32,7 @@ claude-switch CLI
  ~/.claude.json
 ```
 
-## Provider Architecture
+## 🏗️ Provider Architecture
 
 ```
                     Claude Code / OpenCode
@@ -50,7 +61,7 @@ Anthropic, Alibaba, and OpenRouter speak the Anthropic Messages API natively.
 Ollama and Gemini only speak OpenAI format, so LiteLLM translates between protocols.
 GLM uses the coding-helper MCP server which handles its own configuration.
 
-## Provider Switch Flow
+## 🔄 Provider Switch Flow
 
 When switching providers, the tool writes environment variables to `~/.claude/settings.json`:
 
@@ -85,7 +96,7 @@ When switching providers, the tool writes environment variables to `~/.claude/se
                     +--------+---------+
 ```
 
-## Model Tier Alias System
+## 🧠 Model Tier Alias System
 
 Claude Code uses three env vars to alias model tiers:
 
@@ -95,7 +106,7 @@ ANTHROPIC_DEFAULT_SONNET_MODEL -- maps to provider's sonnet model
 ANTHROPIC_DEFAULT_HAIKU_MODEL  -- maps to provider's haiku model
 ```
 
-### Default Tier Maps
+### 🔹 Default Tier Maps
 
 ```
 Provider    |  opus                     |  sonnet                   |  haiku
@@ -110,7 +121,7 @@ Anthropic   |  (cleared)                |  (cleared)                |  (cleared)
 
 Users can override tiers at switch time with `--opus`, `--sonnet`, `--haiku` flags.
 
-## Provider Detection
+## 🔌 Provider Detection
 
 `getCurrentProvider()` detects the active provider by inspecting `~/.claude/settings.json`:
 
@@ -129,7 +140,7 @@ Users can override tiers at switch time with `--opus`, `--sonnet`, `--haiku` fla
 +-------------------------------------------+
 ```
 
-## LiteLLM Proxy Layer
+## 📌 LiteLLM Proxy Layer
 
 Ollama and Gemini require a LiteLLM proxy to translate between Claude Code's Anthropic Messages API format and their native OpenAI Chat Completions format.
 
@@ -145,7 +156,7 @@ LiteLLM Proxy (translation layer)
 
 The proxy is automatically started as a detached background process when switching to Ollama or Gemini. Health checks poll `/health` on the respective port for up to 5 seconds.
 
-## Config File Locations
+## ⚙️ Config File Locations
 
 | File | Purpose | Managed By |
 |------|---------|------------|
@@ -154,7 +165,7 @@ The proxy is automatically started as a detached background process when switchi
 | `~/.config/opencode/opencode.json` | OpenCode provider and model config | `opencode.ts` |
 | `~/.claude-ai-switcher/config.json` | API keys per provider (alibaba, openrouter, gemini) | `config.ts` |
 
-## Cross-Platform Support
+## 💬 Cross-Platform Support
 
 - All paths use `path.join()` + `os.homedir()` (no hardcoded `/home/`)
 - `rimraf` for clean (no `rm -rf`)

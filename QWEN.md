@@ -1,10 +1,26 @@
-# Claude AI Switcher - Project Context
+# 🤖 Claude AI Switcher - Project Context
 
-## Project Overview
+## 📑 Table of Contents
+
+- [🌟 Project Overview](#-project-overview)
+- [🗂️ Project Structure](#️-project-structure)
+- [📦 Installation](#-installation)
+- [▶️ Building and Running](#️-building-and-running)
+- [⚙️ Configuration Files](#️-configuration-files)
+- [⚙️ How It Works](#️-how-it-works)
+- [🧠 Model Alias Env Vars](#-model-alias-env-vars)
+- [🔌 Provider Details](#-provider-details)
+- [🪝 Hooks - Token Tracking & Visual Enhancements](#-hooks---token-tracking--visual-enhancements)
+- [📏 Development Conventions](#-development-conventions)
+- [📦 External Dependencies](#-external-dependencies)
+- [✨ Safety Features](#-safety-features)
+- [🆘 Common Issues & Solutions](#-common-issues--solutions)
+
+## 🌟 Project Overview
 
 **Claude AI Switcher** is a TypeScript CLI tool that enables seamless switching between AI providers (Anthropic, Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, Muse) for **Claude Code** and **OpenCode** clients. It manages configuration files, API keys, environment variables, and model alias env vars so users always know what model is active in Claude Code.
 
-### Key Features
+### ✨ Key Features
 - Quick switching between Anthropic (default), Alibaba Coding Plan, GLM/Z.AI, OpenRouter, Ollama, Gemini, and Muse providers
 - **Model alias env vars** written to `~/.claude/settings.json` so Claude Code routes model tiers to the correct provider model (`ANTHROPIC_DEFAULT_OPUS_MODEL`, `ANTHROPIC_DEFAULT_SONNET_MODEL`, `ANTHROPIC_DEFAULT_HAIKU_MODEL`)
 - **Separate client control** — `claude-switch claude <provider>` targets Claude Code only, `claude-switch opencode <provider>` targets OpenCode only, bare `claude-switch <provider>` updates both
@@ -16,7 +32,7 @@
 - Automatic backup of existing configurations
 - Auto-onboarding to prevent Anthropic connection errors
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 claude-ai-switcher/
@@ -47,9 +63,9 @@ claude-ai-switcher/
 └── README.md              # User documentation
 ```
 
-## Installation
+## 📦 Installation
 
-### Option 1 — npm (recommended, easiest)
+### 🔹 Option 1 — npm (recommended, easiest)
 ```bash
 npm install -g claude-ai-switcher
 claude-switch --version
@@ -57,7 +73,7 @@ claude-switch status
 # update: npm update -g claude-ai-switcher
 ```
 
-### Option 2 — npx (no install)
+### 📦 Option 2 — npx (no install)
 ```bash
 npx --package claude-ai-switcher claude-switch --help
 npx --package claude-ai-switcher claude-switch status
@@ -65,7 +81,7 @@ npx --package claude-ai-switcher claude-switch status
 ```
 Package is `claude-ai-switcher`, binary is `claude-switch` → `--package` form is required.
 
-### Option 3 — git (development / latest `main`)
+### 🔀 Option 3 — git (development / latest `main`)
 ```bash
 git clone https://github.com/tupacalypse187/claude-ai-switcher.git
 cd claude-ai-switcher
@@ -76,13 +92,13 @@ npm link        # installs `claude-switch` globally via symlink
 
 Staying up to date: `git pull` → `npm ci` → `npm run build`.
 
-## Building and Running
+## ▶️ Building and Running
 
-### Prerequisites
+### 📋 Prerequisites
 - Node.js >= 18.0.0
 - npm
 
-### Build Commands
+### ⌨️ Build Commands
 
 ```bash
 # Install dependencies (reproducible install from package-lock.json; does NOT modify it)
@@ -101,14 +117,14 @@ npm start
 npm run clean
 ```
 
-### Global Installation
+### 📦 Global Installation
 
 ```bash
 npm link  # Install CLI globally as 'claude-switch'
 # or via npm marketplace: npm install -g claude-ai-switcher
 ```
 
-### Usage
+### 💻 Usage
 
 ```bash
 # Setup wizard (first-time use)
@@ -159,7 +175,7 @@ claude-switch hooks reset         # Reset token usage counters
 claude-switch hooks remove        # Remove all hooks
 ```
 
-## Configuration Files
+## ⚙️ Configuration Files
 
 | Client | Config File | Purpose |
 |--------|-------------|---------|
@@ -172,9 +188,9 @@ claude-switch hooks remove        # Remove all hooks
 | Visual Enhancements | `~/.claude/visual-enhancements.js` | Visual enhancements script (installed via hooks) |
 | Token Usage Data | `~/.claude/token-usage.json` | Session token usage tracking |
 
-## How It Works
+## ⚙️ How It Works
 
-### Alibaba Coding Plan Configuration
+### ⚙️ Alibaba Coding Plan Configuration
 
 When switching Claude Code to Alibaba, the tool writes these environment variables to `~/.claude/settings.json`:
 
@@ -199,11 +215,11 @@ When switching Claude Code to Alibaba, the tool writes these environment variabl
 
 Switching back to Anthropic clears all these env vars.
 
-### GLM/Z.AI Configuration
+### ⚙️ GLM/Z.AI Configuration
 
 GLM uses the `@z_ai/coding-helper` package to manage its configuration. The tool triggers `coding-helper auth reload claude` to apply GLM settings, plus sets the model tier aliases.
 
-## Model Alias Env Vars
+## 🧠 Model Alias Env Vars
 
 When switching Claude Code to a non-Anthropic provider, the tool writes into `~/.claude/settings.json`:
 
@@ -231,9 +247,9 @@ Default tier maps per provider:
 
 These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Switching to Anthropic clears all three vars.
 
-## Provider Details
+## 🔌 Provider Details
 
-### Alibaba Coding Plan
+### 🔹 Alibaba Coding Plan
 - **Endpoint**: `https://coding-intl.dashscope.aliyuncs.com/apps/anthropic`
 - **Models**: qwen3.7-plus, qwen3.6-plus, qwen3-max-2026-01-23, qwen3-coder-next, qwen3-coder-plus, glm-5, glm-4.7, glm-4.7-flash, kimi-k2.5, MiniMax-M2.5
 - **Context Windows**: 200K - 1M tokens
@@ -249,27 +265,27 @@ These are overridable per-switch with `--opus`, `--sonnet`, `--haiku` flags. Swi
   - **MiniMax-M2.5**: 200K tokens (reasoning, 200K context)
 - **API Key Required**: Yes (from Alibaba Cloud Model Studio)
 
-### GLM/Z.AI
+### 🔹 GLM/Z.AI
 - **Managed by**: `@z_ai/coding-helper` package
 - **Models**: glm-5.3[1m], glm-5.3-flash[1m], glm-5.3-flash, glm-5v-turbo, glm-5-turbo, glm-4.7, glm-4.7-flash
 - **Context Windows**: 200K - 1M tokens
 - **Setup**: `npm install -g @z_ai/coding-helper && coding-helper auth`
 
-### Muse (Meta, direct)
+### 🔹 Muse (Meta, direct)
 - **Endpoint**: `https://api.meta.ai`
 - **Models**: muse-spark-1.2-contributor (discounted default), muse-spark-1.2
 - **Context Windows**: 256K tokens
 - **API Key Required**: Yes (`MODEL_API_KEY` for https://api.meta.ai, stored as `museApiKey`)
 - **Env**: `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, `ANTHROPIC_MODEL`, tier aliases, `CLAUDE_CODE_SUBAGENT_MODEL`, `ENABLE_TOOL_SEARCH=true`
 
-### Anthropic (Default)
+### 🔹 Anthropic (Default)
 - **Models**: claude-opus-4-6, claude-opus-4-5, claude-sonnet-4-6, claude-sonnet-4-5, claude-haiku-4-5
 - **Context Windows**: 200K tokens
 - **Configuration**: Clears all provider env vars and model alias env vars to use native Claude
 
-## Hooks - Token Tracking & Visual Enhancements
+## 🪝 Hooks - Token Tracking & Visual Enhancements
 
-### Token Tracker (`~/.claude/token-tracker.js`)
+### 🔹 Token Tracker (`~/.claude/token-tracker.js`)
 
 Tracks token usage across Claude Code sessions with:
 - **Input/Output token counting**
@@ -277,20 +293,20 @@ Tracks token usage across Claude Code sessions with:
 - **Visual context bar with percentage**
 - **Color-coded alerts** (green <50%, yellow <75%, red <90%, magenta <100%)
 
-#### Installation
+#### 📦 Installation
 ```bash
 claude-switch hooks install      # Install all hooks
 claude-switch hooks install-token  # Install only token tracker
 ```
 
-#### Usage
+#### 💻 Usage
 ```bash
 claude-switch hooks status     # Show current token usage
 claude-switch hooks reset      # Reset token counters
 claude-switch hooks remove-token  # Remove token tracker
 ```
 
-#### Output Example
+#### 💡 Output Example
 ```
 ╔══════════════════════════════════════════════════════════════╗
 ║  🤖 Active Model: Qwen3 6 Plus                                ║
@@ -307,7 +323,7 @@ claude-switch hooks remove-token  # Remove token tracker
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-### Visual Enhancements (`~/.claude/visual-enhancements.js`)
+### 🔹 Visual Enhancements (`~/.claude/visual-enhancements.js`)
 
 Provides visual display of active model and provider information:
 - **Model card** with provider name, model, context window, and capabilities
@@ -315,19 +331,19 @@ Provides visual display of active model and provider information:
 - **Context usage percentage bar**
 - **Custom system prompt generation**
 
-#### Installation
+#### 📦 Installation
 ```bash
 claude-switch hooks install         # Install all hooks
 claude-switch hooks install-visual  # Install only visual enhancements
 ```
 
-#### Usage
+#### 💻 Usage
 ```bash
 claude-switch hooks status          # Show visual status
 claude-switch hooks remove-visual   # Remove visual enhancements
 ```
 
-#### Output Example
+#### 💡 Output Example
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ 🤖 Alibaba Model Studio                                          │
@@ -339,7 +355,7 @@ claude-switch hooks remove-visual   # Remove visual enhancements
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Hook Configuration
+### ⚙️ Hook Configuration
 
 Hooks are managed via `~/.claude/hooks-config.json`:
 ```json
@@ -351,7 +367,7 @@ Hooks are managed via `~/.claude/hooks-config.json`:
 }
 ```
 
-### Token Usage Tracking
+### 💻 Token Usage Tracking
 
 Token usage is stored in `~/.claude/token-usage.json`:
 ```json
@@ -363,16 +379,16 @@ Token usage is stored in `~/.claude/token-usage.json`:
 }
 ```
 
-## Development Conventions
+## 📏 Development Conventions
 
-### Code Style
+### 📏 Code Style
 - **TypeScript**: Strict mode enabled (`strict: true` in tsconfig.json)
 - **Module System**: CommonJS with ES2020 target
 - **Naming**: camelCase for variables/functions, PascalCase for types/interfaces
 - **Imports**: ES module syntax with `.js` extensions for relative imports
 - **Error Handling**: Try-catch blocks with user-friendly error messages via `displayError()`
 
-### Architecture Patterns
+### 🏗️ Architecture Patterns
 - **Separation of Concerns**:
   - `clients/` handles file I/O for specific AI clients
   - `providers/` contains provider-specific configuration logic
@@ -381,7 +397,7 @@ Token usage is stored in `~/.claude/token-usage.json`:
 - **Async/Await**: All file operations use async/await with fs-extra
 - **Interface Definitions**: TypeScript interfaces for all config objects
 
-### Key Types
+### 🔹 Key Types
 
 ```typescript
 // ModelTierMap defines which model maps to each Anthropic tier
@@ -402,7 +418,7 @@ const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
 function getAlibabaTierMap(model: string): ModelTierMap
 ```
 
-### Command Structure
+### 🗂️ Command Structure
 
 ```
 claude-switch <provider>                    → both clients
@@ -425,31 +441,31 @@ Hooks commands:
   claude-switch hooks remove-visual         → Remove visual enhancements
 ```
 
-### Testing Practices
+### 🧪 Testing Practices
 - Manual testing via CLI commands
 - Configuration backup before modifications
 - Validation of model IDs before applying configuration
 
-### Key Dependencies
+### 📦 Key Dependencies
 - `commander`: CLI framework
 - `chalk`: Terminal styling
 - `fs-extra`: Enhanced file system operations
 - `ora`: Loading spinners
 
-## External Dependencies
+## 📦 External Dependencies
 
-### Required for Full Functionality
+### 🔹 Required for Full Functionality
 - **Claude Code**: For Claude Code client support
 - **OpenCode**: For OpenCode client support
 - **@z_ai/coding-helper**: Required for GLM/Z.AI provider support
 
-### API Key Sources
+### 🔑 API Key Sources
 - **Alibaba**: [Alibaba Cloud Model Studio](https://modelstudio.console.alibabacloud.com/)
 - **GLM/Z.AI**: Via `coding-helper auth` interactive setup
 - **Muse**: https://api.meta.ai (`MODEL_API_KEY` → `claude-switch key muse <key>` or `claude-switch setup`)
 - **Anthropic**: Uses system/default Anthropic configuration
 
-## Safety Features
+## ✨ Safety Features
 
 1. **Backup Before Modify**: All config file modifications create timestamped backups
 2. **Directory Creation**: Uses `fs.ensureDir()` to safely create directories
@@ -460,7 +476,7 @@ Hooks commands:
 7. **Hook Safety**: Hooks are optional and can be removed at any time without affecting core functionality
 8. **Token Usage Privacy**: Token usage data stored locally only, never transmitted
 
-## Common Issues & Solutions
+## 🆘 Common Issues & Solutions
 
 | Issue | Solution |
 |-------|----------|
