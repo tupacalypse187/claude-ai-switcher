@@ -29,6 +29,7 @@ const MODEL_CONTEXT_WINDOWS = {
   'MiniMax-M2.5': 200000,
 
   // GLM Models
+  'glm-5.4[1m]': 1000000,
   'glm-5.3[1m]': 1000000,
   'glm-5.3-flash[1m]': 1000000,
   'glm-5.3-flash': 200000,
