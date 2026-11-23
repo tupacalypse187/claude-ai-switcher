@@ -66,6 +66,7 @@ const MODEL_CAPABILITIES = {
   'MiniMax-M2.5': ['Text Generation', 'Deep Thinking'],
 
   // GLM Models
+  'glm-5.4[1m]': ['Text Generation', 'Deep Thinking', 'Multimodal', '1M Context'],
   'glm-5.3[1m]': ['Text Generation', 'Deep Thinking', '1M Context'],
   'glm-5.3-flash[1m]': ['Text Generation', 'Deep Thinking', 'Multimodal', 'Fast', '1M Context'],
   'glm-5.3-flash': ['Text Generation', 'Deep Thinking', 'Multimodal', 'Fast'],
@@ -174,6 +175,7 @@ function getContextWindow(modelId) {
     'glm-4.7-flash': 256000,
     'kimi-k2.5': 200000,
     'MiniMax-M2.5': 200000,
+    'glm-5.4[1m]': 1000000,
     'glm-5.3[1m]': 1000000,
     'glm-5.3-flash[1m]': 1000000,
     'glm-5.3-flash': 200000,

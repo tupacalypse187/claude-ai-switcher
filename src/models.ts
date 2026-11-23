@@ -20,11 +20,11 @@ export interface ModelTierMap {
 }
 
 // Default GLM tier map per Z.AI docs (https://docs.z.ai/devpack/latest-model)
-// GLM-5.3 with 1M context leads opus, GLM-5.3-Flash [1m] is the default sonnet alias,
+// GLM-5.4 with 1M context leads opus, GLM-5.3-Flash [1m] is the default sonnet alias,
 // plain GLM-5.3-Flash (standard context window) covers haiku
 // The [1m] suffix opts into the 1M-context variant; pair with CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000 (see claude-code.ts)
 export const GLM_DEFAULT_TIER_MAP: ModelTierMap = {
-  opus: "glm-5.3[1m]",
+  opus: "glm-5.4[1m]",
   sonnet: "glm-5.3-flash[1m]",
   haiku: "glm-5.3-flash"
 };
@@ -165,11 +165,18 @@ export const alibabaModels: Model[] = [
 // GLM/Z.AI Models (via coding-helper)
 export const glmModels: Model[] = [
   {
+    id: "glm-5.4[1m]",
+    name: "GLM-5.4 (1M Context)",
+    contextWindow: 1000000,
+    capabilities: ["Text Generation", "Deep Thinking", "Visual Understanding"],
+    description: "Zhipu's latest flagship model with stronger all-round coding performance and new vision capabilities. 1M context window. Recommended by Z.AI for the opus tier."
+  },
+  {
     id: "glm-5.3[1m]",
     name: "GLM-5.3 (1M Context)",
     contextWindow: 1000000,
     capabilities: ["Text Generation", "Deep Thinking"],
-    description: "Zhipu's latest flagship model with major advances in complex software engineering and agent tasks. 1M context window. Recommended by Z.AI for the opus tier."
+    description: "Zhipu's previous flagship model with major advances in complex software engineering and agent tasks. 1M context window. Recommended by Z.AI for the opus tier."
   },
   {
     id: "glm-5.3-flash[1m]",
